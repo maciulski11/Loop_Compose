@@ -27,24 +27,22 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
-import com.example.loop_new.NavigationScreens
+import androidx.navigation.compose.rememberNavController
+import com.example.loop_new.Navigation
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.Flashcard
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ScreenPreview() {
-//    Screen()
+    val navController = rememberNavController()
+
+    BoxScreen(navController = navController, boxUid = "")
 }
 
 // UI
 @Composable
-fun BoxScreen() {
-//    Screen()
-}
-
-@Composable
-fun Screen(navController: NavController) {
+fun BoxScreen(navController: NavController, boxUid: String) {
 
     val constraints = ConstraintSet {
         val flashcardList = createRefFor("flashcardList")
@@ -87,7 +85,8 @@ fun Screen(navController: NavController) {
             contentDescription = "Button",
             modifier = Modifier
                 .layoutId("startLesson")
-                .clickable {}
+                .clickable {
+                }
         )
 
         Image(
@@ -95,7 +94,9 @@ fun Screen(navController: NavController) {
             contentDescription = "Button",
             modifier = Modifier
                 .layoutId("addFlashcard")
-                .clickable {}
+                .clickable {
+                    navController.navigate(Navigation.AddFlashcardScreen)
+                }
         )
     }
 }
@@ -112,7 +113,7 @@ fun FlashcardItem(flashcard: Flashcard, navController: NavController) {
                 end = 2.dp
             )
             .clickable {
-                navController.navigate(NavigationScreens.BoxScreen)
+                navController.navigate(Navigation.BoxScreen)
             },
         contentAlignment = Alignment.Center,
         content = {

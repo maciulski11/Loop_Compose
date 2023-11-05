@@ -41,10 +41,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.loop_new.Navigation
 import com.example.loop_new.domain.model.Box
-import com.example.loop_new.NavigationScreens
 import com.example.loop_new.R
-import kotlinx.coroutines.flow.Flow
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -143,7 +142,7 @@ fun Screen(
 @Composable
 fun ShowCustomAlertDialog(
     onAddBox: (nameInput: String, describeInput: String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     var nameInput by remember { mutableStateOf("") }
     var describeInput by remember { mutableStateOf("") }
@@ -217,7 +216,8 @@ fun BoxItem(box: Box, navController: NavController) {
                 end = 2.dp
             )
             .clickable {
-                navController.navigate(NavigationScreens.BoxScreen)
+                val boxUid = box.uid
+                navController.navigate("${Navigation.BoxScreen}/$boxUid")
             },
         contentAlignment = Alignment.Center,
         content = {
