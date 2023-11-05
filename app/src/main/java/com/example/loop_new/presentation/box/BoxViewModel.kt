@@ -12,20 +12,4 @@ class BoxViewModel(private val interfaceRepository: InterfaceRepository): ViewMo
 
     val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
 
-    fun addFlashcard(flashcard: Flashcard) {
-        val flashcardData = Flashcard(
-            word = flashcard.word,
-            translate = flashcard.translate,
-            meaning = flashcard.meaning,
-            example = flashcard.example,
-            partOfSpeech = flashcard.partOfSpeech,
-            pronunciation = flashcard.pronunciation,
-            audioUrl = flashcard.audioUrl,
-            isFrontVisible = flashcard.isFrontVisible
-        )
-
-        viewModelScope.launch {
-            interfaceRepository.addFlashcard(flashcardData, "")
-        }
-    }
 }

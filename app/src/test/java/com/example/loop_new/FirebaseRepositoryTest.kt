@@ -1,5 +1,6 @@
 package com.example.loop_new
 
+import com.example.loop_new.domain.model.Box
 import com.example.loop_new.repository.FirebaseRepository
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -35,8 +36,10 @@ class FirebaseRepositoryTest() {
         val name = "Test Box"
         val describe = "Test description"
 
+        val data = Box(name = name, describe = describe)
+
         // Wywołanie metody, którą testujemy
-        repository.addBox(name, describe)
+        repository.addBox(data)
 
         // Weryfikacja, czy odpowiednie metody Firestore zostały wywołane
         verify(documentReference).set(Mockito.any())

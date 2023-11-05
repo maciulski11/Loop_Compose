@@ -1,29 +1,18 @@
 package com.example.loop_new.presentation.add_flashcard
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,88 +30,305 @@ fun AddFlashcardScreenPreview() {
 
 @Composable
 fun AddFlashcardScreen() {
-    val context = LocalContext.current
-    val density = LocalDensity.current.density
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val view = LocalView.current
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
     ) {
-        val (returnButton, title, wordLinearLayout, translateLinearLayout, partOfSpeechLinearLayout, meanLinearLayout, sentenceLinearLayout, addButton) = createRefs()
+        val (
+            title,
+            wordLinearLayout,
+            translateLinearLayout,
+            partOfSpeechLinearLayout,
+            meanLinearLayout,
+            exampleLinearLayout,
+            addButton
+        ) = createRefs()
 
         val wordEditText = remember { mutableStateOf(TextFieldValue()) }
         val translateEditText = remember { mutableStateOf(TextFieldValue()) }
         val partOfSpeechEditText = remember { mutableStateOf(TextFieldValue()) }
         val meanEditText = remember { mutableStateOf(TextFieldValue()) }
-        val sentenceEditText = remember { mutableStateOf(TextFieldValue()) }
-
-        // Return Button
-//        Image(
-//            painter = painterResource(id = R.drawable.baseline_add_circle_box),
-//            contentDescription = null, // change this
-//            modifier = Modifier
-//                .constrainAs(returnButton) {
-//                    top.linkTo(parent.top, margin = 8.dp)
-//                    start.linkTo(parent.start, margin = 8.dp)
-//                }
-//                .padding(4.dp),
-//
-//        )
+        val exampleEditText = remember { mutableStateOf(TextFieldValue()) }
+        var translateCheckBox by remember { mutableStateOf(true) }
+        var partOfSpeechCheckBox by remember { mutableStateOf(true) }
+        var meanCheckBox by remember { mutableStateOf(true) }
+        var exampleCheckBox by remember { mutableStateOf(true) }
 
         // Title Text
         Text(
             text = "Creating flashcard:",
             style = Typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
+            fontSize = 32.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .constrainAs(title) {
-                    top.linkTo(parent.top, margin = 6.dp)
-                    start.linkTo(returnButton.end)
+                    top.linkTo(parent.top, margin = 14.dp)
                 },
             textAlign = TextAlign.Center,
+        )
+
+        // Word EditText
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+                .fillMaxWidth()
+                .constrainAs(wordLinearLayout) {
+                    top.linkTo(title.bottom, margin = 14.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp)), // Obramowanie
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+
+            OutlinedTextField(
+                value = wordEditText.value,
+                onValueChange = { wordEditText.value = it },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(6.dp),
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                ),
+                singleLine = false,
+                maxLines = 1,
+                placeholder = {
+                    Text(
+                        text = "word",
+                        fontSize = 24.sp,
+                        color = Color.Gray
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent, // Kolor obramowania w trybie skupienia
+                    unfocusedBorderColor = Color.Transparent, // Kolor obramowania w trybie bez skupienia
+                    textColor = Color.Black,
+                    cursorColor = Color.Black
+                )
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.dictionary),
+                contentDescription = "Button",
+                modifier = Modifier
+                    .size(62.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 2.dp)
+                    .clickable { }
+            )
+        }
+
+        // Translate EditText
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+                .fillMaxWidth()
+                .constrainAs(translateLinearLayout) {
+                    top.linkTo(wordLinearLayout.bottom, margin = 6.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp)) // Obramowanie
+
+        ) {
+
+            Checkbox(
+                checked = translateCheckBox,
+                onCheckedChange = { translateCheckBox = it },
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 16.dp)
 
             )
 
-        // Word EditText
-        BasicTextField(
-            value = wordEditText.value,
-            onValueChange = { wordEditText.value = it },
-            modifier = Modifier
-                .border(2.dp, Color.Black, shape = RoundedCornerShape(12.dp)) // Obramowanie
-                .constrainAs(wordLinearLayout) {
-                    top.linkTo(title.bottom)
-                    start.linkTo(parent.start, margin = 10.dp)
-                    end.linkTo(parent.end, margin = 10.dp)
-                }
-//                .fillMaxWidth()
-                .heightIn(min = 60.dp)
-                .clip(shape = MaterialTheme.shapes.small)
-                .background(Color.Gray)
-                .padding(
-                    top = 6.dp,
-                    start = 112.dp,
-                    end = 112.dp
+            OutlinedTextField(
+                value = translateEditText.value,
+                onValueChange = { translateEditText.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 24.sp,
                 ),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    // Handle Next button click
-                    // Move focus to the next field
-                }
-            ),
-            textStyle = TextStyle(
-                color = Color.Black, // Kolor tekstu
-                fontSize = 20.sp, // Rozmiar tekstu
-                fontWeight = FontWeight.Bold // Styl tekstu
-            ),
-            singleLine = true, // Pozwala na jednoliniowe wpisywanie tekstu
-            cursorBrush = SolidColor(Color.Black), // Kolor kursora
-        )
+                singleLine = false,
+                maxLines = 1,
+                placeholder = {
+                    Text(
+                        text = "translate",
+                        fontSize = 24.sp,
+                        color = Color.Gray
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent, // Kolor obramowania w trybie skupienia
+                    unfocusedBorderColor = Color.Transparent, // Kolor obramowania w trybie bez skupienia
+                    textColor = Color.Black,
+                    cursorColor = Color.Black
+                )
+            )
+        }
 
-        // ... Repeat the above code for other fields (translate, partOfSpeech, mean, sentence)
+        // PartOfSpeech EditText
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+                .fillMaxWidth()
+                .constrainAs(partOfSpeechLinearLayout) {
+                    top.linkTo(translateLinearLayout.bottom, margin = 6.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp)) // Obramowanie
+
+        ) {
+
+            Checkbox(
+                checked = partOfSpeechCheckBox,
+                onCheckedChange = { partOfSpeechCheckBox = it },
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 16.dp)
+
+            )
+
+            OutlinedTextField(
+                value = partOfSpeechEditText.value,
+                onValueChange = { partOfSpeechEditText.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                ),
+                singleLine = false,
+                maxLines = 1,
+                placeholder = {
+                    Text(
+                        text = "part of speech",
+                        fontSize = 24.sp,
+                        color = Color.Gray
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent, // Kolor obramowania w trybie skupienia
+                    unfocusedBorderColor = Color.Transparent, // Kolor obramowania w trybie bez skupienia
+                    textColor = Color.Black,
+                    cursorColor = Color.Black
+                )
+            )
+        }
+
+        // Mean EditText
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+                .fillMaxWidth()
+                .constrainAs(meanLinearLayout) {
+                    top.linkTo(partOfSpeechLinearLayout.bottom, margin = 6.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp)) // Obramowanie
+
+        ) {
+
+            Checkbox(
+                checked = meanCheckBox,
+                onCheckedChange = { meanCheckBox = it },
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 16.dp)
+
+            )
+
+            OutlinedTextField(
+                value = meanEditText.value,
+                onValueChange = { meanEditText.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                ),
+                singleLine = false,
+                maxLines = 5,
+                placeholder = {
+                    Text(
+                        text = "mean",
+                        fontSize = 24.sp,
+                        color = Color.Gray
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent, // Kolor obramowania w trybie skupienia
+                    unfocusedBorderColor = Color.Transparent, // Kolor obramowania w trybie bez skupienia
+                    textColor = Color.Black,
+                    cursorColor = Color.Black
+                )
+            )
+        }
+
+
+        // Example EditText
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+                .fillMaxWidth()
+                .constrainAs(exampleLinearLayout) {
+                    top.linkTo(meanLinearLayout.bottom, margin = 6.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .border(2.dp, Color.Black, shape = RoundedCornerShape(16.dp)) // Obramowanie
+
+        ) {
+
+            Checkbox(
+                checked = exampleCheckBox,
+                onCheckedChange = { exampleCheckBox = it },
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 16.dp)
+
+            )
+
+            OutlinedTextField(
+                value = exampleEditText.value,
+                onValueChange = { exampleEditText.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                ),
+                singleLine = false,
+                maxLines = 5,
+                placeholder = {
+                    Text(
+                        text = "example",
+                        fontSize = 24.sp,
+                        color = Color.Gray
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent, // Kolor obramowania w trybie skupienia
+                    unfocusedBorderColor = Color.Transparent, // Kolor obramowania w trybie bez skupienia
+                    textColor = Color.Black,
+                    cursorColor = Color.Black
+                )
+            )
+        }
 
         // Add Button
         FloatingActionButton(
@@ -132,7 +338,7 @@ fun AddFlashcardScreen() {
             },
             modifier = Modifier
                 .constrainAs(addButton) {
-                    bottom.linkTo(parent.bottom, margin = 52.dp)
+                    bottom.linkTo(parent.bottom, margin = 36.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
