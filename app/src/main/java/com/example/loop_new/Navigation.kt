@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.loop_new.services.api.TranslateService
 import com.example.loop_new.presentation.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.box.BoxScreen
@@ -13,7 +14,7 @@ import com.example.loop_new.presentation.box.BoxViewModel
 import com.example.loop_new.presentation.lesson.LessonScreen
 import com.example.loop_new.presentation.main.MainScreen
 import com.example.loop_new.presentation.main.MainViewModel
-import com.example.loop_new.repository.FirebaseRepository
+import com.example.loop_new.services.firebase.FirebaseServices
 import com.google.firebase.firestore.FirebaseFirestore
 
 object Navigation {
@@ -35,7 +36,7 @@ fun NavigationScreens() {
     ) {
 
         composable(Navigation.MainScreen) {
-            val mainViewModel = MainViewModel(FirebaseRepository(firebaseFirestore))
+            val mainViewModel = MainViewModel(FirebaseServices(firebaseFirestore))
             MainScreen(navController, mainViewModel)
         }
 
@@ -44,7 +45,7 @@ fun NavigationScreens() {
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val boxViewModel = BoxViewModel(FirebaseRepository(firebaseFirestore), boxUid = boxUid)
+            val boxViewModel = BoxViewModel(FirebaseServices(firebaseFirestore), boxUid = boxUid)
 
             BoxScreen(navController, boxUid, boxViewModel)
         }
@@ -54,7 +55,7 @@ fun NavigationScreens() {
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val addFlashcardViewModel = AddFlashcardViewModel(FirebaseRepository(firebaseFirestore))
+            val addFlashcardViewModel = AddFlashcardViewModel(FirebaseServices(firebaseFirestore), TranslateService())
 
             AddFlashcardScreen(navController, addFlashcardViewModel, boxUid)
         }

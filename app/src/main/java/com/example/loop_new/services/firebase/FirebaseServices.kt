@@ -1,16 +1,16 @@
-package com.example.loop_new.repository
+package com.example.loop_new.services.firebase
 
 import android.util.Log
-import com.example.loop_new.domain.model.Flashcard
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.repository.InterfaceRepository
+import com.example.loop_new.domain.services.InterfaceRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.UUID
 
-class FirebaseRepository(private val firestore: FirebaseFirestore): InterfaceRepository {
+class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceRepository {
 
     companion object {
         const val BOX = "box"

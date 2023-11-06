@@ -1,6 +1,6 @@
-package com.example.loop_new.domain.repository
+package com.example.loop_new.domain.services
 
-import com.example.loop_new.domain.model.Flashcard
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import kotlinx.coroutines.flow.Flow
 

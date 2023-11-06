@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.repository.InterfaceRepository
+import com.example.loop_new.domain.services.InterfaceRepository
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val interfaceRepository: InterfaceRepository): ViewModel() {

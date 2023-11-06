@@ -1,7 +1,7 @@
 package com.example.loop_new
 
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.repository.FirebaseRepository
+import com.example.loop_new.services.firebase.FirebaseServices
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,7 +10,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 
-class FirebaseRepositoryTest() {
+class FirebaseServicesTest() {
 
     // Inicjalizacja atrap obiektów do testów
     private val firebaseFirestore = Mockito.mock(FirebaseFirestore::class.java)
@@ -18,13 +18,13 @@ class FirebaseRepositoryTest() {
     private val documentReference = Mockito.mock(DocumentReference::class.java)
 
     // Inicjalizacja repozytorium, które będziemy testować
-    private val repository = FirebaseRepository(firebaseFirestore)
+    private val repository = FirebaseServices(firebaseFirestore)
 
     // Metoda inicjalizacyjna przed testem
     @Before
     fun setup() {
         // Mockowanie zachowania obiektów Firestore
-        Mockito.`when`(firebaseFirestore.collection(FirebaseRepository.BOX))
+        Mockito.`when`(firebaseFirestore.collection(FirebaseServices.BOX))
             .thenReturn(collectionReference)
         Mockito.`when`(collectionReference.document(Mockito.anyString()))
             .thenReturn(documentReference)

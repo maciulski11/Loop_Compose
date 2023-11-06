@@ -1,5 +1,6 @@
-package com.example.loop_new.network
+package com.example.loop_new.services.api
 
+import com.example.loop_new.domain.services.InterfaceDictionaryApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -12,5 +13,5 @@ class DictionaryService {
         .build()// Creates the final instance of the Retrofit class
 
     // Calls the create method on the retrofit object to create the CurrencyApi instance
-    val dictionaryApi: DictionaryApi = dictionaryRetrofit.create(DictionaryApi::class.java)
+    val interfaceDictionaryApi: InterfaceDictionaryApi = dictionaryRetrofit.create(InterfaceDictionaryApi::class.java)
 }

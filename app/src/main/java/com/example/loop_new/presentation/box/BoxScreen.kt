@@ -36,7 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.Navigation
 import com.example.loop_new.R
-import com.example.loop_new.domain.model.Flashcard
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Orange
 
