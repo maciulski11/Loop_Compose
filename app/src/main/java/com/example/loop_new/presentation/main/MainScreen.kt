@@ -49,9 +49,9 @@ import com.example.loop_new.R
 @Composable
 fun ScreenPreview() {
     val navController = rememberNavController()
-    val exampleData = createSampleData()
+    val sampleData = createSampleData()
 
-    Screen(navController, exampleData) { _, _ -> }
+    Screen(navController, sampleData) { _, _ -> }
 }
 
 @Composable
@@ -112,7 +112,7 @@ fun Screen(
             columns = GridCells.Fixed(itemsInRow)
         ) {
             items(list) { box ->
-                BoxItem(box = box, navController)
+                BoxItem(box, navController)
             }
         }
 

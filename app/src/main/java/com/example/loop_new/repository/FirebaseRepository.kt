@@ -33,17 +33,6 @@ class FirebaseRepository(private val firestore: FirebaseFirestore): InterfaceRep
     override fun addFlashcard(flashcard: Flashcard, boxUid: String) {
         val uid = UUID.randomUUID().toString()
         val data = flashcard.copy(uid = uid)
-//        val data = Flashcard(
-//            flashcard.word,
-//            flashcard.translate,
-//            flashcard.meaning,
-//            flashcard.example,
-//            flashcard.partOfSpeech,
-//            flashcard.pronunciation,
-//            flashcard.audioUrl,
-//            uid = uid,
-//            flashcard.isFrontVisible
-//        )
 
         try {
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD).document(uid).set(data)
@@ -78,8 +67,8 @@ class FirebaseRepository(private val firestore: FirebaseFirestore): InterfaceRep
         }
     }
 
-    override fun fetchListOfFlashcard(uid: String): Flow<List<Flashcard>> {
-        val userDocRef = firestore.collection(BOX).document(uid)
+    override fun fetchListOfFlashcard(boxUid: String): Flow<List<Flashcard>> {
+        val userDocRef = firestore.collection(BOX).document(boxUid)
         val flashcardsCollectionRef = userDocRef.collection(FLASHCARD)
 
         return callbackFlow {

@@ -7,7 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.loop_new.presentation.add_flashcard.AddFlashcardScreen
+import com.example.loop_new.presentation.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.box.BoxScreen
+import com.example.loop_new.presentation.box.BoxViewModel
 import com.example.loop_new.presentation.lesson.LessonScreen
 import com.example.loop_new.presentation.main.MainScreen
 import com.example.loop_new.presentation.main.MainViewModel
@@ -26,25 +28,37 @@ fun NavigationScreens() {
     val navController = rememberNavController()
 
     val firebaseFirestore = FirebaseFirestore.getInstance()
-    val mainViewModel = MainViewModel(FirebaseRepository(firebaseFirestore))
 
     NavHost(
         navController = navController,
         startDestination = Navigation.MainScreen
     ) {
+
         composable(Navigation.MainScreen) {
+            val mainViewModel = MainViewModel(FirebaseRepository(firebaseFirestore))
             MainScreen(navController, mainViewModel)
         }
+
         composable(
-            "${Navigation.BoxScreen}/{x}",
-            arguments = listOf(navArgument("x") { type = NavType.StringType })
+            "${Navigation.BoxScreen}/{boxUid}",
+            arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
-            val x = backStackEntry.arguments?.getString("x") ?: ""
-            BoxScreen(navController, x)
+            val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+            val boxViewModel = BoxViewModel(FirebaseRepository(firebaseFirestore), boxUid = boxUid)
+
+            BoxScreen(navController, boxUid, boxViewModel)
         }
-        composable(Navigation.AddFlashcardScreen) {
-            AddFlashcardScreen()
+
+        composable(
+            "${Navigation.AddFlashcardScreen}/{boxUid}",
+            arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+            val addFlashcardViewModel = AddFlashcardViewModel(FirebaseRepository(firebaseFirestore))
+
+            AddFlashcardScreen(navController, addFlashcardViewModel, boxUid)
         }
+
         composable(Navigation.LessonScreen) {
             LessonScreen()
         }

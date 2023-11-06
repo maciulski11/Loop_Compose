@@ -8,8 +8,20 @@ import com.example.loop_new.domain.model.Flashcard
 import com.example.loop_new.domain.repository.InterfaceRepository
 import kotlinx.coroutines.launch
 
-class BoxViewModel(private val interfaceRepository: InterfaceRepository): ViewModel() {
+class BoxViewModel(private val interfaceRepository: InterfaceRepository,  boxUid: String) : ViewModel() {
 
     val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
 
+    init {
+        fetchListOfFlashcard(boxUid)
+    }
+
+    private fun fetchListOfFlashcard(boxUid: String) {
+        viewModelScope.launch {
+            val flashcardsFlow = interfaceRepository.fetchListOfFlashcard(boxUid)
+            flashcardsFlow.collect {
+                flashcardList.value = it
+            }
+        }
+    }
 }

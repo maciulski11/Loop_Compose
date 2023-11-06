@@ -12,7 +12,7 @@ interface InterfaceRepository {
 
     fun fetchListOfBox(): Flow<List<Box>>
 
-    fun fetchListOfFlashcard(uid: String): Flow<List<Flashcard>>
+    fun fetchListOfFlashcard(boxUid: String): Flow<List<Flashcard>>
 
 }
 
