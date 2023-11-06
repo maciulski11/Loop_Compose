@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -147,6 +146,7 @@ fun Screen(
                         .padding(end = 2.dp)
                         .clickable {
                             onFetchWord(wordEditText)
+//                            TranslateService().testTranslateFunction()
                         }
                 )
             }
@@ -174,8 +174,8 @@ fun Screen(
                 )
 
                 OutlinedTextField(
-                    value = translateEditText,
-                    onValueChange = { translateEditText = it },
+                    value = viewModel.translate,
+                    onValueChange = { viewModel.translate = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp),

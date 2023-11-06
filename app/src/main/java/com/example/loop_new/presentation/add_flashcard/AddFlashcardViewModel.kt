@@ -1,25 +1,29 @@
 package com.example.loop_new.presentation.add_flashcard
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.loop_new.domain.model.Flashcard
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.api.dictionary.DictionaryResponse
-import com.example.loop_new.domain.repository.InterfaceRepository
-import com.example.loop_new.network.DictionaryService
+import com.example.loop_new.domain.services.InterfaceApiService
+import com.example.loop_new.domain.services.InterfaceRepository
+import com.example.loop_new.services.api.DictionaryService
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class AddFlashcardViewModel(private val interfaceRepository: InterfaceRepository) : ViewModel() {
+class AddFlashcardViewModel(
+    private val interfaceRepository: InterfaceRepository,
+    private val interfaceApiService: InterfaceApiService
+) : ViewModel() {
 
     var meaning: String by mutableStateOf("")
     var example: String by mutableStateOf("")
+    var translate: String by mutableStateOf("")
 
     fun addFlashcard(
         word: String,
@@ -49,7 +53,12 @@ class AddFlashcardViewModel(private val interfaceRepository: InterfaceRepository
     }
 
     fun fetchWord(word: String) {
-        DictionaryService().dictionaryApi.getWord(word)
+
+        interfaceApiService.onTranslationResult(word) { translateWord ->
+            translate = translateWord
+        }
+
+        DictionaryService().interfaceDictionaryApi.getWord(word)
             .enqueue(object : Callback<List<DictionaryResponse>> {
                 override fun onResponse(
                     call: Call<List<DictionaryResponse>>,
@@ -66,7 +75,7 @@ class AddFlashcardViewModel(private val interfaceRepository: InterfaceRepository
 
                                 val meanings = dictionaryResponse.meanings
                                 val targetMeaning =
-                                    meanings.find { it.partOfSpeech == "noun"}
+                                    meanings.find { it.partOfSpeech == "noun" }
 
                                 val nonNullDefinition =
                                     targetMeaning?.definitions?.find { def -> def.definition != null }
@@ -76,23 +85,14 @@ class AddFlashcardViewModel(private val interfaceRepository: InterfaceRepository
                                 example = nonNullDefinition?.example ?: ""
                             }
                         }
-
-
                     } else {
                         Log.d("Currency", "Wystąpił błąd zapytania")
-//                        Toast.makeText(
-//                            ,
-//                            "Wystąpił błąd zapytania",
-//                            Toast.LENGTH_LONG
-//                        ).show()
                     }
                 }
-
 
                 override fun onFailure(call: Call<List<DictionaryResponse>>, t: Throwable) {
 
                 }
-
             })
     }
 }
