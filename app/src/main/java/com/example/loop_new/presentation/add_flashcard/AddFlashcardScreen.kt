@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +30,7 @@ import com.example.loop_new.ui.theme.Typography
 fun AddFlashcardScreenPreview() {
     val navController = rememberNavController()
 
-    Screen(navController = navController) { _, _, _ -> }
+//    Screen(navController = navController) { _, _, _ -> }
 }
 
 @Composable
@@ -38,15 +39,24 @@ fun AddFlashcardScreen(
     viewModel: AddFlashcardViewModel,
     boxUid: String
 ) {
-    Screen(navController) { word, translate, pronunciation ->
-        viewModel.addFlashcard(word, translate, pronunciation, boxUid)
-    }
+    Screen(
+        viewModel,
+        navController,
+        { word, translate, pronunciation ->
+            viewModel.addFlashcard(word, translate, pronunciation, boxUid)
+        },
+        { word ->
+            viewModel.fetchWord(word)
+        }
+    )
 }
 
 @Composable
 fun Screen(
+    viewModel: AddFlashcardViewModel,
     navController: NavController,
-    onAddFlashcard: (word: String, translate: String, pronunciation: String) -> Unit
+    onAddFlashcard: (word: String, translate: String, pronunciation: String) -> Unit,
+    onFetchWord: (word: String) -> Unit
 ) {
 
     Column(
@@ -125,7 +135,7 @@ fun Screen(
                         unfocusedBorderColor = Color.Transparent,
                         textColor = Color.Black,
                         cursorColor = Color.Black
-                    )
+                    ),
                 )
 
                 Image(
@@ -135,7 +145,9 @@ fun Screen(
                         .size(62.dp)
                         .align(Alignment.CenterVertically)
                         .padding(end = 2.dp)
-                        .clickable { }
+                        .clickable {
+                            onFetchWord(wordEditText)
+                        }
                 )
             }
 
@@ -261,8 +273,8 @@ fun Screen(
                 )
 
                 OutlinedTextField(
-                    value = meanEditText,
-                    onValueChange = { meanEditText = it },
+                    value = viewModel.meaning,
+                    onValueChange = { viewModel.meaning = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp),
@@ -309,8 +321,8 @@ fun Screen(
                 )
 
                 OutlinedTextField(
-                    value = exampleEditText,
-                    onValueChange = { exampleEditText = it },
+                    value = viewModel.example,
+                    onValueChange = { viewModel.example = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp),

@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.loop_new.domain.model.Box
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.repository.InterfaceRepository
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.example.loop_new.domain.model
+package com.example.loop_new.domain.model.firebase
 
 data class Box(
     val name: String? = null,

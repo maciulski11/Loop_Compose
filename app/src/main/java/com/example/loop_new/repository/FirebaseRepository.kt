@@ -2,7 +2,7 @@ package com.example.loop_new.repository
 
 import android.util.Log
 import com.example.loop_new.domain.model.Flashcard
-import com.example.loop_new.domain.model.Box
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.repository.InterfaceRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose

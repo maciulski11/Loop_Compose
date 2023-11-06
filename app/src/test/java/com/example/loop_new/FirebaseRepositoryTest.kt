@@ -1,6 +1,6 @@
 package com.example.loop_new
 
-import com.example.loop_new.domain.model.Box
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.repository.FirebaseRepository
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
