@@ -1,20 +1,21 @@
-package com.example.loop_new.services.firebase
+package com.example.loop_new.data.firebase
 
 import android.util.Log
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.services.InterfaceRepository
+import com.example.loop_new.domain.services.InterfaceFirebaseService
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.UUID
 
-class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceRepository {
+class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFirebaseService {
 
     companion object {
         const val BOX = "box"
         const val FLASHCARD = "flashcard"
+        const val FIREBASE_SERVICES = "FIREBASE_SERVICES:"
     }
 
     override fun addBox(box: Box) {
@@ -23,9 +24,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceRepos
 
         try {
             firestore.collection(BOX).document(uid).set(data)
-            Log.d("FIREBASE_REPO:", "Fun addBox: correct addition of box")
+            Log.d(FIREBASE_SERVICES, "Fun addBox: correct addition of box")
         } catch (e: Exception) {
-            Log.d("FIREBASE_REPO:", "Fun addBox: $e")
+            Log.d(FIREBASE_SERVICES, "Fun addBox: $e")
             throw e
         }
     }
@@ -36,9 +37,22 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceRepos
 
         try {
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD).document(uid).set(data)
-            Log.d("FIREBASE_REPO:", "Fun addFlashcard: correct addition of flashcard")
+            Log.d(FIREBASE_SERVICES, "Fun addFlashcard: correct addition of flashcard")
+
         } catch (e: Exception) {
-            Log.d("FIREBASE_REPO:", "Fun addFlashcard: $e")
+            Log.d(FIREBASE_SERVICES, "Fun addFlashcard: $e")
+            throw e
+        }
+    }
+
+    override fun deleteFlashcard(boxUid: String, flashcardUid: String) {
+        try {
+            firestore.collection(BOX).document(boxUid)
+                .collection(FLASHCARD).document(flashcardUid)
+                .delete()
+
+        } catch (e: Exception) {
+            Log.d(FIREBASE_SERVICES, "Fun deleteFlashcard: $e")
             throw e
         }
     }

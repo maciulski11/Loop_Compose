@@ -1,7 +1,7 @@
 package com.example.loop_new
 
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.services.firebase.FirebaseServices
+import com.example.loop_new.data.firebase.FirebaseServices
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore

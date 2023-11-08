@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.InterfaceRepository
+import com.example.loop_new.domain.services.InterfaceFirebaseService
 import kotlinx.coroutines.launch
 
-class BoxViewModel(private val interfaceRepository: InterfaceRepository,  boxUid: String) : ViewModel() {
+class BoxViewModel(private val interfaceFirebaseServices: InterfaceFirebaseService, boxUid: String) : ViewModel() {
 
     val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
 
@@ -18,10 +18,15 @@ class BoxViewModel(private val interfaceRepository: InterfaceRepository,  boxUid
 
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
-            val flashcardsFlow = interfaceRepository.fetchListOfFlashcard(boxUid)
+            val flashcardsFlow = interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
             flashcardsFlow.collect {
                 flashcardList.value = it
             }
         }
     }
+
+    fun deleteFlashcard(boxUid: String, flashcardUid: String) {
+        interfaceFirebaseServices.deleteFlashcard(boxUid, flashcardUid)
+    }
+
 }

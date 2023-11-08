@@ -41,7 +41,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.Navigation
+import com.example.loop_new.navigation.Navigation
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
 

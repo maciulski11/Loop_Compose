@@ -1,24 +1,20 @@
 package com.example.loop_new.presentation.add_flashcard
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.model.api.dictionary.DictionaryResponse
-import com.example.loop_new.domain.services.InterfaceApiService
-import com.example.loop_new.domain.services.InterfaceRepository
-import com.example.loop_new.services.api.DictionaryService
+import com.example.loop_new.domain.services.InterfaceDictionaryService
+import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.services.InterfaceTranslateServices
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class AddFlashcardViewModel(
-    private val interfaceRepository: InterfaceRepository,
-    private val interfaceApiService: InterfaceApiService
+    private val interfaceFirebaseService: InterfaceFirebaseService,
+    private val interfaceTranslateServices: InterfaceTranslateServices,
+    private val interfaceDictionaryService: InterfaceDictionaryService
 ) : ViewModel() {
 
     var meaning: String by mutableStateOf("")
@@ -48,51 +44,21 @@ class AddFlashcardViewModel(
         )
 
         viewModelScope.launch {
-            interfaceRepository.addFlashcard(flashcardData, boxUid)
+            interfaceFirebaseService.addFlashcard(flashcardData, boxUid)
         }
     }
 
-    fun fetchWord(word: String) {
+    fun fetchInfoOfWord(word: String) {
 
-        interfaceApiService.onTranslationResult(word) { translateWord ->
+        interfaceTranslateServices.onTranslationResult(word) { translateWord ->
+
             translate = translateWord
         }
 
-        DictionaryService().interfaceDictionaryApi.getWord(word)
-            .enqueue(object : Callback<List<DictionaryResponse>> {
-                override fun onResponse(
-                    call: Call<List<DictionaryResponse>>,
-                    response: Response<List<DictionaryResponse>>
-                ) {
+        interfaceDictionaryService.onFetchWordInfo(word) {flashcard ->
 
-                    if (response.isSuccessful) {
-                        val dictionaryResponseList = response.body()
-
-                        dictionaryResponseList?.let { it ->
-                            if (it.isNotEmpty()) {
-
-                                val dictionaryResponse = it[0]
-
-                                val meanings = dictionaryResponse.meanings
-                                val targetMeaning =
-                                    meanings.find { it.partOfSpeech == "noun" }
-
-                                val nonNullDefinition =
-                                    targetMeaning?.definitions?.find { def -> def.definition != null }
-
-                                // Ustaw znaczenie w ViewModel
-                                meaning = nonNullDefinition?.definition ?: ""
-                                example = nonNullDefinition?.example ?: ""
-                            }
-                        }
-                    } else {
-                        Log.d("Currency", "Wystąpił błąd zapytania")
-                    }
-                }
-
-                override fun onFailure(call: Call<List<DictionaryResponse>>, t: Throwable) {
-
-                }
-            })
+            meaning = flashcard.meaning.toString()
+            example = flashcard.example.toString()
+        }
     }
 }

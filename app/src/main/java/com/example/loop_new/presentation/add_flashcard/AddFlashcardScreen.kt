@@ -45,7 +45,7 @@ fun AddFlashcardScreen(
             viewModel.addFlashcard(word, translate, pronunciation, boxUid)
         },
         { word ->
-            viewModel.fetchWord(word)
+            viewModel.fetchInfoOfWord(word)
         }
     )
 }
@@ -72,11 +72,11 @@ fun Screen(
 
             // EditText
             var wordEditText by remember { mutableStateOf("") }
-            var translateEditText by remember { mutableStateOf("") }
+            val translateEditText by remember { mutableStateOf("") }
             var partOfSpeechEditText by remember { mutableStateOf("") }
             var meanEditText by remember { mutableStateOf("") }
             var exampleEditText by remember { mutableStateOf("") }
-            var pronunciationEditText by remember { mutableStateOf("") }
+            val pronunciationEditText by remember { mutableStateOf("") }
 
             // CheckBox
             var translateCheckBox by remember { mutableStateOf(true) }

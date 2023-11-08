@@ -34,7 +34,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.Navigation
+import com.example.loop_new.navigation.Navigation
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue
@@ -46,7 +46,7 @@ fun ScreenPreview() {
     val navController = rememberNavController()
     val sampleData = createSampleData()
 
-    Screen(navController = navController, boxUid = "", sampleData)
+    Screen(navController = navController, boxUid = "", sampleData) {}
 }
 
 @Composable
@@ -62,7 +62,14 @@ fun createSampleData(): List<Flashcard> {
 // UI
 @Composable
 fun BoxScreen(navController: NavController, boxUid: String, viewModel: BoxViewModel) {
-    Screen(navController, boxUid, viewModel.flashcardList.value ?: emptyList())
+    Screen(
+        navController,
+        boxUid,
+        viewModel.flashcardList.value ?: emptyList()
+    )
+    { flashcardUid ->
+        viewModel.deleteFlashcard(boxUid, flashcardUid)
+    }
 }
 
 @Composable
@@ -70,8 +77,8 @@ fun Screen(
     navController: NavController,
     boxUid: String,
     list: List<Flashcard>,
+    onDeleteFlashcard: (String) -> Unit
 ) {
-    val context = LocalContext.current // Uzyskaj dostęp do Context za pomocą LocalContext
 
     val constraints = ConstraintSet {
         val flashcardList = createRefFor("flashcardList")
@@ -103,19 +110,21 @@ fun Screen(
             modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("flashcardList")
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        // Obsługa zdarzenia dotknięcia (LongClick)
-                        onLongPress = {
-                            //TODO: implement long click
-                            Toast.makeText(context, "long clik", Toast.LENGTH_SHORT).show()
-
-                        }
-                    )
-                }
+//                .pointerInput(Unit) {
+//                    detectTapGestures(
+//                        // Obsługa zdarzenia dotknięcia (LongClick)
+//                        onLongPress = {
+//                            //TODO: implement long click
+//                            Toast.makeText(context, "long clik", Toast.LENGTH_SHORT).show()
+//
+//                        }
+//                    )
+//                }
         ) {
             items(list) { flashcard ->
-                FlashcardItem(flashcard)
+                FlashcardItem(flashcard) { flashcardUid ->
+                    onDeleteFlashcard(flashcardUid)
+                }
             }
         }
 
@@ -141,7 +150,9 @@ fun Screen(
 }
 
 @Composable
-fun FlashcardItem(flashcard: Flashcard) {
+fun FlashcardItem(flashcard: Flashcard, onDeleteFlashcard: (String) -> Unit) {
+
+    val context = LocalContext.current // Uzyskaj dostęp do Context za pomocą LocalContext
 
     Box(
         modifier = Modifier
@@ -150,7 +161,21 @@ fun FlashcardItem(flashcard: Flashcard) {
                 top = 6.dp,
                 start = 2.dp,
                 end = 2.dp
-            ),
+
+            )
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    // Obsługa zdarzenia dotknięcia (LongClick)
+                    onLongPress = {
+                        onDeleteFlashcard(flashcard.uid.toString())
+                        //TODO: implement long click
+                        Toast
+                            .makeText(context, flashcard.word, Toast.LENGTH_SHORT)
+                            .show()
+
+                    }
+                )
+            },
         contentAlignment = Alignment.Center,
         content = {
             Column(

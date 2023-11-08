@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.services.InterfaceRepository
+import com.example.loop_new.domain.services.InterfaceFirebaseService
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val interfaceRepository: InterfaceRepository): ViewModel() {
+class MainViewModel(private val interfaceFirebaseService: InterfaceFirebaseService): ViewModel() {
 
     val boxList: MutableState<List<Box>?> = mutableStateOf(null)
 
@@ -19,13 +19,13 @@ class MainViewModel(private val interfaceRepository: InterfaceRepository): ViewM
     fun addBox(name: String, describe: String) {
         val box = Box(name = name, describe = describe)
         viewModelScope.launch {
-            interfaceRepository.addBox(box)
+            interfaceFirebaseService.addBox(box)
         }
     }
 
     private fun fetchListOfBox() {
         viewModelScope.launch {
-            val boxFlow = interfaceRepository.fetchListOfBox()
+            val boxFlow = interfaceFirebaseService.fetchListOfBox()
             boxFlow.collect {//nasluchiwanie na strumien boxFlow przy uzyciu fun collect
                 boxList.value = it
             }
