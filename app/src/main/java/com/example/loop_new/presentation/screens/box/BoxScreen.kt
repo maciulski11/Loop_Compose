@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.box
+package com.example.loop_new.presentation.screens.box
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -34,7 +34,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.navigation.Navigation
+import com.example.loop_new.presentation.navigation.Navigation
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue

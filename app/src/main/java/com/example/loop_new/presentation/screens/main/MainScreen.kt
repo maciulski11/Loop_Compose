@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.main
+package com.example.loop_new.presentation.screens.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,7 +41,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.navigation.Navigation
+import com.example.loop_new.presentation.navigation.Navigation
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
 

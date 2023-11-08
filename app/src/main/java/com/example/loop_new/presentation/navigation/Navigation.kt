@@ -1,4 +1,4 @@
-package com.example.loop_new.navigation
+package com.example.loop_new.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
@@ -7,13 +7,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.loop_new.data.api.TranslateService
-import com.example.loop_new.presentation.add_flashcard.AddFlashcardScreen
-import com.example.loop_new.presentation.add_flashcard.AddFlashcardViewModel
-import com.example.loop_new.presentation.box.BoxScreen
-import com.example.loop_new.presentation.box.BoxViewModel
-import com.example.loop_new.presentation.lesson.LessonScreen
-import com.example.loop_new.presentation.main.MainScreen
-import com.example.loop_new.presentation.main.MainViewModel
+import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
+import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
+import com.example.loop_new.presentation.screens.box.BoxScreen
+import com.example.loop_new.presentation.screens.box.BoxViewModel
+import com.example.loop_new.presentation.screens.lesson.LessonScreen
+import com.example.loop_new.presentation.screens.main.MainScreen
+import com.example.loop_new.presentation.screens.main.MainViewModel
 import com.example.loop_new.data.api.DictionaryService
 import com.example.loop_new.data.firebase.FirebaseServices
 import com.google.firebase.firestore.FirebaseFirestore

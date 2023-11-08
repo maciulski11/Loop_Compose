@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.box
+package com.example.loop_new.presentation.screens.box
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

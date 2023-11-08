@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.add_flashcard
+package com.example.loop_new.presentation.screens.add_flashcard
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
