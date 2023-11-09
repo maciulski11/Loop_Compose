@@ -23,7 +23,7 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,26 +49,30 @@ fun DefaultPreview() {
 @Composable
 fun LessonScreen() {
     val localDensity = LocalDensity.current
-
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val items = listOf("1", "2", "3", "4", "5", "6", "7")
-    val currentItem = remember { mutableStateOf(0) }
+    val currentItem = remember { mutableIntStateOf(0) }
 
-    val swipeableState = rememberSwipeableState(initialValue = 0)
+    val swipeableStateX = rememberSwipeableState(initialValue = 0)
+    val swipeableStateY = rememberSwipeableState(initialValue = 0)
+    val screenHeightPx = with(localDensity) { screenHeight.toPx() }
     val screenWidthPx = with(localDensity) { screenWidth.toPx() }
-    val anchors = mapOf(
+    val anchorsX = mapOf(
         -screenWidthPx to (-1), // Full swipe to the left
         0f to 0, // Center position
         screenWidthPx to 1 // Full swipe to the right
     )
+    val anchorsY = mapOf(
+        -screenHeightPx to 2, // Full swipe up
+        0f to 0 // Center position
+    )
 
-    LaunchedEffect(swipeableState.currentValue) {
-        when (swipeableState.currentValue) {
-            -1, 1 -> {
-                // Inkrementujemy currentItem, ale nie pozwalamy mu wyjść poza zakres listy
-                currentItem.value = (currentItem.value + 1) % items.size
-                swipeableState.snapTo(0) // Snap back to center after changing the item
-            }
+    LaunchedEffect(swipeableStateX.currentValue, swipeableStateY.currentValue) {
+        if (swipeableStateX.currentValue != 0 || swipeableStateY.currentValue != 0) {
+            currentItem.intValue = (currentItem.intValue + 1) % items.size
+            swipeableStateX.snapTo(0) // Snap back to center after horizontal swipe
+            swipeableStateY.snapTo(0) // Snap back to center after vertical swipe
         }
     }
 
@@ -77,25 +81,27 @@ fun LessonScreen() {
             .fillMaxSize()
             .background(Color.LightGray)
     ) {
+        val offsetX = swipeableStateX.offset.value.roundToInt()
+        val offsetY = swipeableStateY.offset.value.roundToInt()
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxSize()
-                .padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 16.dp,
-                    bottom = 26.dp
-                )
-                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+                .size(width = screenWidth, height = screenHeight)
+                .offset { IntOffset(offsetX, offsetY) }
                 .swipeable(
-                    state = swipeableState,
-                    anchors = anchors,
+                    state = swipeableStateX,
+                    anchors = anchorsX,
                     thresholds = { _, _ -> FractionalThreshold(0.3f) },
                     orientation = Orientation.Horizontal
                 )
+                .swipeable(
+                    state = swipeableStateY,
+                    anchors = anchorsY,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Vertical
+                )
         ) {
-            FlashcardItem(flashcardText = items[currentItem.value])
+            FlashcardItem(flashcardText = items[currentItem.intValue])
         }
     }
 }
@@ -105,9 +111,7 @@ fun FlashcardItem(flashcardText: String, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 74.dp, bottom = 78.dp, start = 40.dp, end = 40.dp)
-//            .background(painterResource(id = R.drawable.around_background))
-            ,
+            .padding(top = 74.dp, bottom = 78.dp, start = 40.dp, end = 40.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
