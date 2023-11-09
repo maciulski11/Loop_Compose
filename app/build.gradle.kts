@@ -71,7 +71,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    //Mockito
+    // Mockito
     testImplementation("org.mockito:mockito-core:3.12.4")
     androidTestImplementation("org.mockito:mockito-android:3.12.4")
 
@@ -89,10 +89,11 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
 
-    //ConstraintLayout
+    // ConstraintLayout
     implementation("androidx.constraintlayout:constraintlayout-compose-android:1.1.0-alpha13")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
 }

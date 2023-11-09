@@ -16,6 +16,7 @@ import com.example.loop_new.presentation.screens.main.MainScreen
 import com.example.loop_new.presentation.screens.main.MainViewModel
 import com.example.loop_new.data.api.DictionaryService
 import com.example.loop_new.data.firebase.FirebaseServices
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.DelicateCoroutinesApi
 

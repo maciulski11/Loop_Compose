@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
@@ -28,8 +29,9 @@ import com.example.loop_new.ui.theme.Typography
 @Composable
 fun AddFlashcardScreenPreview() {
     val navController = rememberNavController()
+    val viewModel: AddFlashcardViewModel = hiltViewModel()
 
-//    Screen(navController = navController) { _, _, _ -> }
+//    Screen(viewModel = viewModel, navController = navController, { _, _, _ -> }, { _ ->})
 }
 
 @Composable

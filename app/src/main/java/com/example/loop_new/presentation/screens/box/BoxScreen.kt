@@ -110,16 +110,6 @@ fun Screen(
             modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("flashcardList")
-//                .pointerInput(Unit) {
-//                    detectTapGestures(
-//                        // Obsługa zdarzenia dotknięcia (LongClick)
-//                        onLongPress = {
-//                            //TODO: implement long click
-//                            Toast.makeText(context, "long clik", Toast.LENGTH_SHORT).show()
-//
-//                        }
-//                    )
-//                }
         ) {
             items(list) { flashcard ->
                 FlashcardItem(flashcard) { flashcardUid ->
@@ -134,6 +124,7 @@ fun Screen(
             modifier = Modifier
                 .layoutId("startLesson")
                 .clickable {
+                    navController.navigate(Navigation.LessonScreen)
                 }
         )
 
