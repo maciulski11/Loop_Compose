@@ -124,7 +124,7 @@ fun Screen(
             modifier = Modifier
                 .layoutId("startLesson")
                 .clickable {
-                    navController.navigate(Navigation.LessonScreen)
+                    navController.navigate("${Navigation.LessonScreen}/$boxUid")
                 }
         )
 

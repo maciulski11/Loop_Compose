@@ -16,7 +16,7 @@ import com.example.loop_new.presentation.screens.main.MainScreen
 import com.example.loop_new.presentation.screens.main.MainViewModel
 import com.example.loop_new.data.api.DictionaryService
 import com.example.loop_new.data.firebase.FirebaseServices
-import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.DelicateCoroutinesApi
 
@@ -49,7 +49,7 @@ fun NavigationScreens() {
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val boxViewModel = BoxViewModel(FirebaseServices(firebaseFirestore), boxUid = boxUid)
+            val boxViewModel = BoxViewModel(FirebaseServices(firebaseFirestore), boxUid)
 
             BoxScreen(navController, boxUid, boxViewModel)
         }
@@ -64,8 +64,13 @@ fun NavigationScreens() {
             AddFlashcardScreen(navController, addFlashcardViewModel, boxUid)
         }
 
-        composable(Navigation.LessonScreen) {
-            LessonScreen()
+        composable("${Navigation.LessonScreen}/{boxUid}",
+            arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+            val lessonViewModel = LessonViewModel(FirebaseServices(firebaseFirestore), boxUid)
+
+            LessonScreen(lessonViewModel)
         }
     }
 }
