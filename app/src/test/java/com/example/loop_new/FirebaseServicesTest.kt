@@ -10,7 +10,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 
-class FirebaseServicesTest() {
+class FirebaseServicesTest {
 
     // Inicjalizacja atrap obiektów do testów
     private val firebaseFirestore = Mockito.mock(FirebaseFirestore::class.java)
@@ -32,7 +32,7 @@ class FirebaseServicesTest() {
 
     // Test jednostkowy metody addBox z repozytorium
     @Test
-    suspend fun testAddBox() {
+    fun testAddBox() {
         val name = "Test Box"
         val describe = "Test description"
 

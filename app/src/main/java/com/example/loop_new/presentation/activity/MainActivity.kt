@@ -13,7 +13,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Loop_NewTheme {
-
                 NavigationScreens()
             }
         }

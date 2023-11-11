@@ -5,4 +5,8 @@ object LogTags {
     const val DICTIONARY_SERVICE = "DICTIONARY_SERVICES:"
     const val TRANSLATE_SERVICES = "TRANSLATE_SERVICE:"
 
+    const val MAIN_VIEW_MODEL = "MainViewModel:"
+    const val LESSON_VIEW_MODEL = "MainViewModel:"
+    const val BOX_VIEW_MODEL = "BoxViewModel:"
+    const val ADD_FLASHCARD_VIEW_MODEL = "AddFlashcardViewModel:"
 }
