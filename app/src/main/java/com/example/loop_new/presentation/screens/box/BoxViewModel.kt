@@ -18,8 +18,8 @@ class BoxViewModel(private val interfaceFirebaseServices: InterfaceFirebaseServi
 
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
-            val flashcardsFlow = interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
-            flashcardsFlow.collect {
+            interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
+            .collect {
                 flashcardList.value = it
             }
         }

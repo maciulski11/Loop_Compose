@@ -67,6 +67,7 @@ fun createSampleData(): List<Box> {
 // UI
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel) {
+
     Screen(
         navController = navController,
         list = viewModel.boxList.value ?: emptyList()

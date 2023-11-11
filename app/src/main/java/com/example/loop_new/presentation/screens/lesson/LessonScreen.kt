@@ -25,10 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,16 +42,16 @@ import kotlin.math.roundToInt
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-//    FlashcardItem("dsfdsfd")
+fun LessonScreenPreview() {
+//    LessonScreen(boxUid = "")
 }
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LessonScreen(viewModel: LessonViewModel) {
+
     val currentFlashcard by viewModel.currentFlashcard.collectAsState()
-    val isDataLoaded by viewModel.isDataLoaded.collectAsState()
 
     val localDensity = LocalDensity.current
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -77,43 +73,39 @@ fun LessonScreen(viewModel: LessonViewModel) {
         }
     }
 
-    if (isDataLoaded) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray)
+    ) {
+        val offsetX = swipeableStateX.offset.value.roundToInt()
+        val offsetY = swipeableStateY.offset.value.roundToInt()
+
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.LightGray)
+                .align(Alignment.Center)
+                .size(width = screenWidth, height = screenHeight)
+                .offset { IntOffset(offsetX, offsetY) }
+                .swipeable(
+                    state = swipeableStateX,
+                    anchors = anchorsX,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Horizontal
+                )
+                .swipeable(
+                    state = swipeableStateY,
+                    anchors = anchorsY,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Vertical
+                )
         ) {
-            val offsetX = swipeableStateX.offset.value.roundToInt()
-            val offsetY = swipeableStateY.offset.value.roundToInt()
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(width = screenWidth, height = screenHeight)
-                    .offset { IntOffset(offsetX, offsetY) }
-                    .swipeable(
-                        state = swipeableStateX,
-                        anchors = anchorsX,
-                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                        orientation = Orientation.Horizontal
-                    )
-                    .swipeable(
-                        state = swipeableStateY,
-                        anchors = anchorsY,
-                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                        orientation = Orientation.Vertical
-                    )
-            ) {
-                currentFlashcard?.let {
-                    FlashcardItem(flashcardText = it)
-                } ?: Text("Brak fiszek do wyświetlenia")
-            }
+            currentFlashcard?.let {
+                FlashcardItem(flashcardText = it)
+            } ?: Text("Brak fiszek do wyświetlenia")
         }
-    } else {
-        // Możesz tutaj dodać ekran ładowania
-        Text("Ładowanie danych...", modifier = Modifier.fillMaxSize())
     }
 }
+
 
 @Composable
 fun FlashcardItem(flashcardText: Flashcard, modifier: Modifier = Modifier) {
@@ -149,7 +141,7 @@ fun FrontSide(flashcardText: Flashcard) {
             .fillMaxSize()
             .visible(true) // Create an extension function to handle visibility
             .border(3.dp, Blue, RoundedCornerShape(20.dp))
-        ) {
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = flashcardText.word.toString(),

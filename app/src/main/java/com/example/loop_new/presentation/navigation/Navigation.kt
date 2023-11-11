@@ -1,23 +1,21 @@
 package com.example.loop_new.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.loop_new.data.api.TranslateService
+import com.example.loop_new.DependencyProvider
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
 import com.example.loop_new.presentation.screens.lesson.LessonScreen
+import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.main.MainScreen
 import com.example.loop_new.presentation.screens.main.MainViewModel
-import com.example.loop_new.data.api.DictionaryService
-import com.example.loop_new.data.firebase.FirebaseServices
-import com.example.loop_new.presentation.screens.lesson.LessonViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 object Navigation {
@@ -32,16 +30,15 @@ object Navigation {
 fun NavigationScreens() {
     val navController = rememberNavController()
 
-    val firebaseFirestore = FirebaseFirestore.getInstance()
-
     NavHost(
         navController = navController,
         startDestination = Navigation.MainScreen
     ) {
 
         composable(Navigation.MainScreen) {
-            val mainViewModel = MainViewModel(FirebaseServices(firebaseFirestore))
-            MainScreen(navController, mainViewModel)
+            val viewModel = remember { MainViewModel(DependencyProvider().firebaseServices) }
+
+            MainScreen(navController, viewModel)
         }
 
         composable(
@@ -49,9 +46,9 @@ fun NavigationScreens() {
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val boxViewModel = BoxViewModel(FirebaseServices(firebaseFirestore), boxUid)
+            val viewModel = remember { BoxViewModel(DependencyProvider().firebaseServices, boxUid) }
 
-            BoxScreen(navController, boxUid, boxViewModel)
+            BoxScreen(navController, boxUid, viewModel)
         }
 
         composable(
@@ -59,18 +56,25 @@ fun NavigationScreens() {
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val addFlashcardViewModel = AddFlashcardViewModel(FirebaseServices(firebaseFirestore), TranslateService(), DictionaryService())
+            val viewModel =
+                remember {
+                    AddFlashcardViewModel(
+                        DependencyProvider().firebaseServices,
+                        DependencyProvider().translateService,
+                        DependencyProvider().dictionaryService
+                    )
+                }
 
-            AddFlashcardScreen(navController, addFlashcardViewModel, boxUid)
+            AddFlashcardScreen(navController, boxUid, viewModel)
         }
 
         composable("${Navigation.LessonScreen}/{boxUid}",
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val lessonViewModel = LessonViewModel(FirebaseServices(firebaseFirestore), boxUid)
+            val viewModel = remember { LessonViewModel(DependencyProvider().firebaseServices, boxUid) }
 
-            LessonScreen(lessonViewModel)
+            LessonScreen(viewModel)
         }
     }
 }

@@ -62,6 +62,7 @@ fun createSampleData(): List<Flashcard> {
 // UI
 @Composable
 fun BoxScreen(navController: NavController, boxUid: String, viewModel: BoxViewModel) {
+
     Screen(
         navController,
         boxUid,
@@ -79,13 +80,12 @@ fun Screen(
     list: List<Flashcard>,
     onDeleteFlashcard: (String) -> Unit
 ) {
-
     val constraints = ConstraintSet {
-        val flashcardList = createRefFor("flashcardList")
+        val flashcardsList = createRefFor("flashcardList")
         val startLesson = createRefFor("startLesson")
         val addFlashcard = createRefFor("addFlashcard")
 
-        constrain(flashcardList) {
+        constrain(flashcardsList) {
             top.linkTo(parent.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)

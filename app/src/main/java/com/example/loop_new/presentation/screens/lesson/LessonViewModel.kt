@@ -13,7 +13,6 @@ class LessonViewModel(private val interfaceFirebaseServices: InterfaceFirebaseSe
     private val flashcardList = MutableStateFlow<List<Flashcard>>(emptyList())
     private val _currentFlashcard = MutableStateFlow<Flashcard?>(null)
     val currentFlashcard: StateFlow<Flashcard?> = _currentFlashcard
-    val isDataLoaded = MutableStateFlow(false)
 
     init {
         fetchListOfFlashcard(boxUid)
@@ -21,10 +20,10 @@ class LessonViewModel(private val interfaceFirebaseServices: InterfaceFirebaseSe
 
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseServices.fetchListOfFlashcard(boxUid).collect { newFlashcardList ->
-                flashcardList.value = newFlashcardList
-                _currentFlashcard.value = newFlashcardList.firstOrNull()
-                isDataLoaded.value = true
+            interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
+                .collect { newFlashcardList ->
+                    flashcardList.value = newFlashcardList
+                    _currentFlashcard.value = newFlashcardList.firstOrNull()
             }
         }
     }
@@ -37,25 +36,3 @@ class LessonViewModel(private val interfaceFirebaseServices: InterfaceFirebaseSe
         }
     }
 }
-
-
-
-
-//class LessonViewModel(private val interfaceFirebaseServices: InterfaceFirebaseService, boxUid: String): ViewModel() {
-//
-//    val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
-//
-//    init {
-//        fetchListOfFlashcard(boxUid)
-//    }
-//
-//    private fun fetchListOfFlashcard(boxUid: String) {
-//        viewModelScope.launch {
-//            val flashcardsFlow = interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
-//            flashcardsFlow.collect {
-//                flashcardList.value = it
-//            }
-//        }
-//    }
-//
-//}

@@ -31,15 +31,16 @@ fun AddFlashcardScreenPreview() {
     val navController = rememberNavController()
     val viewModel: AddFlashcardViewModel = hiltViewModel()
 
-//    Screen(viewModel = viewModel, navController = navController, { _, _, _ -> }, { _ ->})
+    Screen(viewModel = viewModel, navController = navController, { _, _, _ -> }, { _ ->})
 }
 
 @Composable
 fun AddFlashcardScreen(
     navController: NavController,
-    viewModel: AddFlashcardViewModel,
-    boxUid: String
+    boxUid: String,
+    viewModel: AddFlashcardViewModel
 ) {
+
     Screen(
         viewModel,
         navController,
