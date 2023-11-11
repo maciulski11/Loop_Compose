@@ -31,7 +31,7 @@ fun AddFlashcardScreenPreview() {
     val navController = rememberNavController()
     val viewModel: AddFlashcardViewModel = hiltViewModel()
 
-    Screen(viewModel = viewModel, navController = navController, { _, _, _ -> }, { _ ->})
+    Screen(viewModel = viewModel, navController = navController, { _, _, _, _ -> }, { _ -> })
 }
 
 @Composable
@@ -44,8 +44,8 @@ fun AddFlashcardScreen(
     Screen(
         viewModel,
         navController,
-        { word, translate, pronunciation ->
-            viewModel.addFlashcard(word, translate, pronunciation, boxUid)
+        { word, translate, mean, example ->
+            viewModel.addFlashcard(word, translate, mean, example, boxUid)
         },
         { word ->
             viewModel.fetchInfoOfWord(word)
@@ -57,7 +57,7 @@ fun AddFlashcardScreen(
 fun Screen(
     viewModel: AddFlashcardViewModel,
     navController: NavController,
-    onAddFlashcard: (word: String, translate: String, pronunciation: String) -> Unit,
+    onAddFlashcard: (word: String, translate: String, mean: String, example: String) -> Unit,
     onFetchWord: (word: String) -> Unit
 ) {
 
@@ -75,11 +75,7 @@ fun Screen(
 
             // EditText
             var wordEditText by remember { mutableStateOf("") }
-            val translateEditText by remember { mutableStateOf("") }
             var partOfSpeechEditText by remember { mutableStateOf("") }
-            var meanEditText by remember { mutableStateOf("") }
-            var exampleEditText by remember { mutableStateOf("") }
-            val pronunciationEditText by remember { mutableStateOf("") }
 
             // CheckBox
             var translateCheckBox by remember { mutableStateOf(true) }
@@ -149,7 +145,6 @@ fun Screen(
                         .padding(end = 2.dp)
                         .clickable {
                             onFetchWord(wordEditText)
-//                            TranslateService().testTranslateFunction()
                         }
                 )
             }
@@ -356,7 +351,12 @@ fun Screen(
             // Add Flashcard Button
             FloatingActionButton(
                 onClick = {
-                    onAddFlashcard(wordEditText, translateEditText, pronunciationEditText)
+                    onAddFlashcard(
+                        wordEditText,
+                        viewModel.translate,
+                        viewModel.meaning,
+                        viewModel.example,
+                    )
                     navController.navigateUp()
                 },
                 modifier = Modifier

@@ -11,7 +11,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class DictionaryService: InterfaceDictionaryService {
+class DictionaryService : InterfaceDictionaryService {
 
     private val dictionaryRetrofit = Retrofit.Builder()
         .baseUrl("https://api.dictionaryapi.dev/api/v2/entries/en/")// Main url which will be use to every ask
@@ -20,7 +20,8 @@ class DictionaryService: InterfaceDictionaryService {
         .build()// Creates the final instance of the Retrofit class
 
     // Calls the create method on the retrofit object to create the CurrencyApi instance
-    private val interfaceDictionaryApi: InterfaceDictionaryApi = dictionaryRetrofit.create(InterfaceDictionaryApi::class.java)
+    private val interfaceDictionaryApi: InterfaceDictionaryApi =
+        dictionaryRetrofit.create(InterfaceDictionaryApi::class.java)
 
     override fun onFetchWordInfo(word: String, onFetchWordInfo: (Flashcard) -> Unit) {
         DictionaryService().interfaceDictionaryApi.getWord(word)
@@ -38,16 +39,21 @@ class DictionaryService: InterfaceDictionaryService {
 
                                 val dictionaryResponse = it[0]
 
-                                val meanings = dictionaryResponse.meanings
+                                val dictionaryResponseModel = dictionaryResponse.meanings
                                 val targetMeaning =
-                                    meanings.find { it.partOfSpeech == "noun" }
+                                    dictionaryResponseModel.find { it.partOfSpeech == "noun" }
 
-                                val nonNullDefinition =
+                                val definitionsModel =
                                     targetMeaning?.definitions?.find { def -> def.definition != null }
 
+                                val phoneticsModel =
+                                    dictionaryResponse.phonetics.find { pro -> pro.audio != null }
+
                                 val wordInfo = Flashcard(
-                                    meaning = nonNullDefinition?.definition,
-                                    example = nonNullDefinition?.example
+                                    meaning = definitionsModel?.definition,
+                                    example = definitionsModel?.example,
+                                    audioUrl = phoneticsModel?.audio,
+                                    pronunciation = phoneticsModel?.text
                                 )
 
                                 onFetchWordInfo(wordInfo)
@@ -62,6 +68,5 @@ class DictionaryService: InterfaceDictionaryService {
 
                 }
             })
-
     }
 }

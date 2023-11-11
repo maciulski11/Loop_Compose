@@ -17,29 +17,29 @@ class AddFlashcardViewModel(
     private val interfaceDictionaryService: InterfaceDictionaryService
 ) : ViewModel() {
 
+    var translate: String by mutableStateOf("")
     var meaning: String by mutableStateOf("")
     var example: String by mutableStateOf("")
-    var translate: String by mutableStateOf("")
+    private var pronunciation: String by mutableStateOf("")
+    private var audioUrl: String by mutableStateOf("")
 
     fun addFlashcard(
         word: String,
         translate: String,
-//        meaning: String,
-//        example: String,
+        meaning: String,
+        example: String,
 //        partOfSpeech: String,
-        pronunciation: String,
-//        audioUrl: String,
 //        isFrontVisible: Boolean,
         boxUid: String
     ) {
         val flashcardData = Flashcard(
             word = word,
             translate = translate,
-//            meaning = meaning,
-//            example = example,
+            meaning = meaning,
+            example = example,
 //            partOfSpeech = partOfSpeech,
             pronunciation = pronunciation,
-//            audioUrl = audioUrl,
+            audioUrl = audioUrl,
 //            isFrontVisible = isFrontVisible
         )
 
@@ -59,6 +59,9 @@ class AddFlashcardViewModel(
 
             meaning = flashcard.meaning.toString()
             example = flashcard.example.toString()
+            pronunciation = flashcard.pronunciation.toString()
+            audioUrl = flashcard.audioUrl.toString()
+
         }
     }
 }
