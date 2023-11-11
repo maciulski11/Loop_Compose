@@ -1,5 +1,7 @@
 package com.example.loop_new.data.api
 
+import android.util.Log
+import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.api.translate.TranslateRequest
 import com.example.loop_new.domain.model.api.translate.TranslateResponse
 import com.example.loop_new.domain.services.InterfaceTranslateServices
@@ -30,15 +32,18 @@ class TranslateService : InterfaceTranslateServices {
                     val translateResponse =
                         Gson().fromJson(responseBody, TranslateResponse::class.java)
                     val translatedText = translateResponse.translations.firstOrNull()?.text
-                    println("Translated text: $translatedText")
 
                     onTranslateWord(translatedText ?: "")
 
+                    Log.d(LogTags.TRANSLATE_SERVICES, "onTranslationResult: Success response: $translatedText")
+
                 } else {
-                    println("Error response: $responseCode")
+                    Log.e(LogTags.TRANSLATE_SERVICES, "onTranslationResult: Error response: $responseCode")
                 }
+
             } catch (e: Exception) {
                 // Obsługa błędów
+                Log.e(LogTags.TRANSLATE_SERVICES, "Translation error: $e")
                 e.printStackTrace()
             }
         }

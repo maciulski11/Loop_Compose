@@ -1,6 +1,7 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
+import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.InterfaceFirebaseService
@@ -15,7 +16,6 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
     companion object {
         const val BOX = "box"
         const val FLASHCARD = "flashcard"
-        const val FIREBASE_SERVICES = "FIREBASE_SERVICES:"
     }
 
     override fun addBox(box: Box) {
@@ -24,9 +24,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
 
         try {
             firestore.collection(BOX).document(uid).set(data)
-            Log.d(FIREBASE_SERVICES, "Fun addBox: correct addition of box")
+            Log.d(LogTags.FIREBASE_SERVICES, "addBox: Correct addition of box")
         } catch (e: Exception) {
-            Log.d(FIREBASE_SERVICES, "Fun addBox: $e")
+            Log.e(LogTags.FIREBASE_SERVICES, "addBox: Error: $e")
             throw e
         }
     }
@@ -37,10 +37,10 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
 
         try {
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD).document(uid).set(data)
-            Log.d(FIREBASE_SERVICES, "Fun addFlashcard: correct addition of flashcard")
+            Log.d(LogTags.FIREBASE_SERVICES, "addFlashcard: Correct addition of flashcard")
 
         } catch (e: Exception) {
-            Log.d(FIREBASE_SERVICES, "Fun addFlashcard: $e")
+            Log.e(LogTags.FIREBASE_SERVICES, "addFlashcard: Error: $e")
             throw e
         }
     }
@@ -51,8 +51,10 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
                 .collection(FLASHCARD).document(flashcardUid)
                 .delete()
 
+            Log.d(LogTags.FIREBASE_SERVICES, "deleteFlashcard: Success!")
+
         } catch (e: Exception) {
-            Log.d(FIREBASE_SERVICES, "Fun deleteFlashcard: $e")
+            Log.e(LogTags.FIREBASE_SERVICES, "deleteFlashcard: Error: $e")
             throw e
         }
     }
@@ -63,6 +65,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
             val listenerRegistration = collection.addSnapshotListener { querySnapshot, error ->
                 if (error != null) {
                     close(error)
+                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Error: $error")
                     return@addSnapshotListener
                 }
 
@@ -73,6 +76,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
                 }
 
                 trySend(tempList).isSuccess
+                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Success!")
             }
 
             awaitClose {
@@ -89,6 +93,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
             val listenerRegistration = flashcardsCollectionRef.addSnapshotListener { flashcardsSnapshot, error ->
                 if (error != null) {
                     close(error)
+                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
                     return@addSnapshotListener
                 }
 
@@ -99,6 +104,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
                 }
 
                 trySend(flashcards).isSuccess
+                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Success!")
             }
 
             awaitClose {

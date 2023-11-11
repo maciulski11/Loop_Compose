@@ -1,6 +1,7 @@
 package com.example.loop_new.data.api
 
 import android.util.Log
+import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.api.dictionary.DictionaryResponse
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.InterfaceDictionaryApi
@@ -57,15 +58,17 @@ class DictionaryService : InterfaceDictionaryService {
                                 )
 
                                 onFetchWordInfo(wordInfo)
+
+                                Log.d(LogTags.DICTIONARY_SERVICE, "onFetchWordInfo: Success!")
                             }
                         }
                     } else {
-                        Log.d("Currency", "Wystąpił błąd zapytania")
+                        Log.e(LogTags.DICTIONARY_SERVICE, "onFetchWordInfo: Request failed with code ${response.code()}")
                     }
                 }
 
                 override fun onFailure(call: Call<List<DictionaryResponse>>, t: Throwable) {
-
+                    Log.e(LogTags.DICTIONARY_SERVICE, "onFetchWordInfo: Request failed with exception", t)
                 }
             })
     }
