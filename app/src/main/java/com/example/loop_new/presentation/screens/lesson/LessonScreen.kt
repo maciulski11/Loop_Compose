@@ -23,8 +23,12 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,78 +40,83 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue
 import kotlin.math.roundToInt
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    FlashcardItem("dsfdsfd")
+//    FlashcardItem("dsfdsfd")
 }
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LessonScreen() {
+fun LessonScreen(viewModel: LessonViewModel) {
+    val currentFlashcard by viewModel.currentFlashcard.collectAsState()
+    val isDataLoaded by viewModel.isDataLoaded.collectAsState()
+
     val localDensity = LocalDensity.current
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val items = listOf("1", "2", "3", "4", "5", "6", "7")
-    val currentItem = remember { mutableIntStateOf(0) }
 
     val swipeableStateX = rememberSwipeableState(initialValue = 0)
     val swipeableStateY = rememberSwipeableState(initialValue = 0)
     val screenHeightPx = with(localDensity) { screenHeight.toPx() }
     val screenWidthPx = with(localDensity) { screenWidth.toPx() }
-    val anchorsX = mapOf(
-        -screenWidthPx to (-1), // Full swipe to the left
-        0f to 0, // Center position
-        screenWidthPx to 1 // Full swipe to the right
-    )
-    val anchorsY = mapOf(
-        -screenHeightPx to 2, // Full swipe up
-        0f to 0 // Center position
-    )
+
+    val anchorsX = mapOf(-screenWidthPx to (-1), 0f to 0, screenWidthPx to 1)
+    val anchorsY = mapOf(-screenHeightPx to 2, 0f to 0)
 
     LaunchedEffect(swipeableStateX.currentValue, swipeableStateY.currentValue) {
         if (swipeableStateX.currentValue != 0 || swipeableStateY.currentValue != 0) {
-            currentItem.intValue = (currentItem.intValue + 1) % items.size
-            swipeableStateX.snapTo(0) // Snap back to center after horizontal swipe
-            swipeableStateY.snapTo(0) // Snap back to center after vertical swipe
+            viewModel.moveToNextFlashcard()
+            swipeableStateX.snapTo(0)
+            swipeableStateY.snapTo(0)
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray)
-    ) {
-        val offsetX = swipeableStateX.offset.value.roundToInt()
-        val offsetY = swipeableStateY.offset.value.roundToInt()
+    if (isDataLoaded) {
         Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .size(width = screenWidth, height = screenHeight)
-                .offset { IntOffset(offsetX, offsetY) }
-                .swipeable(
-                    state = swipeableStateX,
-                    anchors = anchorsX,
-                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                    orientation = Orientation.Horizontal
-                )
-                .swipeable(
-                    state = swipeableStateY,
-                    anchors = anchorsY,
-                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                    orientation = Orientation.Vertical
-                )
+                .fillMaxSize()
+                .background(Color.LightGray)
         ) {
-            FlashcardItem(flashcardText = items[currentItem.intValue])
+            val offsetX = swipeableStateX.offset.value.roundToInt()
+            val offsetY = swipeableStateY.offset.value.roundToInt()
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(width = screenWidth, height = screenHeight)
+                    .offset { IntOffset(offsetX, offsetY) }
+                    .swipeable(
+                        state = swipeableStateX,
+                        anchors = anchorsX,
+                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                        orientation = Orientation.Horizontal
+                    )
+                    .swipeable(
+                        state = swipeableStateY,
+                        anchors = anchorsY,
+                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                        orientation = Orientation.Vertical
+                    )
+            ) {
+                currentFlashcard?.let {
+                    FlashcardItem(flashcardText = it)
+                } ?: Text("Brak fiszek do wyświetlenia")
+            }
         }
+    } else {
+        // Możesz tutaj dodać ekran ładowania
+        Text("Ładowanie danych...", modifier = Modifier.fillMaxSize())
     }
 }
 
 @Composable
-fun FlashcardItem(flashcardText: String, modifier: Modifier = Modifier) {
+fun FlashcardItem(flashcardText: Flashcard, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -133,7 +142,7 @@ fun FlashcardItem(flashcardText: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FrontSide(flashcardText: String) {
+fun FrontSide(flashcardText: Flashcard) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -143,7 +152,7 @@ fun FrontSide(flashcardText: String) {
         ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = flashcardText,
+                text = flashcardText.word.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp,
                 color = Color.Black,
