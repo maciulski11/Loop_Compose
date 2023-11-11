@@ -34,7 +34,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.presentation.navigation.Navigation
+import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue
@@ -124,7 +124,7 @@ fun Screen(
             modifier = Modifier
                 .layoutId("startLesson")
                 .clickable {
-                    navController.navigate("${Navigation.LessonScreen}/$boxUid")
+                    navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
                 }
         )
 
@@ -134,7 +134,7 @@ fun Screen(
             modifier = Modifier
                 .layoutId("addFlashcard")
                 .clickable {
-                    navController.navigate("${Navigation.AddFlashcardScreen}/$boxUid")
+                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
                 }
         )
     }

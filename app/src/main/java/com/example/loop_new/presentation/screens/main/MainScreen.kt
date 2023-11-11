@@ -41,7 +41,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.presentation.navigation.Navigation
+import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
 
@@ -218,7 +218,7 @@ fun BoxItem(box: Box, navController: NavController) {
             )
             .clickable {
                 val boxUid = box.uid
-                navController.navigate("${Navigation.BoxScreen}/$boxUid")
+                navController.navigate("${NavigationSupport.BoxScreen}/$boxUid")
             },
         contentAlignment = Alignment.Center,
         content = {

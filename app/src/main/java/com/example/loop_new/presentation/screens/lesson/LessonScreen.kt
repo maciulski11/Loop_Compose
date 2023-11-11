@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +16,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
@@ -36,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue
 import kotlin.math.roundToInt
@@ -49,7 +52,7 @@ fun LessonScreenPreview() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LessonScreen(viewModel: LessonViewModel) {
+fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUid: String) {
 
     val currentFlashcard by viewModel.currentFlashcard.collectAsState()
 
@@ -67,45 +70,55 @@ fun LessonScreen(viewModel: LessonViewModel) {
 
     LaunchedEffect(swipeableStateX.currentValue, swipeableStateY.currentValue) {
         if (swipeableStateX.currentValue != 0 || swipeableStateY.currentValue != 0) {
-            viewModel.moveToNextFlashcard()
+            viewModel.moveToNextFlashcard(navController, boxUid)
             swipeableStateX.snapTo(0)
             swipeableStateY.snapTo(0)
+
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray)
+    Column(
+        modifier = Modifier.fillMaxSize(),
     ) {
-        val offsetX = swipeableStateX.offset.value.roundToInt()
-        val offsetY = swipeableStateY.offset.value.roundToInt()
+        // Dodaj pasek postępu tutaj
+        LinearProgressIndicator(
+            progress = viewModel.progress / 100f,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .size(width = screenWidth, height = screenHeight)
-                .offset { IntOffset(offsetX, offsetY) }
-                .swipeable(
-                    state = swipeableStateX,
-                    anchors = anchorsX,
-                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                    orientation = Orientation.Horizontal
-                )
-                .swipeable(
-                    state = swipeableStateY,
-                    anchors = anchorsY,
-                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                    orientation = Orientation.Vertical
-                )
+                .fillMaxSize()
+                .background(Color.LightGray)
         ) {
-            currentFlashcard?.let {
-                FlashcardItem(flashcardText = it)
-            } ?: Text("Brak fiszek do wyświetlenia")
+            val offsetX = swipeableStateX.offset.value.roundToInt()
+            val offsetY = swipeableStateY.offset.value.roundToInt()
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(width = screenWidth, height = screenHeight)
+                    .offset { IntOffset(offsetX, offsetY) }
+                    .swipeable(
+                        state = swipeableStateX,
+                        anchors = anchorsX,
+                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                        orientation = Orientation.Horizontal
+                    )
+                    .swipeable(
+                        state = swipeableStateY,
+                        anchors = anchorsY,
+                        thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                        orientation = Orientation.Vertical
+                    )
+            ) {
+                currentFlashcard?.let {
+                    FlashcardItem(flashcardText = it)
+                }
+            }
         }
     }
 }
-
 
 @Composable
 fun FlashcardItem(flashcardText: Flashcard, modifier: Modifier = Modifier) {
@@ -167,7 +180,7 @@ fun FrontSide(flashcardText: Flashcard) {
             }
         }
         Text(
-            text = "dsvdv",
+            text = flashcardText.pronunciation.toString(),
             fontWeight = FontWeight.Bold,
             fontSize = 21.sp,
             color = Color(0xFFFFA500) // This is the color orange in ARGB

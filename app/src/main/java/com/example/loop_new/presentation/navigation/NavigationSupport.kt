@@ -18,7 +18,7 @@ import com.example.loop_new.presentation.screens.main.MainScreen
 import com.example.loop_new.presentation.screens.main.MainViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 
-object Navigation {
+object NavigationSupport {
     const val MainScreen = "main_screen"
     const val BoxScreen = "box_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
@@ -32,17 +32,17 @@ fun NavigationScreens() {
 
     NavHost(
         navController = navController,
-        startDestination = Navigation.MainScreen
+        startDestination = NavigationSupport.MainScreen
     ) {
 
-        composable(Navigation.MainScreen) {
+        composable(NavigationSupport.MainScreen) {
             val viewModel = remember { MainViewModel(DependencyProvider().firebaseServices) }
 
             MainScreen(navController, viewModel)
         }
 
         composable(
-            "${Navigation.BoxScreen}/{boxUid}",
+            "${NavigationSupport.BoxScreen}/{boxUid}",
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
@@ -52,7 +52,7 @@ fun NavigationScreens() {
         }
 
         composable(
-            "${Navigation.AddFlashcardScreen}/{boxUid}",
+            "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
@@ -68,13 +68,13 @@ fun NavigationScreens() {
             AddFlashcardScreen(navController, boxUid, viewModel)
         }
 
-        composable("${Navigation.LessonScreen}/{boxUid}",
+        composable("${NavigationSupport.LessonScreen}/{boxUid}",
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
             val viewModel = remember { LessonViewModel(DependencyProvider().firebaseServices, boxUid) }
 
-            LessonScreen(viewModel)
+            LessonScreen(navController, viewModel, boxUid)
         }
     }
 }
