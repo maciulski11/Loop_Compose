@@ -1,8 +1,12 @@
 package com.example.loop_new.presentation.screens.lesson
 
 import android.util.Log
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class LessonViewModel(
     private val interfaceFirebaseServices: InterfaceFirebaseService,
-    boxUid: String
+    boxUid: String,
 ) : ViewModel() {
 
     private val flashcardList = MutableStateFlow<List<Flashcard>>(emptyList())
@@ -25,6 +29,7 @@ class LessonViewModel(
     val currentFlashcard: StateFlow<Flashcard?> = _currentFlashcard
 
     var progress by mutableFloatStateOf(0f)
+    var progressText: String by mutableStateOf("")
 
     init {
         fetchListOfFlashcard(boxUid)
@@ -37,6 +42,9 @@ class LessonViewModel(
                     .collect { newFlashcardList ->
                         flashcardList.value = newFlashcardList
                         _currentFlashcard.value = newFlashcardList.firstOrNull()
+
+                        progressText = currentFlashcard.let { "0 / ${flashcardList.value.size}" }
+
                     }
 
                 Log.d(LogTags.LESSON_VIEW_MODEL, "fetchListOfFlashcard: Success!")
@@ -73,6 +81,9 @@ class LessonViewModel(
 
             Log.d(LogTags.LESSON_VIEW_MODEL, "moveToNextFlashcard: No next flashcard available")
         }
+
+        progressText = currentFlashcard.let { "${currentIndex + 1} / ${totalFlashcards}" }
+
     }
 
     private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
