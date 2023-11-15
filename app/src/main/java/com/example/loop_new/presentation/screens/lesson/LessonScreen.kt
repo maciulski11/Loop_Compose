@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.lesson
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -36,15 +37,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +61,7 @@ import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Gray2
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Preview(showBackground = true)
@@ -75,6 +79,8 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
     var isVisibleLeft by remember { mutableStateOf(false) }
     var isVisibleRight by remember { mutableStateOf(false) }
     var isVisibleUp by remember { mutableStateOf(false) }
+
+    var isFront by remember { mutableStateOf(true) }
 
     val localDensity = LocalDensity.current
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -102,28 +108,56 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
     val offsetXSwipe = swipeableStateX.offset.value
     val offsetYSwipe = swipeableStateY.offset.value
 
-// Użyj offsetYSwipe do obsługi przesuwania i offsetYAnimation dla animacji
+    // Użyj offsetYSwipe do obsługi przesuwania i offsetYAnimation dla animacji
     val offsetX = if (isVisibleLeft || isVisibleRight) offsetXAnimation else offsetXSwipe
     val offsetY = if (isVisibleUp) offsetYAnimation else offsetYSwipe
 
     val anchorsX = mapOf(-screenWidthPx to (-1), 0f to 0, screenWidthPx to 1)
     val anchorsY = mapOf(-screenHeightPx to 2, 0f to 0)
 
-    LaunchedEffect(isVisibleUp || isVisibleLeft || isVisibleRight) {
-        if (isVisibleUp || isVisibleLeft || isVisibleRight) {
-            delay(500)
-            viewModel.moveToNextFlashcard(navController, boxUid)
-            isVisibleUp = false
-            isVisibleLeft = false
-            isVisibleRight = false
+    LaunchedEffect(
+        swipeableStateX.currentValue,
+        swipeableStateY.currentValue,
+        isVisibleUp,
+        isVisibleLeft,
+        isVisibleRight
+    ) {
+
+        when {
+            swipeableStateX.currentValue != 0 || swipeableStateY.currentValue != 0 -> {
+                viewModel.moveToNextFlashcard(navController, boxUid)
+                swipeableStateX.snapTo(0)
+                swipeableStateY.snapTo(0)
+            }
+
+            isVisibleLeft || isVisibleRight -> {
+                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                viewModel.moveToNextFlashcard(navController, boxUid)
+                isVisibleLeft = false
+                isVisibleRight = false
+            }
+
+            isVisibleUp -> {
+                delay(500) // Opóźnienie, aby pozwolić na zakończenie animacji
+                viewModel.moveToNextFlashcard(navController, boxUid)
+                isVisibleUp = false
+            }
         }
+        isFront = true
     }
 
-    LaunchedEffect(swipeableStateX.currentValue, swipeableStateY.currentValue) {
-        if (swipeableStateX.currentValue != 0 || swipeableStateY.currentValue != 0) {
-            viewModel.moveToNextFlashcard(navController, boxUid)
-            swipeableStateX.snapTo(0)
-            swipeableStateY.snapTo(0)
+    val rotationY = remember { Animatable(0f) }
+    val coroutineScope = rememberCoroutineScope()
+
+    var isAnimating by remember { mutableStateOf(false) }
+
+    fun triggerRotation() {
+        coroutineScope.launch {
+            isAnimating = true
+            rotationY.animateTo(
+                targetValue = if (rotationY.value == 180f) 0f else 180f,
+                animationSpec = tween(durationMillis = 550)
+            )
         }
     }
 
@@ -158,7 +192,6 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
         Box(
             modifier = Modifier
                 .weight(1f)
-                .background(Color.White)
         ) {
 
             Box(modifier = Modifier
@@ -177,10 +210,24 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                     thresholds = { _, _ -> FractionalThreshold(0.3f) },
                     orientation = Orientation.Vertical
                 )
+                .graphicsLayer {
+                    this.rotationY = rotationY.value
+                    transformOrigin = TransformOrigin.Center
+                    cameraDistance = 12f * density
+                }
+                .clickable {
+                    coroutineScope.launch {
+                        delay(320)
+                        // Resetuj rotację do 0, aby przygotować się na kolejną animację
+                        rotationY.snapTo(0f)
+                        isFront = !isFront
+                        isAnimating = !isAnimating
+                    }
+                    triggerRotation()
+                }
             ) {
-
                 currentFlashcard?.let {
-                    FlashcardItem(flashcardText = it)
+                    FlashcardItem(flashcard = it, isFront, isAnimating)
                 }
             }
         }
@@ -188,8 +235,8 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
-                .padding(start = 14.dp, end = 14.dp, bottom = 30.dp, top = 14.dp),
+                .background(Color.Transparent)
+                .padding(start = 14.dp, end = 14.dp, bottom = 30.dp, top = 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
@@ -224,43 +271,37 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 }
 
 @Composable
-fun FlashcardItem(flashcardText: Flashcard, modifier: Modifier = Modifier) {
+fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 34.dp, bottom = 44.dp, start = 40.dp, end = 40.dp),
+            .padding(top = 34.dp, bottom = 40.dp, start = 40.dp, end = 40.dp)
+            .border(3.dp, Blue, RoundedCornerShape(20.dp)),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "",
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(top = 14.dp, end = 14.dp),
-                fontSize = 16.sp
-            )
-
-            // The front side of the flashcard
-            FrontSide(flashcardText)
-
-            // The back side of the flashcard
-            BackSide()
+        if (!isAnimating) {
+            if (front) {
+                // The front side of the flashcard
+                FrontSide(flashcard)
+            } else {
+                // The back side of the flashcard
+                BackSide(flashcard)
+            }
         }
     }
 }
 
 @Composable
-fun FrontSide(flashcardText: Flashcard) {
+fun FrontSide(flashcard: Flashcard) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .visible(true) // Create an extension function to handle visibility
-            .border(3.dp, Blue, RoundedCornerShape(20.dp))
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = flashcardText.word.toString(),
+                text = flashcard.word.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp,
                 color = Color.Black,
@@ -283,7 +324,7 @@ fun FrontSide(flashcardText: Flashcard) {
             }
         }
         Text(
-            text = flashcardText.pronunciation.toString(),
+            text = flashcard.pronunciation.toString(),
             fontWeight = FontWeight.Bold,
             fontSize = 21.sp,
             color = Color(0xFFFFA500) // This is the color orange in ARGB
@@ -292,27 +333,29 @@ fun FrontSide(flashcardText: Flashcard) {
 }
 
 @Composable
-fun BackSide() {
+fun BackSide(flashcard: Flashcard) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.visible(false) // Create an extension function to handle visibility
+        modifier = Modifier
+            .fillMaxSize()
+            .visible(true) // Create an extension function to handle visibility
     ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = flashcard.meaning.toString(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp,
+                color = Color.Black,
+                maxLines = 2,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+
+        }
         Text(
-            text = "",
+            text = flashcard.example.toString(),
             fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
-            color = Color.Black // Replace with the correct color from resources
-        )
-        Text(
-            text = "a thing done successfully, typically by effort, courage, or skill.",
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = Color.Black
-        )
-        Text(
-            text = "to reach this stage is a great achievement",
-            fontStyle = FontStyle.Italic,
-            fontSize = 16.sp
+            fontSize = 21.sp,
+            color = Color(0xFFFFA500) // This is the color orange in ARGB
         )
     }
 }
