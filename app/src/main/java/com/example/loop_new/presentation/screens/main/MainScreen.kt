@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -122,7 +123,10 @@ fun Screen(
             contentDescription = "Button",
             modifier = Modifier
                 .layoutId("addBoxButton")
-                .clickable {
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
                     showDialogState.value = true
                 }
         )
@@ -216,7 +220,10 @@ fun BoxItem(box: Box, navController: NavController) {
                 start = 2.dp,
                 end = 2.dp
             )
-            .clickable {
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
                 val boxUid = box.uid
                 navController.navigate("${NavigationSupport.BoxScreen}/$boxUid")
             },

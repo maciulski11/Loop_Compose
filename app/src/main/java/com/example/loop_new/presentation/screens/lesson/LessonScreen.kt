@@ -9,10 +9,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,9 +28,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
@@ -60,6 +59,7 @@ import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Gray2
+import com.example.loop_new.ui.theme.Orange
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -215,7 +215,10 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                     transformOrigin = TransformOrigin.Center
                     cameraDistance = 12f * density
                 }
-                .clickable {
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
                     coroutineScope.launch {
                         delay(320)
                         // Resetuj rotację do 0, aby przygotować się na kolejną animację
@@ -245,33 +248,44 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                 contentDescription = "Button",
                 modifier = Modifier
                     .size(110.dp)
-                    .clickable {
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
                         isVisibleLeft = true
-                    })
+                    }
+            )
 
             Image(painter = painterResource(id = R.drawable.baseline_fitness_center_24),
                 contentDescription = "Button",
                 modifier = Modifier
                     .size(100.dp)
-                    .clickable {
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
                         isVisibleUp = true
-                    })
+                    }
+            )
 
             Image(
                 painter = painterResource(id = R.drawable.baseline_check_24),
                 contentDescription = "Button",
                 modifier = Modifier
                     .size(110.dp)
-                    .clickable {
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
                         isVisibleRight = true
-                    },
+                    }
             )
         }
     }
 }
 
 @Composable
-fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean, modifier: Modifier = Modifier) {
+fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -295,6 +309,7 @@ fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean, mo
 fun FrontSide(flashcard: Flashcard) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
             .visible(true) // Create an extension function to handle visibility
@@ -308,26 +323,39 @@ fun FrontSide(flashcard: Flashcard) {
                 maxLines = 2,
                 modifier = Modifier.padding(start = 8.dp)
             )
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Default.Call,
+
+            if (flashcard.audioUrl!!.isNotEmpty()) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_volume),
                     contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { }
                 )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Default.Build,
+
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_volume_off),
                     contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { }
                 )
             }
         }
+
         Text(
             text = flashcard.pronunciation.toString(),
             fontWeight = FontWeight.Bold,
             fontSize = 21.sp,
-            color = Color(0xFFFFA500) // This is the color orange in ARGB
+            color = Orange
         )
     }
 }
@@ -336,26 +364,26 @@ fun FrontSide(flashcard: Flashcard) {
 fun BackSide(flashcard: Flashcard) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
+            .padding(start = 26.dp, end = 26.dp)
             .visible(true) // Create an extension function to handle visibility
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = flashcard.meaning.toString(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 28.sp,
-                color = Color.Black,
-                maxLines = 2,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+        Text(
+            text = flashcard.meaning.toString(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            color = Color.Black,
+            maxLines = 2,
+        )
 
-        }
+        Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = flashcard.example.toString(),
-            fontWeight = FontWeight.Bold,
-            fontSize = 21.sp,
-            color = Color(0xFFFFA500) // This is the color orange in ARGB
+            fontSize = 20.sp,
+            color = Color.Gray
         )
     }
 }

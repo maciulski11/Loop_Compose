@@ -54,7 +54,7 @@ class DictionaryService : InterfaceDictionaryService {
                                     meaning = definitionsModel?.definition,
                                     example = definitionsModel?.example,
                                     audioUrl = phoneticsModel?.audio,
-                                    pronunciation = phoneticsModel?.text
+                                    pronunciation = phoneticsModel?.text?.lowercase()
                                 )
 
                                 onFetchWordInfo(wordInfo)

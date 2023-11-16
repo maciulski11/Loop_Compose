@@ -82,7 +82,7 @@ class LessonViewModel(
             Log.d(LogTags.LESSON_VIEW_MODEL, "moveToNextFlashcard: No next flashcard available")
         }
 
-        progressText = currentFlashcard.let { "${currentIndex + 1} / ${totalFlashcards}" }
+        progressText = currentFlashcard.let { "${currentIndex + 1} / $totalFlashcards" }
 
     }
 
