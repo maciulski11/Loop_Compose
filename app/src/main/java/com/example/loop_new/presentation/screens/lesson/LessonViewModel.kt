@@ -24,7 +24,7 @@ class LessonViewModel(
     boxUid: String,
 ) : ViewModel() {
 
-    private val flashcardList = MutableStateFlow<List<Flashcard>>(emptyList())
+    val flashcardList = MutableStateFlow<List<Flashcard>>(emptyList())
     private val _currentFlashcard = MutableStateFlow<Flashcard?>(null)
     val currentFlashcard: StateFlow<Flashcard?> = _currentFlashcard
 
@@ -88,5 +88,9 @@ class LessonViewModel(
 
     private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
         return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
+    }
+
+    fun secondFlashcard() {
+
     }
 }

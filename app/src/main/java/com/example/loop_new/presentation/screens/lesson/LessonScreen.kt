@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.lesson
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -24,8 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.rememberSwipeableState
@@ -70,6 +69,7 @@ fun LessonScreenPreview() {
 //    LessonScreen(boxUid = "")
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUid: String) {
@@ -138,7 +138,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
             }
 
             isVisibleUp -> {
-                delay(500) // Opóźnienie, aby pozwolić na zakończenie animacji
+                delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 isVisibleUp = false
             }
@@ -192,7 +192,73 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
         Box(
             modifier = Modifier
                 .weight(1f)
+                .background(Color.White)
         ) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                if (viewModel.flashcardList.value.indexOf(currentFlashcard) < viewModel.flashcardList.value.size - 1) {
+                    // Renderuj zawartość następnej fiszki, jeśli nie jesteś na ostatniej
+                    val flashcard = viewModel.flashcardList.value.indexOf(currentFlashcard) + 1
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 40.dp, bottom = 46.dp, start = 46.dp, end = 46.dp)
+                            .border(3.dp, Blue, RoundedCornerShape(20.dp))
+                            .visible(true) // Create an extension function to handle visibility
+                    ) {
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = viewModel.flashcardList.value[flashcard].word.toString(),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                color = Color.Black,
+                                maxLines = 2,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+
+                            if (viewModel.flashcardList.value[flashcard].audioUrl!!.isNotEmpty()) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.baseline_volume),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(42.dp)
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        ) { }
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(id = R.drawable.baseline_volume_off),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(42.dp)
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        ) { }
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = viewModel.flashcardList.value[flashcard].pronunciation.toString(),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 21.sp,
+                            color = Orange
+                        )
+                    }
+                }
+            }
 
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -238,7 +304,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Transparent)
+                .background(Color.White)
                 .padding(start = 14.dp, end = 14.dp, bottom = 30.dp, top = 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
@@ -290,7 +356,9 @@ fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean) {
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 34.dp, bottom = 40.dp, start = 40.dp, end = 40.dp)
-            .border(3.dp, Blue, RoundedCornerShape(20.dp)),
+            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
+            .border(3.dp, Blue, RoundedCornerShape(20.dp))
+            .background(Color.White), // Białe tło z zaokrąglonymi rogami
         contentAlignment = Alignment.Center
     ) {
         if (!isAnimating) {
@@ -314,7 +382,10 @@ fun FrontSide(flashcard: Flashcard) {
             .fillMaxSize()
             .visible(true) // Create an extension function to handle visibility
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = flashcard.word.toString(),
                 fontWeight = FontWeight.Bold,
@@ -325,7 +396,6 @@ fun FrontSide(flashcard: Flashcard) {
             )
 
             if (flashcard.audioUrl!!.isNotEmpty()) {
-
                 Image(
                     painter = painterResource(id = R.drawable.baseline_volume),
                     contentDescription = null,
@@ -336,7 +406,6 @@ fun FrontSide(flashcard: Flashcard) {
                             interactionSource = remember { MutableInteractionSource() }
                         ) { }
                 )
-
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_volume_off),
@@ -360,6 +429,7 @@ fun FrontSide(flashcard: Flashcard) {
     }
 }
 
+
 @Composable
 fun BackSide(flashcard: Flashcard) {
     Column(
@@ -367,7 +437,7 @@ fun BackSide(flashcard: Flashcard) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 26.dp, end = 26.dp)
+            .padding(start = 22.dp, end = 22.dp)
             .visible(true) // Create an extension function to handle visibility
     ) {
         Text(
@@ -386,6 +456,11 @@ fun BackSide(flashcard: Flashcard) {
             color = Color.Gray
         )
     }
+}
+
+@Composable
+fun SecondFlashcard(flashcardList: List<Flashcard>) {
+
 }
 
 @Composable
