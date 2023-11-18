@@ -1,9 +1,7 @@
 package com.example.loop_new.presentation.screens.lesson
 
+import android.media.MediaPlayer
 import android.util.Log
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +16,7 @@ import com.example.loop_new.presentation.navigation.NavigationSupport
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class LessonViewModel(
     private val interfaceFirebaseServices: InterfaceFirebaseService,
@@ -90,7 +89,17 @@ class LessonViewModel(
         return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
     }
 
-    fun secondFlashcard() {
-
+    fun playAudioFromUrl(url: String) {
+        MediaPlayer().apply {
+            try {
+                setDataSource(url)
+                prepareAsync()
+                setOnPreparedListener {
+                    start()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 }

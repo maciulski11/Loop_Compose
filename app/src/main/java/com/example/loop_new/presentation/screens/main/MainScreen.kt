@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -30,7 +31,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -151,16 +156,23 @@ fun ShowCustomAlertDialog(
 ) {
     var nameInput by remember { mutableStateOf("") }
     var describeInput by remember { mutableStateOf("") }
-
-
+    
     AlertDialog(
         modifier = Modifier
-            .height(300.dp)
-            .width(300.dp)
-            .background(Color.White),
-        onDismissRequest = { onDismiss() },
+            .height(270.dp)
+            .width(340.dp)
+            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
+            .border(3.dp, Black, RoundedCornerShape(20.dp))
+            .background(White), // Białe tło z zaokrąglonymi rogami
+        onDismissRequest = { /* Touching the screen turns off it */ },
         title = {
-            Text("Create Box:")
+            Text(
+                text = "Create Box:",
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(bottom = 6.dp)
+            )
         },
         text = {
             Column {
@@ -185,24 +197,34 @@ fun ShowCustomAlertDialog(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(end = 22.dp),
+                horizontalArrangement = Arrangement.Absolute.Right
             ) {
                 Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black),
                     onClick = {
                         onDismiss()
                     }
                 ) {
-                    Text("Cancel")
+                    Text(
+                        text = "Cancel",
+                        color = White
+                    )
                 }
 
+                Spacer(modifier = Modifier.width(14.dp))
+
                 Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     onClick = {
                         onAddBox(nameInput, describeInput)
                         onDismiss()
                     }
                 ) {
-                    Text("OK")
+                    Text(
+                        text = "OK",
+                        color = Black
+                    )
                 }
             }
         }

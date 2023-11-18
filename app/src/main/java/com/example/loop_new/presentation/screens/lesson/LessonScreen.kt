@@ -74,6 +74,7 @@ fun LessonScreenPreview() {
 @Composable
 fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUid: String) {
 
+    val flashcardList = viewModel.flashcardList.value
     val currentFlashcard by viewModel.currentFlashcard.collectAsState()
 
     var isVisibleLeft by remember { mutableStateOf(false) }
@@ -199,9 +200,9 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                if (viewModel.flashcardList.value.indexOf(currentFlashcard) < viewModel.flashcardList.value.size - 1) {
+                if (flashcardList.indexOf(currentFlashcard) < flashcardList.size - 1) {
                     // Renderuj zawartość następnej fiszki, jeśli nie jesteś na ostatniej
-                    val flashcard = viewModel.flashcardList.value.indexOf(currentFlashcard) + 1
+                    val flashcard = flashcardList.indexOf(currentFlashcard) + 1
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -217,7 +218,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = viewModel.flashcardList.value[flashcard].word.toString(),
+                                text = flashcardList[flashcard].word.toString(),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
                                 color = Color.Black,
@@ -225,33 +226,22 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                                 modifier = Modifier.padding(start = 8.dp)
                             )
 
-                            if (viewModel.flashcardList.value[flashcard].audioUrl!!.isNotEmpty()) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.baseline_volume),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(42.dp)
-                                        .clickable(
-                                            indication = null,
-                                            interactionSource = remember { MutableInteractionSource() }
-                                        ) { }
-                                )
-                            } else {
-                                Image(
-                                    painter = painterResource(id = R.drawable.baseline_volume_off),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(42.dp)
-                                        .clickable(
-                                            indication = null,
-                                            interactionSource = remember { MutableInteractionSource() }
-                                        ) { }
-                                )
-                            }
+                            Image(
+                                painter = painterResource(
+                                    id = if (flashcardList[flashcard].audioUrl!!.isNotEmpty()) {
+                                        R.drawable.baseline_volume
+                                    } else {
+                                        R.drawable.baseline_volume_off
+                                    }
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(42.dp)
+                            )
                         }
 
                         Text(
-                            text = viewModel.flashcardList.value[flashcard].pronunciation.toString(),
+                            text = flashcardList[flashcard].pronunciation.toString(),
                             fontWeight = FontWeight.Bold,
                             fontSize = 21.sp,
                             color = Orange
@@ -296,7 +286,9 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                 }
             ) {
                 currentFlashcard?.let {
-                    FlashcardItem(flashcard = it, isFront, isAnimating)
+                    FlashcardItem(flashcard = it, isFront, isAnimating) { audioUrl ->
+                        viewModel.playAudioFromUrl(audioUrl)
+                    }
                 }
             }
         }
@@ -351,7 +343,12 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 }
 
 @Composable
-fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean) {
+fun FlashcardItem(
+    flashcard: Flashcard,
+    front: Boolean,
+    isAnimating: Boolean,
+    onPlayAudioFromUrl: (String) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -364,7 +361,9 @@ fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean) {
         if (!isAnimating) {
             if (front) {
                 // The front side of the flashcard
-                FrontSide(flashcard)
+                FrontSide(flashcard) { audioUrl ->
+                    onPlayAudioFromUrl(audioUrl)
+                }
             } else {
                 // The back side of the flashcard
                 BackSide(flashcard)
@@ -374,7 +373,7 @@ fun FlashcardItem(flashcard: Flashcard, front: Boolean, isAnimating: Boolean) {
 }
 
 @Composable
-fun FrontSide(flashcard: Flashcard) {
+fun FrontSide(flashcard: Flashcard, onPlayAudioFromUrl: (String) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -395,29 +394,27 @@ fun FrontSide(flashcard: Flashcard) {
                 modifier = Modifier.padding(start = 8.dp)
             )
 
-            if (flashcard.audioUrl!!.isNotEmpty()) {
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_volume),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { }
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_volume_off),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { }
-                )
-            }
+            Image(
+                painter = painterResource(
+
+                    id = if (flashcard.audioUrl!!.isNotEmpty()) {
+                        R.drawable.baseline_volume
+                    } else {
+                        R.drawable.baseline_volume_off
+                    }
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(42.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        if (flashcard.audioUrl.isNotEmpty()) {
+                            onPlayAudioFromUrl(flashcard.audioUrl)
+                        }
+                    }
+            )
         }
 
         Text(
@@ -428,7 +425,6 @@ fun FrontSide(flashcard: Flashcard) {
         )
     }
 }
-
 
 @Composable
 fun BackSide(flashcard: Flashcard) {
@@ -456,11 +452,6 @@ fun BackSide(flashcard: Flashcard) {
             color = Color.Gray
         )
     }
-}
-
-@Composable
-fun SecondFlashcard(flashcardList: List<Flashcard>) {
-
 }
 
 @Composable
