@@ -51,10 +51,10 @@ class DictionaryService : InterfaceDictionaryService {
                                     dictionaryResponse.phonetics.find { pro -> pro.audio != null }
 
                                 val wordInfo = Flashcard(
-                                    meaning = definitionsModel?.definition,
-                                    example = definitionsModel?.example,
+                                    meaning = definitionsModel?.definition ?: "",
+                                    example = definitionsModel?.example ?: "",
                                     audioUrl = phoneticsModel?.audio,
-                                    pronunciation = phoneticsModel?.text?.lowercase()
+                                    pronunciation = phoneticsModel?.text?.lowercase() ?: ""
                                 )
 
                                 onFetchWordInfo(wordInfo)

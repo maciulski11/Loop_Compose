@@ -41,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
@@ -437,10 +439,20 @@ fun BackSide(flashcard: Flashcard) {
             .visible(true) // Create an extension function to handle visibility
     ) {
         Text(
+            text = flashcard.translate.toString(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 34.sp,
+            color = Blue,
+            maxLines = 2,
+        )
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        Text(
             text = flashcard.meaning.toString(),
             fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = Color.Black,
+            fontSize = 22.sp,
+            color = Black,
             maxLines = 2,
         )
 
@@ -448,7 +460,7 @@ fun BackSide(flashcard: Flashcard) {
 
         Text(
             text = flashcard.example.toString(),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             color = Color.Gray
         )
     }

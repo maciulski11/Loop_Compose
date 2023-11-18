@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -179,8 +178,6 @@ fun FlashcardItem(
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit
 ) {
-
-    val context = LocalContext.current // Uzyskaj dostęp do Context za pomocą LocalContext
     val showDialogState = remember { mutableStateOf(false) }
 
     Box(
@@ -190,7 +187,6 @@ fun FlashcardItem(
                 top = 6.dp,
                 start = 2.dp,
                 end = 2.dp
-
             )
             .pointerInput(Unit) {
                 detectTapGestures(

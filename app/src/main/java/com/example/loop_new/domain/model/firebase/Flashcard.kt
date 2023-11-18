@@ -9,7 +9,6 @@ data class Flashcard (
     val pronunciation: String? = null,
     val audioUrl: String? = null,
     val uid: String? = null,
-    var isFrontVisible: Boolean? = null,
     var lastStudiedDate: Long? = null,
     var nextStudyDate: Long? = null,
 )

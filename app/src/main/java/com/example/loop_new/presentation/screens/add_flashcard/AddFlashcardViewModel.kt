@@ -22,7 +22,7 @@ class AddFlashcardViewModel(
     var translate: String by mutableStateOf("")
     var meaning: String by mutableStateOf("")
     var example: String by mutableStateOf("")
-    private var pronunciation: String by mutableStateOf("")
+    var pronunciation: String by mutableStateOf("")
     private var audioUrl: String by mutableStateOf("")
 
     fun addFlashcard(
@@ -30,8 +30,7 @@ class AddFlashcardViewModel(
         translate: String,
         meaning: String,
         example: String,
-//        partOfSpeech: String,
-//        isFrontVisible: Boolean,
+        pronunciation: String,
         boxUid: String
     ) {
         val flashcardData = Flashcard(
@@ -39,10 +38,8 @@ class AddFlashcardViewModel(
             translate = translate,
             meaning = meaning,
             example = example,
-//            partOfSpeech = partOfSpeech,
             pronunciation = pronunciation,
             audioUrl = audioUrl,
-//            isFrontVisible = isFrontVisible
         )
 
         viewModelScope.launch {

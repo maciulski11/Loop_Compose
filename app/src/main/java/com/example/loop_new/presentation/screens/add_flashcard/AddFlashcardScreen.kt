@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
+import com.example.loop_new.ui.theme.Orange
 import com.example.loop_new.ui.theme.Typography
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -32,7 +33,7 @@ fun AddFlashcardScreenPreview() {
     val navController = rememberNavController()
     val viewModel: AddFlashcardViewModel = hiltViewModel()
 
-    Screen(viewModel = viewModel, navController = navController, { _, _, _, _ -> }, { _ -> })
+    Screen(viewModel = viewModel, navController = navController, { _, _, _, _, _ -> }, { _ -> })
 }
 
 @Composable
@@ -45,8 +46,8 @@ fun AddFlashcardScreen(
     Screen(
         viewModel,
         navController,
-        { word, translate, mean, example ->
-            viewModel.addFlashcard(word, translate, mean, example, boxUid)
+        { word, translate, pronunciation, mean, example ->
+            viewModel.addFlashcard(word, translate, mean, example, pronunciation,boxUid)
         },
         { word ->
             viewModel.fetchInfoOfWord(word)
@@ -58,7 +59,7 @@ fun AddFlashcardScreen(
 fun Screen(
     viewModel: AddFlashcardViewModel,
     navController: NavController,
-    onAddFlashcard: (word: String, translate: String, mean: String, example: String) -> Unit,
+    onAddFlashcard: (word: String, translate: String, pronunciation: String, mean: String, example: String) -> Unit,
     onFetchWord: (word: String) -> Unit
 ) {
 
@@ -76,11 +77,10 @@ fun Screen(
 
             // EditText
             var wordEditText by remember { mutableStateOf("") }
-            var partOfSpeechEditText by remember { mutableStateOf("") }
 
             // CheckBox
             var translateCheckBox by remember { mutableStateOf(true) }
-            var partOfSpeechCheckBox by remember { mutableStateOf(true) }
+            var pronunciationCheckBox by remember { mutableStateOf(true) }
             var meanCheckBox by remember { mutableStateOf(true) }
             var exampleCheckBox by remember { mutableStateOf(true) }
 
@@ -203,7 +203,7 @@ fun Screen(
                 )
             }
 
-            // PartOfSpeech EditText
+            // PronunciationEditText
             Row(
                 modifier = Modifier
                     .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -216,8 +216,8 @@ fun Screen(
 
             ) {
                 Checkbox(
-                    checked = partOfSpeechCheckBox,
-                    onCheckedChange = { partOfSpeechCheckBox = it },
+                    checked = pronunciationCheckBox,
+                    onCheckedChange = { pronunciationCheckBox = it },
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.CenterVertically)
@@ -226,20 +226,20 @@ fun Screen(
                 )
 
                 OutlinedTextField(
-                    value = partOfSpeechEditText,
-                    onValueChange = { partOfSpeechEditText = it },
+                    value = viewModel.pronunciation,
+                    onValueChange = { viewModel.pronunciation = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp),
                     textStyle = TextStyle(
-                        color = Color.Black,
+                        color = Orange,
                         fontSize = 24.sp,
                     ),
                     singleLine = false,
                     maxLines = 1,
                     placeholder = {
                         Text(
-                            text = "part of speech",
+                            text = "pronunciation",
                             fontSize = 24.sp,
                             color = Color.Gray
                         )
@@ -263,7 +263,6 @@ fun Screen(
                         Color.Black,
                         shape = RoundedCornerShape(16.dp)
                     )
-
             ) {
                 Checkbox(
                     checked = meanCheckBox,
@@ -355,11 +354,18 @@ fun Screen(
             // Add Flashcard Button
             FloatingActionButton(
                 onClick = {
+                    // Przygotowanie danych w zależności od stanu checkboxów
+                    val translate = if (translateCheckBox) viewModel.translate else ""
+                    val pronunciation = if (pronunciationCheckBox) viewModel.pronunciation else ""
+                    val meaning = if (meanCheckBox) viewModel.meaning else ""
+                    val example = if (exampleCheckBox) viewModel.example else ""
+
                     onAddFlashcard(
                         wordEditText,
-                        viewModel.translate,
-                        viewModel.meaning,
-                        viewModel.example,
+                        translate,
+                        pronunciation,
+                        meaning,
+                        example
                     )
                     navController.navigateUp()
                 },
