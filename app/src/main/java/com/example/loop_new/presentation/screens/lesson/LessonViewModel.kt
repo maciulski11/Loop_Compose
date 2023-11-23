@@ -11,8 +11,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.services.InterfaceFirebaseService
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +39,7 @@ class LessonViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
+                interfaceFirebaseServices.fetchListOfFlashcardInLesson(boxUid)
                     .collect { newFlashcardList ->
                         flashcardList.value = newFlashcardList
                         _currentFlashcard.value = newFlashcardList.firstOrNull()
@@ -82,11 +84,24 @@ class LessonViewModel(
         }
 
         progressText = currentFlashcard.let { "${currentIndex + 1} / $totalFlashcards" }
-
     }
 
     private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
         return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
+    }
+
+    fun setKnowledgeLevelOfFlashcard(
+        boxUid: String,
+        flashcardUid: String,
+        knowledgeLevel: KnowledgeLevel
+    ) {
+        viewModelScope.launch {
+            interfaceFirebaseServices.setKnowledgeLevelOfFlashcard(
+                boxUid,
+                flashcardUid,
+                knowledgeLevel
+            )
+        }
     }
 
     fun playAudioFromUrl(url: String) {

@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
@@ -57,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Gray2
@@ -78,6 +78,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 
     val flashcardList = viewModel.flashcardList.value
     val currentFlashcard by viewModel.currentFlashcard.collectAsState()
+    val indexOfFlashcard = flashcardList.indexOf(currentFlashcard)
 
     var isVisibleLeft by remember { mutableStateOf(false) }
     var isVisibleRight by remember { mutableStateOf(false) }
@@ -118,6 +119,14 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
     val anchorsX = mapOf(-screenWidthPx to (-1), 0f to 0, screenWidthPx to 1)
     val anchorsY = mapOf(-screenHeightPx to 2, 0f to 0)
 
+    fun setKnowledgeLevel(knowledgeLevel: KnowledgeLevel) {
+        viewModel.setKnowledgeLevelOfFlashcard(
+            boxUid,
+            flashcardList[indexOfFlashcard].uid.toString(),
+            knowledgeLevel
+        )
+    }
+
     LaunchedEffect(
         swipeableStateX.currentValue,
         swipeableStateY.currentValue,
@@ -125,24 +134,29 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
         isVisibleLeft,
         isVisibleRight
     ) {
-
         when {
-            swipeableStateX.currentValue != 0 || swipeableStateY.currentValue != 0 -> {
+
+            isVisibleRight || swipeableStateX.currentValue == 1 -> {
+                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                setKnowledgeLevel(KnowledgeLevel.KNOW)
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateX.snapTo(0)
-                swipeableStateY.snapTo(0)
-            }
-
-            isVisibleLeft || isVisibleRight -> {
-                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
-                viewModel.moveToNextFlashcard(navController, boxUid)
-                isVisibleLeft = false
                 isVisibleRight = false
             }
 
-            isVisibleUp -> {
-                delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
+            isVisibleLeft || swipeableStateX.currentValue == -1 -> {
+                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                setKnowledgeLevel(KnowledgeLevel.DO_NOT_KNOW)
                 viewModel.moveToNextFlashcard(navController, boxUid)
+                swipeableStateX.snapTo(0)
+                isVisibleLeft = false
+            }
+
+            isVisibleUp || swipeableStateY.currentValue == 2 -> {
+                delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
+                setKnowledgeLevel(KnowledgeLevel.SOMEWHAT_KNOW)
+                viewModel.moveToNextFlashcard(navController, boxUid)
+                swipeableStateY.snapTo(0)
                 isVisibleUp = false
             }
         }
@@ -219,6 +233,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+
                             Text(
                                 text = flashcardList[flashcard].word.toString(),
                                 fontWeight = FontWeight.Bold,
@@ -387,11 +402,12 @@ fun FrontSide(flashcard: Flashcard, onPlayAudioFromUrl: (String) -> Unit) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Text(
                 text = flashcard.word.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp,
-                color = Color.Black,
+                color = Black,
                 maxLines = 2,
                 modifier = Modifier.padding(start = 8.dp)
             )

@@ -26,7 +26,7 @@ class BoxViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                val flashcardFlow = interfaceFirebaseServices.fetchListOfFlashcard(boxUid)
+                val flashcardFlow = interfaceFirebaseServices.fetchListOfFlashcardInBox(boxUid)
 
                 flashcardFlow.collect {
                     flashcardList.value = it
