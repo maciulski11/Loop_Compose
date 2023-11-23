@@ -13,6 +13,7 @@ import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.services.InterfaceService
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ import java.io.IOException
 
 class LessonViewModel(
     private val interfaceFirebaseServices: InterfaceFirebaseService,
+    private val interfaceService: InterfaceService,
     boxUid: String,
 ) : ViewModel() {
 
@@ -104,17 +106,9 @@ class LessonViewModel(
         }
     }
 
-    fun playAudioFromUrl(url: String) {
-        MediaPlayer().apply {
-            try {
-                setDataSource(url)
-                prepareAsync()
-                setOnPreparedListener {
-                    start()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+    fun playAudioFromUrl(audioUrl: String) {
+        viewModelScope.launch {
+            interfaceService.playAudioFromUrl(audioUrl)
         }
     }
 }

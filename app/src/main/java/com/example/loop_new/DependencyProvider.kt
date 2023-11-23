@@ -1,5 +1,6 @@
 package com.example.loop_new
 
+import com.example.loop_new.data.Service
 import com.example.loop_new.data.api.DictionaryService
 import com.example.loop_new.data.api.TranslateService
 import com.example.loop_new.data.firebase.FirebaseServices
@@ -15,4 +16,6 @@ class DependencyProvider {
     val translateService: TranslateService = TranslateService()
     // Dictionary Api
     val dictionaryService: DictionaryService = DictionaryService()
+    // Service
+    val service: Service = Service()
 }

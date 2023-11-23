@@ -46,7 +46,13 @@ fun NavigationScreens() {
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val viewModel = remember { BoxViewModel(DependencyProvider().firebaseServices, boxUid) }
+            val viewModel = remember {
+                BoxViewModel(
+                    DependencyProvider().firebaseServices,
+                    DependencyProvider().service,
+                    boxUid
+                )
+            }
 
             BoxScreen(navController, boxUid, viewModel)
         }
@@ -68,11 +74,18 @@ fun NavigationScreens() {
             AddFlashcardScreen(navController, boxUid, viewModel)
         }
 
-        composable("${NavigationSupport.LessonScreen}/{boxUid}",
+        composable(
+            "${NavigationSupport.LessonScreen}/{boxUid}",
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val viewModel = remember { LessonViewModel(DependencyProvider().firebaseServices, boxUid) }
+            val viewModel = remember {
+                LessonViewModel(
+                    DependencyProvider().firebaseServices,
+                    DependencyProvider().service,
+                    boxUid
+                )
+            }
 
             LessonScreen(navController, viewModel, boxUid)
         }
