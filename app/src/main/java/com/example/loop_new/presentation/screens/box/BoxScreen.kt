@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
@@ -52,8 +51,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.ui.theme.Blue
+import com.example.loop_new.ui.theme.Green
 import com.example.loop_new.ui.theme.Orange
+import com.example.loop_new.ui.theme.Red
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -179,6 +181,13 @@ fun FlashcardItem(
     onDeleteFlashcard: (String) -> Unit
 ) {
     val showDialogState = remember { mutableStateOf(false) }
+    val color = remember { mutableStateOf(Black) } // Domyślny kolor
+
+    when (flashcard.knowledgeLevel) {
+        KnowledgeLevel.KNOW.value -> color.value = Green
+        KnowledgeLevel.DO_NOT_KNOW.value -> color.value = Red
+        KnowledgeLevel.SOMEWHAT_KNOW.value -> color.value = Blue
+    }
 
     Box(
         modifier = Modifier
@@ -201,7 +210,7 @@ fun FlashcardItem(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .border(3.dp, Blue, RoundedCornerShape(20.dp)),
+                    .border(3.dp, color.value, RoundedCornerShape(20.dp)),
             ) {
 
                 Row(
