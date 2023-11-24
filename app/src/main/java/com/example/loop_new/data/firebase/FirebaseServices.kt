@@ -1,6 +1,7 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
+import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
@@ -10,14 +11,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.Calendar
+import java.util.TimeZone
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
-class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFirebaseService {
+class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFirebaseService {
 
     companion object {
         const val BOX = "box"
         const val FLASHCARD = "flashcard"
     }
+
+    private val currentTime =
+        Calendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw")).timeInMillis
 
     override fun addBox(box: Box) {
         val uid = UUID.randomUUID().toString()
@@ -32,23 +39,65 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
         }
     }
 
-    override fun setKnowledgeLevelOfFlashcard(boxUid: String, flashcardUid: String, knowledgeLevel: KnowledgeLevel) {
-        val updateData = mapOf("knowledgeLevel" to knowledgeLevel.value)
-
+    private fun setKnowledgeLevelOfFlashcard(
+        boxUid: String,
+        flashcardUid: String,
+        updateData: Map<String, *>
+    ) {
         try {
             firestore.collection(BOX).document(boxUid)
                 .collection(FLASHCARD).document(flashcardUid)
                 .update(updateData)
                 .addOnSuccessListener {
-                    Log.d(LogTags.FIREBASE_SERVICES, "setKnowledgeLevelOfFlashcard: Update successful")
+                    Log.d(
+                        LogTags.FIREBASE_SERVICES,
+                        "setKnowledgeLevelOfFlashcard: Update successful"
+                    )
                 }
                 .addOnFailureListener { e ->
-                    Log.e(LogTags.FIREBASE_SERVICES, "setKnowledgeLevelOfFlashcard: Error updating: $e")
+                    Log.e(
+                        LogTags.FIREBASE_SERVICES,
+                        "setKnowledgeLevelOfFlashcard: Error updating: $e"
+                    )
                 }
         } catch (e: Exception) {
             Log.e(LogTags.FIREBASE_SERVICES, "setKnowledgeLevelOfFlashcard: Error: $e")
         }
     }
+
+    override fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
+
+        val updateData = mapOf(
+            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.KNOW.value,
+            FlashcardFields.LAST_STUDIED_DATE to currentTime,
+            FlashcardFields.NEXT_STUDY_DATE to currentTime + TimeUnit.DAYS.toMillis(5)
+        )
+
+        setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
+    }
+
+    override fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
+
+        val updateData = mapOf(
+            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.SOMEWHAT_KNOW.value,
+            FlashcardFields.LAST_STUDIED_DATE to currentTime,
+            FlashcardFields.NEXT_STUDY_DATE to currentTime + TimeUnit.DAYS.toMillis(2)
+        )
+
+        setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
+    }
+
+    override fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
+
+        val updateData = mapOf(
+            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.DO_NOT_KNOW.value,
+            FlashcardFields.LAST_STUDIED_DATE to currentTime,
+            FlashcardFields.NEXT_STUDY_DATE to currentTime + TimeUnit.HOURS.toMillis(12)
+        )
+
+        setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
+    }
+
 
     override fun addFlashcard(flashcard: Flashcard, boxUid: String) {
         val uid = UUID.randomUUID().toString()
@@ -105,26 +154,27 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
     }
 
     override fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>> {
-        val userDocRef = firestore.collection(BOX).document(boxUid)
-        val flashcardsCollectionRef = userDocRef.collection(FLASHCARD)
+        val flashcardsCollectionRef =
+            firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
 
         return callbackFlow {
-            val listenerRegistration = flashcardsCollectionRef.addSnapshotListener { flashcardsSnapshot, error ->
-                if (error != null) {
-                    close(error)
-                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
-                    return@addSnapshotListener
-                }
+            val listenerRegistration =
+                flashcardsCollectionRef.addSnapshotListener { flashcardsSnapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
+                        return@addSnapshotListener
+                    }
 
-                val flashcards = mutableListOf<Flashcard>()
-                for (document in flashcardsSnapshot!!) {
-                    val flashcard = document.toObject(Flashcard::class.java)
-                    flashcards.add(flashcard)
-                }
+                    val flashcards = mutableListOf<Flashcard>()
+                    for (document in flashcardsSnapshot!!) {
+                        val flashcard = document.toObject(Flashcard::class.java)
+                        flashcards.add(flashcard)
+                    }
 
-                trySend(flashcards).isSuccess
-                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Success!")
-            }
+                    trySend(flashcards).isSuccess
+                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Success!")
+                }
 
             awaitClose {
                 listenerRegistration.remove()
@@ -133,7 +183,8 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
     }
 
     override fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>> {
-        val flashcardsCollectionRef = firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
+        val flashcardsCollectionRef =
+            firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
 
         return callbackFlow {
             // Wykonaj jednorazowe zapytanie do Firestore
@@ -149,8 +200,6 @@ class FirebaseServices(private val firestore: FirebaseFirestore): InterfaceFireb
                     close(error)
                     Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
                 }
-
-            awaitClose { }
         }
     }
 }

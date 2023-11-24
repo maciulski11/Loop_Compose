@@ -19,9 +19,13 @@ interface InterfaceFirebaseService {
 
     fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>>
 
-    fun setKnowledgeLevelOfFlashcard(boxUid: String, flashcardUid: String, knowledgeLevel: KnowledgeLevel)
+    fun updateFlashcardToKnow(boxUid: String, flashcardUid: String)
 
-    }
+    fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String)
+
+    fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String)
+
+}
 
 class SampleDataRepository {
 

@@ -1,6 +1,5 @@
 package com.example.loop_new.presentation.screens.lesson
 
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -11,15 +10,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.services.InterfaceFirebaseService
 import com.example.loop_new.domain.services.InterfaceService
 import com.example.loop_new.presentation.navigation.NavigationSupport
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class LessonViewModel(
     private val interfaceFirebaseServices: InterfaceFirebaseService,
@@ -59,6 +55,10 @@ class LessonViewModel(
         }
     }
 
+    private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
+        return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
+    }
+
     fun moveToNextFlashcard(navController: NavController, boxUid: String) {
         val currentList = flashcardList.value
         val currentIndex = currentList.indexOf(_currentFlashcard.value)
@@ -88,21 +88,21 @@ class LessonViewModel(
         progressText = currentFlashcard.let { "${currentIndex + 1} / $totalFlashcards" }
     }
 
-    private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
-        return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
+    fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
+        viewModelScope.launch {
+            interfaceFirebaseServices.updateFlashcardToKnow(boxUid, flashcardUid)
+        }
     }
 
-    fun setKnowledgeLevelOfFlashcard(
-        boxUid: String,
-        flashcardUid: String,
-        knowledgeLevel: KnowledgeLevel
-    ) {
+    fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseServices.setKnowledgeLevelOfFlashcard(
-                boxUid,
-                flashcardUid,
-                knowledgeLevel
-            )
+            interfaceFirebaseServices.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
+        }
+    }
+
+    fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
+        viewModelScope.launch {
+            interfaceFirebaseServices.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
         }
     }
 

@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Gray2
@@ -119,14 +118,6 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
     val anchorsX = mapOf(-screenWidthPx to (-1), 0f to 0, screenWidthPx to 1)
     val anchorsY = mapOf(-screenHeightPx to 2, 0f to 0)
 
-    fun setKnowledgeLevel(knowledgeLevel: KnowledgeLevel) {
-        viewModel.setKnowledgeLevelOfFlashcard(
-            boxUid,
-            flashcardList[indexOfFlashcard].uid.toString(),
-            knowledgeLevel
-        )
-    }
-
     LaunchedEffect(
         swipeableStateX.currentValue,
         swipeableStateY.currentValue,
@@ -138,7 +129,11 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 
             isVisibleRight || swipeableStateX.currentValue == 1 -> {
                 delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
-                setKnowledgeLevel(KnowledgeLevel.KNOW)
+//                setKnowledgeLevel(KnowledgeLevel.KNOW)
+                viewModel.updateFlashcardToKnow(
+                    boxUid,
+                    flashcardList[indexOfFlashcard].uid.toString()
+                )
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateX.snapTo(0)
                 isVisibleRight = false
@@ -146,7 +141,10 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 
             isVisibleLeft || swipeableStateX.currentValue == -1 -> {
                 delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
-                setKnowledgeLevel(KnowledgeLevel.DO_NOT_KNOW)
+                viewModel.updateFlashcardToSomewhatKnow(
+                    boxUid,
+                    flashcardList[indexOfFlashcard].uid.toString()
+                )
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateX.snapTo(0)
                 isVisibleLeft = false
@@ -154,7 +152,10 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 
             isVisibleUp || swipeableStateY.currentValue == 2 -> {
                 delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
-                setKnowledgeLevel(KnowledgeLevel.SOMEWHAT_KNOW)
+                viewModel.updateFlashcardToDoNotKnow(
+                    boxUid,
+                    flashcardList[indexOfFlashcard].uid.toString()
+                )
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateY.snapTo(0)
                 isVisibleUp = false
