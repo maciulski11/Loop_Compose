@@ -1,0 +1,1337 @@
+[debug] [2023-11-25T13:24:48.919Z] ----------------------------------------------------------------------
+[debug] [2023-11-25T13:24:48.924Z] Command:       /usr/local/bin/node /Users/maciej/.npm-global/bin/firebase emulators:start
+[debug] [2023-11-25T13:24:48.925Z] CLI Version:   12.9.1
+[debug] [2023-11-25T13:24:48.925Z] Platform:      darwin
+[debug] [2023-11-25T13:24:48.925Z] Node Version:  v20.10.0
+[debug] [2023-11-25T13:24:48.925Z] Time:          Sat Nov 25 2023 14:24:48 GMT+0100 (Central European Standard Time)
+[debug] [2023-11-25T13:24:48.925Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-11-25T13:24:49.005Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-11-25T13:24:49.006Z] > authorizing via signed-in user (maciej663433329@gmail.com)
+[info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
+[debug] [2023-11-25T13:24:49.191Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-11-25T13:24:49.191Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-11-25T13:24:49.195Z] [hub] writing locator at /var/folders/lz/hvh_xsf90n1268ns8zvsxml80000gn/T/hub-loop-new-ae26d.json
+[debug] [2023-11-25T13:24:49.331Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-11-25T13:24:49.331Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-11-25T13:24:49.331Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: auth, firestore, database, hosting, pubsub, storage {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mauth, firestore, database, hosting, pubsub, storage\u001b[22m"}}
+[debug] [2023-11-25T13:24:49.333Z] defaultcredentials: writing to file /Users/maciej/.config/firebase/maciej663433329_gmail_com_application_default_credentials.json
+[debug] [2023-11-25T13:24:49.336Z] Setting GAC to /Users/maciej/.config/firebase/maciej663433329_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to /Users/maciej/.config/firebase/maciej663433329_gmail_com_application_default_credentials.json"}}
+[debug] [2023-11-25T13:24:49.336Z] > refreshing access token with scopes: []
+[debug] [2023-11-25T13:24:49.337Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-11-25T13:24:49.337Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-11-25T13:24:49.524Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-11-25T13:24:49.524Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-11-25T13:24:49.532Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/loop-new-ae26d/adminSdkConfig [none]
+[debug] [2023-11-25T13:24:49.832Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/loop-new-ae26d/adminSdkConfig 200
+[debug] [2023-11-25T13:24:49.833Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/loop-new-ae26d/adminSdkConfig {"projectId":"loop-new-ae26d","storageBucket":"loop-new-ae26d.appspot.com"}
+[info] i  ui: downloading ui-v1.11.7.zip... {"metadata":{"emulator":{"name":"ui"},"message":"downloading ui-v1.11.7.zip..."}}
+[debug] [2023-11-25T13:24:49.848Z] >>> [apiv2][query] GET https://storage.googleapis.com/firebase-preview-drop/emulator/ui-v1.11.7.zip 
+[debug] [2023-11-25T13:24:49.986Z] <<< [apiv2][status] GET https://storage.googleapis.com/firebase-preview-drop/emulator/ui-v1.11.7.zip 200
+[debug] [2023-11-25T13:24:49.986Z] <<< [apiv2][body] GET https://storage.googleapis.com/firebase-preview-drop/emulator/ui-v1.11.7.zip [stream]
+[debug] [2023-11-25T13:24:50.604Z] Data is 3064105
+[debug] [2023-11-25T13:24:50.605Z] [unzip] Entry: client/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2023-11-25T13:24:50.605Z] [unzip] Processing entry: client/
+[debug] [2023-11-25T13:24:50.605Z] [unzip] mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/
+[debug] [2023-11-25T13:24:50.606Z] [unzip] Entry: client/favicon.ico (compressed_size=2497 bytes, uncompressed_size=7406 bytes)
+[debug] [2023-11-25T13:24:50.606Z] [unzip] Processing entry: client/favicon.ico
+[debug] [2023-11-25T13:24:50.606Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.606Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/favicon.ico
+[debug] [2023-11-25T13:24:50.610Z] [unzip] Entry: client/apple-touch-icon.png (compressed_size=7231 bytes, uncompressed_size=7367 bytes)
+[debug] [2023-11-25T13:24:50.610Z] [unzip] Processing entry: client/apple-touch-icon.png
+[debug] [2023-11-25T13:24:50.610Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.610Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/apple-touch-icon.png
+[debug] [2023-11-25T13:24:50.611Z] [unzip] Entry: client/android-chrome-512x512.png (compressed_size=16987 bytes, uncompressed_size=18186 bytes)
+[debug] [2023-11-25T13:24:50.611Z] [unzip] Processing entry: client/android-chrome-512x512.png
+[debug] [2023-11-25T13:24:50.611Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.611Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/android-chrome-512x512.png
+[debug] [2023-11-25T13:24:50.613Z] [unzip] Entry: client/assets/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2023-11-25T13:24:50.613Z] [unzip] Processing entry: client/assets/
+[debug] [2023-11-25T13:24:50.613Z] [unzip] mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/
+[debug] [2023-11-25T13:24:50.613Z] [unzip] Entry: client/assets/extensions/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2023-11-25T13:24:50.613Z] [unzip] Processing entry: client/assets/extensions/
+[debug] [2023-11-25T13:24:50.613Z] [unzip] mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/extensions/
+[debug] [2023-11-25T13:24:50.614Z] [unzip] Entry: client/assets/extensions/default-extension.png (compressed_size=1646 bytes, uncompressed_size=1657 bytes)
+[debug] [2023-11-25T13:24:50.614Z] [unzip] Processing entry: client/assets/extensions/default-extension.png
+[debug] [2023-11-25T13:24:50.614Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/extensions
+[debug] [2023-11-25T13:24:50.614Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/extensions/default-extension.png
+[debug] [2023-11-25T13:24:50.615Z] [unzip] Entry: client/assets/index.58ca09f7.css (compressed_size=37601 bytes, uncompressed_size=321252 bytes)
+[debug] [2023-11-25T13:24:50.615Z] [unzip] Processing entry: client/assets/index.58ca09f7.css
+[debug] [2023-11-25T13:24:50.615Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets
+[debug] [2023-11-25T13:24:50.615Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/index.58ca09f7.css
+[debug] [2023-11-25T13:24:50.618Z] [unzip] Entry: client/assets/index.c2583d42.js (compressed_size=526232 bytes, uncompressed_size=1860152 bytes)
+[debug] [2023-11-25T13:24:50.618Z] [unzip] Processing entry: client/assets/index.c2583d42.js
+[debug] [2023-11-25T13:24:50.618Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets
+[debug] [2023-11-25T13:24:50.618Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/index.c2583d42.js
+[debug] [2023-11-25T13:24:50.624Z] [unzip] Entry: client/assets/provider-icons/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2023-11-25T13:24:50.624Z] [unzip] Processing entry: client/assets/provider-icons/
+[debug] [2023-11-25T13:24:50.624Z] [unzip] mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/
+[debug] [2023-11-25T13:24:50.624Z] [unzip] Entry: client/assets/provider-icons/auth_service_oidc.svg (compressed_size=414 bytes, uncompressed_size=858 bytes)
+[debug] [2023-11-25T13:24:50.624Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_oidc.svg
+[debug] [2023-11-25T13:24:50.624Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.624Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_oidc.svg
+[debug] [2023-11-25T13:24:50.625Z] [unzip] Entry: client/assets/provider-icons/auth_service_yahoo.svg (compressed_size=577 bytes, uncompressed_size=1182 bytes)
+[debug] [2023-11-25T13:24:50.625Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_yahoo.svg
+[debug] [2023-11-25T13:24:50.625Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.625Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_yahoo.svg
+[debug] [2023-11-25T13:24:50.625Z] [unzip] Entry: client/assets/provider-icons/auth_service_phone.svg (compressed_size=261 bytes, uncompressed_size=414 bytes)
+[debug] [2023-11-25T13:24:50.625Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_phone.svg
+[debug] [2023-11-25T13:24:50.625Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.625Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_phone.svg
+[debug] [2023-11-25T13:24:50.626Z] [unzip] Entry: client/assets/provider-icons/auth_service_saml.svg (compressed_size=575 bytes, uncompressed_size=1226 bytes)
+[debug] [2023-11-25T13:24:50.626Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_saml.svg
+[debug] [2023-11-25T13:24:50.626Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.626Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_saml.svg
+[debug] [2023-11-25T13:24:50.626Z] [unzip] Entry: client/assets/provider-icons/auth_service_mslive.svg (compressed_size=203 bytes, uncompressed_size=378 bytes)
+[debug] [2023-11-25T13:24:50.626Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_mslive.svg
+[debug] [2023-11-25T13:24:50.626Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.626Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_mslive.svg
+[debug] [2023-11-25T13:24:50.627Z] [unzip] Entry: client/assets/provider-icons/auth_service_facebook.svg (compressed_size=289 bytes, uncompressed_size=457 bytes)
+[debug] [2023-11-25T13:24:50.627Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_facebook.svg
+[debug] [2023-11-25T13:24:50.627Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.627Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_facebook.svg
+[debug] [2023-11-25T13:24:50.627Z] [unzip] Entry: client/assets/provider-icons/auth_service_play_games.svg (compressed_size=565 bytes, uncompressed_size=1173 bytes)
+[debug] [2023-11-25T13:24:50.627Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_play_games.svg
+[debug] [2023-11-25T13:24:50.627Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.627Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_play_games.svg
+[debug] [2023-11-25T13:24:50.627Z] [unzip] Entry: client/assets/provider-icons/auth_service_github.svg (compressed_size=466 bytes, uncompressed_size=838 bytes)
+[debug] [2023-11-25T13:24:50.627Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_github.svg
+[debug] [2023-11-25T13:24:50.627Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.627Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_github.svg
+[debug] [2023-11-25T13:24:50.628Z] [unzip] Entry: client/assets/provider-icons/auth_service_apple.svg (compressed_size=230 bytes, uncompressed_size=334 bytes)
+[debug] [2023-11-25T13:24:50.628Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_apple.svg
+[debug] [2023-11-25T13:24:50.628Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.628Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_apple.svg
+[debug] [2023-11-25T13:24:50.628Z] [unzip] Entry: client/assets/provider-icons/auth_service_google.svg (compressed_size=409 bytes, uncompressed_size=720 bytes)
+[debug] [2023-11-25T13:24:50.628Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_google.svg
+[debug] [2023-11-25T13:24:50.628Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.628Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_google.svg
+[debug] [2023-11-25T13:24:50.628Z] [unzip] Entry: client/assets/provider-icons/auth_service_email.svg (compressed_size=228 bytes, uncompressed_size=326 bytes)
+[debug] [2023-11-25T13:24:50.628Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_email.svg
+[debug] [2023-11-25T13:24:50.628Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.629Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_email.svg
+[debug] [2023-11-25T13:24:50.629Z] [unzip] Entry: client/assets/provider-icons/auth_service_twitter.svg (compressed_size=444 bytes, uncompressed_size=751 bytes)
+[debug] [2023-11-25T13:24:50.629Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_twitter.svg
+[debug] [2023-11-25T13:24:50.629Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.629Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_twitter.svg
+[debug] [2023-11-25T13:24:50.629Z] [unzip] Entry: client/assets/provider-icons/auth_service_game_center.svg (compressed_size=991 bytes, uncompressed_size=3921 bytes)
+[debug] [2023-11-25T13:24:50.629Z] [unzip] Processing entry: client/assets/provider-icons/auth_service_game_center.svg
+[debug] [2023-11-25T13:24:50.629Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons
+[debug] [2023-11-25T13:24:50.629Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/provider-icons/auth_service_game_center.svg
+[debug] [2023-11-25T13:24:50.629Z] [unzip] Entry: client/assets/index.c2583d42.js.map (compressed_size=1778557 bytes, uncompressed_size=7961927 bytes)
+[debug] [2023-11-25T13:24:50.629Z] [unzip] Processing entry: client/assets/index.c2583d42.js.map
+[debug] [2023-11-25T13:24:50.629Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets
+[debug] [2023-11-25T13:24:50.630Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/index.c2583d42.js.map
+[debug] [2023-11-25T13:24:50.650Z] [unzip] Entry: client/assets/img/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2023-11-25T13:24:50.650Z] [unzip] Processing entry: client/assets/img/
+[debug] [2023-11-25T13:24:50.650Z] [unzip] mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/img/
+[debug] [2023-11-25T13:24:50.650Z] [unzip] Entry: client/assets/img/database.png (compressed_size=29449 bytes, uncompressed_size=29988 bytes)
+[debug] [2023-11-25T13:24:50.650Z] [unzip] Processing entry: client/assets/img/database.png
+[debug] [2023-11-25T13:24:50.650Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/img
+[debug] [2023-11-25T13:24:50.650Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/assets/img/database.png
+[debug] [2023-11-25T13:24:50.651Z] [unzip] Entry: client/safari-pinned-tab.svg (compressed_size=838 bytes, uncompressed_size=1504 bytes)
+[debug] [2023-11-25T13:24:50.651Z] [unzip] Processing entry: client/safari-pinned-tab.svg
+[debug] [2023-11-25T13:24:50.651Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.651Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/safari-pinned-tab.svg
+[debug] [2023-11-25T13:24:50.651Z] [unzip] Entry: client/mstile-150x150.png (compressed_size=5406 bytes, uncompressed_size=5723 bytes)
+[debug] [2023-11-25T13:24:50.651Z] [unzip] Processing entry: client/mstile-150x150.png
+[debug] [2023-11-25T13:24:50.651Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.652Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/mstile-150x150.png
+[debug] [2023-11-25T13:24:50.652Z] [unzip] Entry: client/browserconfig.xml (compressed_size=491 bytes, uncompressed_size=822 bytes)
+[debug] [2023-11-25T13:24:50.652Z] [unzip] Processing entry: client/browserconfig.xml
+[debug] [2023-11-25T13:24:50.652Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.652Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/browserconfig.xml
+[debug] [2023-11-25T13:24:50.652Z] [unzip] Entry: client/robots.txt (compressed_size=26 bytes, uncompressed_size=26 bytes)
+[debug] [2023-11-25T13:24:50.653Z] [unzip] Processing entry: client/robots.txt
+[debug] [2023-11-25T13:24:50.653Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.653Z] [unzip] Writing file: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/robots.txt
+[debug] [2023-11-25T13:24:50.653Z] [unzip] Entry: client/index.html (compressed_size=1363 bytes, uncompressed_size=3064 bytes)
+[debug] [2023-11-25T13:24:50.653Z] [unzip] Processing entry: client/index.html
+[debug] [2023-11-25T13:24:50.653Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.653Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/index.html
+[debug] [2023-11-25T13:24:50.654Z] [unzip] Entry: client/favicon-16x16.png (compressed_size=757 bytes, uncompressed_size=777 bytes)
+[debug] [2023-11-25T13:24:50.654Z] [unzip] Processing entry: client/favicon-16x16.png
+[debug] [2023-11-25T13:24:50.654Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.654Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/favicon-16x16.png
+[debug] [2023-11-25T13:24:50.654Z] [unzip] Entry: client/manifest.json (compressed_size=246 bytes, uncompressed_size=551 bytes)
+[debug] [2023-11-25T13:24:50.654Z] [unzip] Processing entry: client/manifest.json
+[debug] [2023-11-25T13:24:50.654Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.654Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/manifest.json
+[debug] [2023-11-25T13:24:50.655Z] [unzip] Entry: client/favicon-32x32.png (compressed_size=1175 bytes, uncompressed_size=1175 bytes)
+[debug] [2023-11-25T13:24:50.655Z] [unzip] Processing entry: client/favicon-32x32.png
+[debug] [2023-11-25T13:24:50.655Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.655Z] [unzip] Writing file: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/favicon-32x32.png
+[debug] [2023-11-25T13:24:50.655Z] [unzip] Entry: client/android-chrome-192x192.png (compressed_size=7602 bytes, uncompressed_size=7834 bytes)
+[debug] [2023-11-25T13:24:50.655Z] [unzip] Processing entry: client/android-chrome-192x192.png
+[debug] [2023-11-25T13:24:50.655Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client
+[debug] [2023-11-25T13:24:50.655Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/client/android-chrome-192x192.png
+[debug] [2023-11-25T13:24:50.656Z] [unzip] Entry: server/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2023-11-25T13:24:50.656Z] [unzip] Processing entry: server/
+[debug] [2023-11-25T13:24:50.656Z] [unzip] mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server/
+[debug] [2023-11-25T13:24:50.656Z] [unzip] Entry: server/server.js (compressed_size=343746 bytes, uncompressed_size=1346374 bytes)
+[debug] [2023-11-25T13:24:50.656Z] [unzip] Processing entry: server/server.js
+[debug] [2023-11-25T13:24:50.656Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server
+[debug] [2023-11-25T13:24:50.656Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server/server.js
+[debug] [2023-11-25T13:24:50.660Z] [unzip] Entry: server/server.js.map (compressed_size=289157 bytes, uncompressed_size=1325651 bytes)
+[debug] [2023-11-25T13:24:50.660Z] [unzip] Processing entry: server/server.js.map
+[debug] [2023-11-25T13:24:50.660Z] [unzip] else mkdir: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server
+[debug] [2023-11-25T13:24:50.660Z] [unzip] deflating: /Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server/server.js.map
+[debug] [2023-11-25T13:24:50.666Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-11-25T13:24:50.666Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-11-25T13:24:50.666Z] Starting Emulator UI with command {"binary":"node","args":["/Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/Users/maciej/.cache/firebase/emulators/ui-v1.11.7/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2023-11-25T13:24:50.729Z] Web / API server started at 127.0.0.1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
+[debug] [2023-11-25T13:24:50.730Z] Web / API server started at ::1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
+[info] i  functions: Watching "/Users/maciej/Developer/Git/Loop_New/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/Users/maciej/Developer/Git/Loop_New/functions\" for Cloud Functions..."}}
+[debug] [2023-11-25T13:24:50.926Z] Validating nodejs source
+[debug] [2023-11-25T13:24:51.460Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T13:24:51.460Z] Building nodejs source
+[debug] [2023-11-25T13:24:51.461Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T13:24:51.462Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T13:24:51.464Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8266
+
+[debug] [2023-11-25T13:24:52.013Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"0 7,13,19 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[info] i  functions[us-central1-checkFlashcards]: function ignored because the pubsub emulator does not exist or is not running. {"metadata":{"emulator":{"name":"functions"},"message":"function ignored because the pubsub emulator does not exist or is not running."}}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub running at 127.0.0.1:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2023-11-25T13:26:58.140Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T13:26:59.149Z] Validating nodejs source
+[debug] [2023-11-25T13:26:59.783Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T13:26:59.783Z] Building nodejs source
+[debug] [2023-11-25T13:26:59.783Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T13:26:59.785Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T13:26:59.786Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8426
+
+[debug] [2023-11-25T13:27:00.024Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"0 14 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T13:28:18.516Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T13:28:19.520Z] Validating nodejs source
+[debug] [2023-11-25T13:28:19.992Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T13:28:19.992Z] Building nodejs source
+[debug] [2023-11-25T13:28:19.992Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T13:28:19.993Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T13:28:19.994Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8557
+
+[debug] [2023-11-25T13:28:20.220Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"30 14 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T13:34:38.386Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T13:34:39.406Z] Validating nodejs source
+[debug] [2023-11-25T13:34:40.184Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T13:34:40.186Z] Building nodejs source
+[debug] [2023-11-25T13:34:40.186Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T13:34:40.211Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T13:34:40.214Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8368
+
+[debug] [2023-11-25T13:34:40.433Z] Got response from /__/functions.yaml {"endpoints":{},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] ✔  functions: Loaded functions definitions from source: . {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: ."}}
+[debug] [2023-11-25T13:35:08.763Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T13:35:09.774Z] Validating nodejs source
+[debug] [2023-11-25T13:35:10.634Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T13:35:10.636Z] Building nodejs source
+[debug] [2023-11-25T13:35:10.636Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T13:35:10.641Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T13:35:10.646Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8670
+
+[debug] [2023-11-25T13:35:11.076Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"30 14 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T13:59:48.883Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T13:59:49.901Z] Validating nodejs source
+[debug] [2023-11-25T13:59:50.965Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T13:59:50.966Z] Building nodejs source
+[debug] [2023-11-25T13:59:50.966Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T13:59:50.973Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T13:59:50.979Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8830
+
+[debug] [2023-11-25T13:59:51.471Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"10 15 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T14:01:24.875Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:01:25.881Z] Validating nodejs source
+[debug] [2023-11-25T14:01:26.561Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:01:26.561Z] Building nodejs source
+[debug] [2023-11-25T14:01:26.561Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:01:26.563Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:01:26.565Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8426
+
+[debug] [2023-11-25T14:01:26.790Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"5 15 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T14:12:50.025Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:12:51.074Z] Validating nodejs source
+[debug] [2023-11-25T14:12:52.105Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:12:52.106Z] Building nodejs source
+[debug] [2023-11-25T14:12:52.106Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:12:52.115Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:12:52.125Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8148
+
+[debug] [2023-11-25T14:12:52.574Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"15 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"Europe/Warsaw"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T14:15:28.195Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:15:29.206Z] Validating nodejs source
+[debug] [2023-11-25T14:15:30.107Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:15:30.108Z] Building nodejs source
+[debug] [2023-11-25T14:15:30.108Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:15:30.119Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:15:30.128Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8769
+
+[debug] [2023-11-25T14:15:30.544Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"20 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T14:35:09.569Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:35:10.597Z] Validating nodejs source
+[debug] [2023-11-25T14:35:11.395Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:35:11.395Z] Building nodejs source
+[debug] [2023-11-25T14:35:11.395Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:35:11.402Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:35:11.409Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8283
+
+[debug] [2023-11-25T14:35:11.677Z] Got response from /__/functions.yaml {"endpoints":{"checkFlashcards":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"36 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"checkFlashcards"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: checkFlashcards. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: checkFlashcards."}}
+[debug] [2023-11-25T14:40:11.997Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:40:13.020Z] Validating nodejs source
+[debug] [2023-11-25T14:40:13.657Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:40:13.658Z] Building nodejs source
+[debug] [2023-11-25T14:40:13.658Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:40:13.659Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:40:13.660Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8518
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:21:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T14:40:13.962Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T14:41:32.086Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:41:33.098Z] Validating nodejs source
+[debug] [2023-11-25T14:41:33.702Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:41:33.703Z] Building nodejs source
+[debug] [2023-11-25T14:41:33.703Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:41:33.704Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:41:33.706Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8531
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:21:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T14:41:33.896Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T14:46:37.603Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:46:38.610Z] Validating nodejs source
+[debug] [2023-11-25T14:46:39.229Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:46:39.229Z] Building nodejs source
+[debug] [2023-11-25T14:46:39.229Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:46:39.231Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:46:39.232Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8292
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:24:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T14:46:39.424Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T14:50:21.915Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:50:22.921Z] Validating nodejs source
+[debug] [2023-11-25T14:50:23.425Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:50:23.425Z] Building nodejs source
+[debug] [2023-11-25T14:50:23.425Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:50:23.426Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:50:23.427Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8611
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:22:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T14:50:23.636Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T14:52:00.082Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:52:01.086Z] Validating nodejs source
+[debug] [2023-11-25T14:52:01.592Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:52:01.592Z] Building nodejs source
+[debug] [2023-11-25T14:52:01.592Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:52:01.593Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:52:01.595Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8107
+
+[error] /Users/maciej/Developer/Git/Loop_New/functions/index.js:34
+             if (flashcard.nextStudyDate <= currentTime) {
+                          ^
+
+SyntaxError: Unexpected token '.'
+    at internalCompileFunction (node:internal/vm:77:18)
+    at wrapSafe (node:internal/modules/cjs/loader:1288:20)
+    at Module._compile (node:internal/modules/cjs/loader:1340:27)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+
+[debug] [2023-11-25T14:52:01.704Z] Got response code 400; body Failed to generate manifest from function source: SyntaxError: Unexpected token '.'
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T14:55:12.598Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T14:55:13.600Z] Validating nodejs source
+[debug] [2023-11-25T14:55:14.320Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T14:55:14.320Z] Building nodejs source
+[debug] [2023-11-25T14:55:14.321Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T14:55:14.322Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T14:55:14.323Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8764
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:22:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T14:55:14.729Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T15:00:54.154Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:00:55.161Z] Validating nodejs source
+[debug] [2023-11-25T15:00:55.817Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:00:55.817Z] Building nodejs source
+[debug] [2023-11-25T15:00:55.817Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:00:55.819Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:00:55.831Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8972
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:22:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T15:00:56.035Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T15:01:03.462Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:01:04.467Z] Validating nodejs source
+[debug] [2023-11-25T15:01:04.937Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:01:04.937Z] Building nodejs source
+[debug] [2023-11-25T15:01:04.937Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:01:04.939Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:01:04.940Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8209
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:22:27)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T15:01:05.108Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T15:05:26.269Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:05:27.273Z] Validating nodejs source
+[debug] [2023-11-25T15:05:27.820Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:05:27.821Z] Building nodejs source
+[debug] [2023-11-25T15:05:27.821Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:05:27.822Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:05:27.823Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8938
+
+[debug] [2023-11-25T15:05:28.069Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"6 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[info] i  functions[us-central1-updateBoxes]: function ignored because the pubsub emulator does not exist or is not running. {"metadata":{"emulator":{"name":"functions"},"message":"function ignored because the pubsub emulator does not exist or is not running."}}
+[debug] [2023-11-25T15:06:51.211Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:06:52.216Z] Validating nodejs source
+[debug] [2023-11-25T15:06:53.113Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:06:53.115Z] Building nodejs source
+[debug] [2023-11-25T15:06:53.115Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:06:53.118Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:06:53.119Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8962
+
+[debug] [2023-11-25T15:06:53.629Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"7 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:07:41.700Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:07:42.706Z] Validating nodejs source
+[debug] [2023-11-25T15:07:43.267Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:07:43.268Z] Building nodejs source
+[debug] [2023-11-25T15:07:43.268Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:07:43.279Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:07:43.280Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8542
+
+[debug] [2023-11-25T15:07:43.515Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"8 17 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:10:45.490Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:10:46.492Z] Validating nodejs source
+[debug] [2023-11-25T15:10:47.938Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:10:47.940Z] Building nodejs source
+[debug] [2023-11-25T15:10:47.940Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:10:47.943Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:10:47.945Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8962
+
+[debug] [2023-11-25T15:10:48.233Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"11 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:16:02.412Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:16:03.418Z] Validating nodejs source
+[debug] [2023-11-25T15:16:03.915Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:16:03.915Z] Building nodejs source
+[debug] [2023-11-25T15:16:03.915Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:16:03.916Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:16:03.917Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8438
+
+[debug] [2023-11-25T15:16:04.170Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"6 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:20:37.651Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:20:38.675Z] Validating nodejs source
+[debug] [2023-11-25T15:20:39.695Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:20:39.696Z] Building nodejs source
+[debug] [2023-11-25T15:20:39.696Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:20:39.700Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:20:39.704Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8737
+
+[debug] [2023-11-25T15:20:40.234Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"22 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:22:12.072Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:22:13.079Z] Validating nodejs source
+[debug] [2023-11-25T15:22:13.695Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:22:13.695Z] Building nodejs source
+[debug] [2023-11-25T15:22:13.695Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:22:13.699Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:22:13.701Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8615
+
+[debug] [2023-11-25T15:22:13.992Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"23 16 * * *","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:26:47.334Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:26:48.345Z] Validating nodejs source
+[debug] [2023-11-25T15:26:49.663Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:26:49.664Z] Building nodejs source
+[debug] [2023-11-25T15:26:49.664Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:26:49.669Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:26:49.672Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8564
+
+[debug] [2023-11-25T15:26:49.902Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"every 1 minutes","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:27:15.141Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:27:16.146Z] Validating nodejs source
+[debug] [2023-11-25T15:27:16.724Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:27:16.724Z] Building nodejs source
+[debug] [2023-11-25T15:27:16.724Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:27:16.725Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:27:16.726Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8081
+
+[debug] [2023-11-25T15:27:17.048Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"every 1 minutes","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:27:35.657Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:27:36.663Z] Validating nodejs source
+[debug] [2023-11-25T15:27:37.272Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:27:37.274Z] Building nodejs source
+[debug] [2023-11-25T15:27:37.274Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:27:37.278Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:27:37.280Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8444
+
+[debug] [2023-11-25T15:27:37.567Z] Got response from /__/functions.yaml {"endpoints":{"updateBoxes":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"scheduleTrigger":{"schedule":"every 1 minutes","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetryDuration":null,"maxBackoffDuration":null,"minBackoffDuration":null},"timeZone":"CEST"},"labels":{},"entryPoint":"updateBoxes"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[info] ✔  functions: Loaded functions definitions from source: updateBoxes. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: updateBoxes."}}
+[debug] [2023-11-25T15:59:44.131Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T15:59:45.165Z] Validating nodejs source
+[debug] [2023-11-25T15:59:46.969Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T15:59:46.971Z] Building nodejs source
+[debug] [2023-11-25T15:59:46.971Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T15:59:46.977Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T15:59:46.979Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8399
+
+[error] ReferenceError: functions is not defined
+    at Object.<anonymous> (/Users/maciej/Developer/Git/Loop_New/functions/index.js:22:23)
+    at Module._compile (node:internal/modules/cjs/loader:1376:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at loadModule (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:40:16)
+    at loadStack (/Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/runtime/loader.js:93:23)
+    at /Users/maciej/Developer/Git/Loop_New/functions/node_modules/firebase-functions/lib/bin/firebase-functions.js:56:56
+
+[debug] [2023-11-25T15:59:47.394Z] Got response code 400; body Failed to generate manifest from function source: ReferenceError: functions is not defined
+[error] ⬢  functions: Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: Functions codebase could not be analyzed successfully. It may have a syntax or runtime error"}}
+[debug] [2023-11-25T16:19:08.843Z] File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /Users/maciej/Developer/Git/Loop_New/functions/index.js changed, reloading triggers"}}
+[debug] [2023-11-25T16:19:09.862Z] Validating nodejs source
+[debug] [2023-11-25T16:19:10.503Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-11-25T16:19:10.503Z] Building nodejs source
+[debug] [2023-11-25T16:19:10.504Z] Failed to find version of module node: reached end of search path /Users/maciej/Developer/Git/Loop_New/functions/node_modules
+[warn] ⚠  functions: Your requested "node" version "18" doesn't match your global version "20". Using node@20 from host. 
+[debug] [2023-11-25T16:19:10.515Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-11-25T16:19:10.517Z] Found firebase-functions binary at '/Users/maciej/Developer/Git/Loop_New/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8051
+
+[debug] [2023-11-25T16:19:10.736Z] Got response from /__/functions.yaml {"endpoints":{},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] ✔  functions: Loaded functions definitions from source: . {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: ."}}
