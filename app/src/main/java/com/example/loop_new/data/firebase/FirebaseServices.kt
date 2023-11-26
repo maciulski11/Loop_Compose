@@ -7,6 +7,7 @@ import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +24,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         const val FLASHCARD = "flashcard"
     }
 
-    private val currentTime =
-        Calendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw")).timeInMillis
+    private val currentTime = Timestamp.now().toDate()
+    // Create a calendar with date
+    private val calendar = Calendar.getInstance()
 
     override fun addBox(box: Box) {
         val uid = UUID.randomUUID().toString()
@@ -67,10 +69,14 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
 
+        calendar.time = currentTime
+        calendar.add(Calendar.DAY_OF_MONTH, 4)
+        val newTimestamp = Timestamp(calendar.time)
+
         val updateData = mapOf(
             FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.KNOW.value,
             FlashcardFields.LAST_STUDIED_DATE to currentTime,
-            FlashcardFields.NEXT_STUDY_DATE to currentTime + TimeUnit.DAYS.toMillis(5)
+            FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
 
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
@@ -78,10 +84,14 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
 
+        calendar.time = currentTime
+        calendar.add(Calendar.DAY_OF_MONTH, 2)
+        val newTimestamp = Timestamp(calendar.time)
+
         val updateData = mapOf(
             FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.SOMEWHAT_KNOW.value,
             FlashcardFields.LAST_STUDIED_DATE to currentTime,
-            FlashcardFields.NEXT_STUDY_DATE to currentTime + TimeUnit.DAYS.toMillis(2)
+            FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
 
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
@@ -89,10 +99,14 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
 
+        calendar.time = currentTime
+        calendar.add(Calendar.HOUR_OF_DAY, 12)
+        val newTimestamp = Timestamp(calendar.time)
+
         val updateData = mapOf(
             FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.DO_NOT_KNOW.value,
             FlashcardFields.LAST_STUDIED_DATE to currentTime,
-            FlashcardFields.NEXT_STUDY_DATE to currentTime + TimeUnit.HOURS.toMillis(12)
+            FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
 
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
@@ -128,8 +142,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
     }
 
     override fun fetchListOfBox(): Flow<List<Box>> {
+        val collection = firestore.collection(BOX)
+
         return callbackFlow {
-            val collection = firestore.collection(BOX)
             val listenerRegistration = collection.addSnapshotListener { querySnapshot, error ->
                 if (error != null) {
                     close(error)
@@ -200,6 +215,8 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
                     close(error)
                     Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
                 }
+
+            awaitClose { }
         }
     }
 }
