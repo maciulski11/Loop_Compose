@@ -20,9 +20,11 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
     companion object {
         const val BOX = "box"
         const val FLASHCARD = "flashcard"
+        const val REPEAT = "repeat"
     }
 
-    private val currentTime = Timestamp.now().toDate()
+    private val currentTime = Timestamp.now()
+
     // Create a calendar with date
     private val calendar = Calendar.getInstance()
 
@@ -67,13 +69,13 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
 
-        calendar.time = currentTime
+        calendar.time = currentTime.toDate()
         calendar.add(Calendar.DAY_OF_MONTH, 4)
         val newTimestamp = Timestamp(calendar.time)
 
         val updateData = mapOf(
             FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.KNOW.value,
-            FlashcardFields.LAST_STUDIED_DATE to currentTime,
+            FlashcardFields.LAST_STUDIED_DATE to currentTime.toDate(),
             FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
 
@@ -82,13 +84,13 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
 
-        calendar.time = currentTime
+        calendar.time = currentTime.toDate()
         calendar.add(Calendar.DAY_OF_MONTH, 2)
         val newTimestamp = Timestamp(calendar.time)
 
         val updateData = mapOf(
             FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.SOMEWHAT_KNOW.value,
-            FlashcardFields.LAST_STUDIED_DATE to currentTime,
+            FlashcardFields.LAST_STUDIED_DATE to currentTime.toDate(),
             FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
 
@@ -97,13 +99,13 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
 
-        calendar.time = currentTime
+        calendar.time = currentTime.toDate()
         calendar.add(Calendar.HOUR_OF_DAY, 12)
         val newTimestamp = Timestamp(calendar.time)
 
         val updateData = mapOf(
             FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.DO_NOT_KNOW.value,
-            FlashcardFields.LAST_STUDIED_DATE to currentTime,
+            FlashcardFields.LAST_STUDIED_DATE to currentTime.toDate(),
             FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
 
@@ -216,5 +218,72 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
             awaitClose { }
         }
+    }
+
+    override fun fetchRepeatFlashcards() {
+        firestore.collection(BOX)
+            .get()
+            .addOnSuccessListener { boxSnapshot ->
+                for (boxDocument in boxSnapshot.documents) {
+                    // Iteracja przez dokumenty "box" użytkownika
+                    val boxID = boxDocument.id
+
+                    firestore.collection(BOX).document(boxID)
+                        .collection(FLASHCARD)
+                        .get()
+                        .addOnSuccessListener { flashcardSnapshot ->
+                            for (flashcardDocument in flashcardSnapshot.documents) {
+                                // Iteracja przez fiszki w danym boxie
+                                val flashcard = flashcardDocument.toObject(Flashcard::class.java)
+
+                                if (flashcard != null && flashcard.nextStudyDate!! <= currentTime) {
+
+                                    addFlashcardToRepeatSection(flashcard)
+
+                                    Log.d(
+                                        LogTags.FIREBASE_SERVICES,
+                                        "fetchRepeatFlashcards: ${flashcard.word}"
+                                    )
+                                }
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e(LogTags.FIREBASE_SERVICES, "fetchRepeatFlashcards: $exception")
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(LogTags.FIREBASE_SERVICES, "fetchRepeatFlashcards: $exception")
+            }
+    }
+
+    private fun addFlashcardToRepeatSection(flashcard: Flashcard) {
+        val flashcardRepeat = flashcard.copy()
+
+        firestore.collection(REPEAT)
+            .whereEqualTo("uid", flashcard.uid)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    // Fiszka o danym uid nie istnieje, więc możesz ją dodać
+                    firestore.collection(REPEAT)
+                        .add(flashcardRepeat)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d(
+                                LogTags.FIREBASE_SERVICES,
+                                "addFlashcardToRepeatSection: Successfully added flashcard to repeat collection!"
+                            )
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e(
+                                LogTags.FIREBASE_SERVICES,
+                                "addFlashcardToRepeatSection: $exception"
+                            )
+                        }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(LogTags.FIREBASE_SERVICES, "addFlashcardToRepeatSection: $exception")
+            }
     }
 }

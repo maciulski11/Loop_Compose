@@ -10,7 +10,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 @OptIn(DelicateCoroutinesApi::class)
 class DependencyProvider {
     // Firebase
-    private val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     val firebaseServices: FirebaseServices = FirebaseServices(firebaseFirestore)
     // Translate Api
     val translateService: TranslateService = TranslateService()

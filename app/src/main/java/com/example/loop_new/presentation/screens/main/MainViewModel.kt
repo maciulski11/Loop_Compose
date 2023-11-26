@@ -18,21 +18,6 @@ class MainViewModel(private val interfaceFirebaseService: InterfaceFirebaseServi
         fetchListOfBox()
     }
 
-    fun addBox(name: String, describe: String) {
-        val box = Box(name = name, describe = describe)
-        viewModelScope.launch {
-            try {
-                interfaceFirebaseService.addBox(box)
-
-                Log.d(LogTags.MAIN_VIEW_MODEL, "addBox: Correct addition of box")
-
-            } catch (e: Exception) {
-
-                Log.e(LogTags.MAIN_VIEW_MODEL, "addBox: Error: $e")
-            }
-        }
-    }
-
     private fun fetchListOfBox() {
         viewModelScope.launch {
             try {
@@ -45,6 +30,21 @@ class MainViewModel(private val interfaceFirebaseService: InterfaceFirebaseServi
             } catch (e: Exception) {
 
                 Log.e(LogTags.MAIN_VIEW_MODEL, "fetchListOfBox: Error: $e")
+            }
+        }
+    }
+
+    fun addBox(name: String, describe: String) {
+        val box = Box(name = name, describe = describe)
+        viewModelScope.launch {
+            try {
+                interfaceFirebaseService.addBox(box)
+
+                Log.d(LogTags.MAIN_VIEW_MODEL, "addBox: Correct addition of box")
+
+            } catch (e: Exception) {
+
+                Log.e(LogTags.MAIN_VIEW_MODEL, "addBox: Error: $e")
             }
         }
     }

@@ -19,6 +19,8 @@ interface InterfaceFirebaseService {
 
     fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>>
 
+    fun fetchRepeatFlashcards()
+
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String)
 
     fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String)

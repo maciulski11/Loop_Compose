@@ -85,7 +85,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel) {
 
     Screen(
         navController = navController,
-        list = viewModel.boxList.value ?: emptyList()
+        list = viewModel.boxList.value ?: emptyList(),
     ) { nameInput, describeInput ->
         viewModel.addBox(nameInput, describeInput)
     }
@@ -168,6 +168,7 @@ fun Screen(
                 // Kod rozpoczynający lekcję nauki fiszek
             },
         )
+
     }
 }
 
