@@ -258,8 +258,6 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
     }
 
     private fun addFlashcardToRepeatSection(flashcard: Flashcard) {
-        val flashcardRepeat = flashcard.copy()
-
         firestore.collection(REPEAT)
             .whereEqualTo("uid", flashcard.uid)
             .get()
@@ -267,7 +265,8 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
                 if (querySnapshot.isEmpty) {
                     // Fiszka o danym uid nie istnieje, więc możesz ją dodać
                     firestore.collection(REPEAT)
-                        .add(flashcardRepeat)
+                        .document(flashcard.uid!!)
+                        .set(flashcard)
                         .addOnSuccessListener { documentReference ->
                             Log.d(
                                 LogTags.FIREBASE_SERVICES,

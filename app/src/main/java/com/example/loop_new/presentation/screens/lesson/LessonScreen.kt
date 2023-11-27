@@ -127,37 +127,60 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
     ) {
         when {
 
-            isVisibleRight || swipeableStateX.currentValue == 1 -> {
-                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
-//                setKnowledgeLevel(KnowledgeLevel.KNOW)
+            swipeableStateX.currentValue == 1 -> {
                 viewModel.updateFlashcardToKnow(
                     boxUid,
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateX.snapTo(0)
+            }
+
+            isVisibleRight -> {
+                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                viewModel.updateFlashcardToKnow(
+                    boxUid,
+                    flashcardList[indexOfFlashcard].uid.toString()
+                )
+                viewModel.moveToNextFlashcard(navController, boxUid)
                 isVisibleRight = false
             }
 
-            isVisibleLeft || swipeableStateX.currentValue == -1 -> {
-                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+            swipeableStateX.currentValue == -1 -> {
                 viewModel.updateFlashcardToSomewhatKnow(
                     boxUid,
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateX.snapTo(0)
+            }
+
+            isVisibleLeft -> {
+                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                viewModel.updateFlashcardToSomewhatKnow(
+                    boxUid,
+                    flashcardList[indexOfFlashcard].uid.toString()
+                )
+                viewModel.moveToNextFlashcard(navController, boxUid)
                 isVisibleLeft = false
             }
 
-            isVisibleUp || swipeableStateY.currentValue == 2 -> {
-                delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
+            swipeableStateY.currentValue == 2 -> {
                 viewModel.updateFlashcardToDoNotKnow(
                     boxUid,
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
                 viewModel.moveToNextFlashcard(navController, boxUid)
                 swipeableStateY.snapTo(0)
+            }
+
+            isVisibleUp -> {
+                delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
+                viewModel.updateFlashcardToDoNotKnow(
+                    boxUid,
+                    flashcardList[indexOfFlashcard].uid.toString()
+                )
+                viewModel.moveToNextFlashcard(navController, boxUid)
                 isVisibleUp = false
             }
         }

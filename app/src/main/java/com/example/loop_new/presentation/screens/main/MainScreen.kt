@@ -166,9 +166,8 @@ fun Screen(
         AnimatedLearningButton(
             onClick = {
                 // Kod rozpoczynający lekcję nauki fiszek
-            },
+            }
         )
-
     }
 }
 
