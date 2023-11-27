@@ -6,55 +6,49 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
-import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.InterfaceFirebaseService
-import com.example.loop_new.domain.services.InterfaceService
 import kotlinx.coroutines.launch
 
-class BoxViewModel(
-    private val interfaceFirebaseServices: InterfaceFirebaseService,
-    private val interfaceService: InterfaceService,
-    boxUid: String
-) : ViewModel() {
+class BoxViewModel(private val interfaceFirebaseService: InterfaceFirebaseService) : ViewModel() {
 
-    val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
+    val boxList: MutableState<List<Box>?> = mutableStateOf(null)
 
     init {
-        fetchListOfFlashcard(boxUid)
+        fetchListOfBox()
     }
 
-    private fun fetchListOfFlashcard(boxUid: String) {
+    private fun fetchListOfBox() {
         viewModelScope.launch {
             try {
-                val flashcardFlow = interfaceFirebaseServices.fetchListOfFlashcardInBox(boxUid)
+                val boxFlow = interfaceFirebaseService.fetchListOfBox()
+                boxFlow.collect { boxes ->
+                    boxList.value = boxes
 
-                flashcardFlow.collect {
-                    flashcardList.value = it
+                    Log.d(LogTags.MAIN_VIEW_MODEL, "fetchListOfBox: Success!")
                 }
-
-                Log.d(LogTags.BOX_VIEW_MODEL, "fetchListOfFlashcard: Success")
-
             } catch (e: Exception) {
 
-                Log.e(LogTags.BOX_VIEW_MODEL, "fetchListOfFlashcard: Error: $e")
+                Log.e(LogTags.MAIN_VIEW_MODEL, "fetchListOfBox: Error: $e")
             }
         }
     }
 
-    fun deleteFlashcard(boxUid: String, flashcardUid: String) {
-        try {
-            interfaceFirebaseServices.deleteFlashcard(boxUid, flashcardUid)
-            Log.d(LogTags.BOX_VIEW_MODEL, "deleteFlashcard: Success")
-
-        } catch (e: Exception) {
-
-            Log.e(LogTags.BOX_VIEW_MODEL, "deleteFlashcard: Error: $e")
-        }
-    }
-
-    fun playAudioFromUrl(audioUrl: String) {
+    fun addBox(name: String, describe: String) {
+        val box = Box(name = name, describe = describe)
         viewModelScope.launch {
-            interfaceService.playAudioFromUrl(audioUrl)
+            try {
+                interfaceFirebaseService.addBox(box)
+
+                Log.d(LogTags.MAIN_VIEW_MODEL, "addBox: Correct addition of box")
+
+            } catch (e: Exception) {
+
+                Log.e(LogTags.MAIN_VIEW_MODEL, "addBox: Error: $e")
+            }
         }
     }
 }
+
+
+

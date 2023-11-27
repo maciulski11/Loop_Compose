@@ -10,12 +10,13 @@ import androidx.navigation.navArgument
 import com.example.loop_new.DependencyProvider
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
-import com.example.loop_new.presentation.screens.box.BoxScreen
-import com.example.loop_new.presentation.screens.box.BoxViewModel
+import com.example.loop_new.presentation.screens.flashcard.FlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard.FlashcardViewModel
 import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
-import com.example.loop_new.presentation.screens.main.MainScreen
-import com.example.loop_new.presentation.screens.main.MainViewModel
+import com.example.loop_new.presentation.screens.box.BoxScreen
+import com.example.loop_new.presentation.screens.box.BoxViewModel
+import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 object NavigationSupport {
@@ -36,9 +37,9 @@ fun NavigationScreens() {
     ) {
 
         composable(NavigationSupport.MainScreen) {
-            val viewModel = remember { MainViewModel(DependencyProvider().firebaseServices) }
+            val viewModel = remember { BoxViewModel(DependencyProvider().firebaseServices) }
 
-            MainScreen(navController, viewModel)
+            BoxScreen(navController, viewModel)
         }
 
         composable(
@@ -47,14 +48,14 @@ fun NavigationScreens() {
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
             val viewModel = remember {
-                BoxViewModel(
+                FlashcardViewModel(
                     DependencyProvider().firebaseServices,
-                    DependencyProvider().service,
+                    DependencyProvider().mainViewModel,
                     boxUid
                 )
             }
 
-            BoxScreen(navController, boxUid, viewModel)
+            FlashcardScreen(navController, boxUid, viewModel)
         }
 
         composable(
@@ -82,7 +83,7 @@ fun NavigationScreens() {
             val viewModel = remember {
                 LessonViewModel(
                     DependencyProvider().firebaseServices,
-                    DependencyProvider().service,
+                    DependencyProvider().mainViewModel,
                     boxUid
                 )
             }

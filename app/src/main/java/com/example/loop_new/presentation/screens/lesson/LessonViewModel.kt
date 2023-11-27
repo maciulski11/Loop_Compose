@@ -11,15 +11,15 @@ import androidx.navigation.NavController
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.InterfaceFirebaseService
-import com.example.loop_new.domain.services.InterfaceService
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LessonViewModel(
     private val interfaceFirebaseServices: InterfaceFirebaseService,
-    private val interfaceService: InterfaceService,
+    private val mainViewModel: MainViewModel,
     boxUid: String,
 ) : ViewModel() {
 
@@ -107,8 +107,6 @@ class LessonViewModel(
     }
 
     fun playAudioFromUrl(audioUrl: String) {
-        viewModelScope.launch {
-            interfaceService.playAudioFromUrl(audioUrl)
-        }
+        mainViewModel.playAudioFromUrl(audioUrl)
     }
 }

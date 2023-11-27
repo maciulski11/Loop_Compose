@@ -1,13 +1,20 @@
 package com.example.loop_new.presentation.screens.box
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateValue
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,31 +24,32 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -49,13 +57,8 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
-import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.model.firebase.KnowledgeLevel
-import com.example.loop_new.ui.theme.Blue
-import com.example.loop_new.ui.theme.Green
-import com.example.loop_new.ui.theme.Orange
-import com.example.loop_new.ui.theme.Red
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -63,263 +66,154 @@ fun ScreenPreview() {
     val navController = rememberNavController()
     val sampleData = createSampleData()
 
-    Screen(navController = navController, boxUid = "", sampleData, { }, { })
+    Screen(navController, sampleData) { _, _ -> }
 }
 
 @Composable
-fun createSampleData(): List<Flashcard> {
-    val sampleData = mutableListOf<Flashcard>()
+fun createSampleData(): List<Box> {
+    val sampleData = mutableListOf<Box>()
 
-    for (i in 1..12) {
-        sampleData.add(Flashcard(word = "Flashcard", pronunciation = "(h)wer"))
+    for (i in 1..22) {
+        sampleData.add(Box("Box $i", "Description $i"))
     }
     return sampleData
 }
 
 // UI
 @Composable
-fun BoxScreen(navController: NavController, boxUid: String, viewModel: BoxViewModel) {
+fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
 
     Screen(
-        navController,
-        boxUid,
-        viewModel.flashcardList.value ?: emptyList(),
-        { audioUrl ->
-            viewModel.playAudioFromUrl(audioUrl)
-        },
-        { flashcardUid ->
-            viewModel.deleteFlashcard(boxUid, flashcardUid)
-        }
-    )
+        navController = navController,
+        list = viewModel.boxList.value ?: emptyList(),
+    ) { nameInput, describeInput ->
+        viewModel.addBox(nameInput, describeInput)
+    }
 }
 
 @Composable
 fun Screen(
     navController: NavController,
-    boxUid: String,
-    list: List<Flashcard>,
-    onPlayAudioFromUrl: (String) -> Unit,
-    onDeleteFlashcard: (String) -> Unit
+    list: List<Box>,
+    onAddBox: (nameInput: String, describeInput: String) -> Unit
 ) {
-    val constraints = ConstraintSet {
-        val flashcardsList = createRefFor("flashcardList")
-        val startLesson = createRefFor("startLesson")
-        val addFlashcard = createRefFor("addFlashcard")
+    val showDialogState = remember { mutableStateOf(false) }
 
-        constrain(flashcardsList) {
+    val constraints = ConstraintSet {
+        val boxList = createRefFor("boxList")
+        val addBoxButton = createRefFor("addBoxButton")
+        val repeatButton = createRefFor("repeatButton")
+
+        constrain(boxList) {
             top.linkTo(parent.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
 
-        constrain(startLesson) {
-            bottom.linkTo(parent.bottom, margin = 92.dp)
-            end.linkTo(parent.end, margin = 16.dp)
-        }
-
-        constrain(addFlashcard) {
+        constrain(addBoxButton) {
             bottom.linkTo(parent.bottom, margin = 14.dp)
             end.linkTo(parent.end, margin = 16.dp)
         }
+
+        constrain(repeatButton) {
+            bottom.linkTo(parent.bottom, margin = 10.dp)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
     }
+
+    val itemsInRow = 2 // Ilość elementów w jednym wierszu
 
     ConstraintLayout(
         constraints,
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(
+        LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
-                .layoutId("flashcardList")
+                .layoutId("boxList"),
+            columns = GridCells.Fixed(itemsInRow)
         ) {
-            items(list) { flashcard ->
-                FlashcardItem(
-                    flashcard,
-                    { audioUrl ->
-                        onPlayAudioFromUrl(audioUrl)
-
-                    },
-                    { flashcardUid ->
-                        onDeleteFlashcard(flashcardUid)
-                    }
-                )
+            items(list) { box ->
+                BoxItem(box, navController)
             }
         }
-
-        Image(
-            painter = painterResource(id = R.drawable.start_lesson_circle_78),
-            contentDescription = "Button",
-            modifier = Modifier
-                .layoutId("startLesson")
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
-                }
-        )
 
         Image(
             painter = painterResource(id = R.drawable.baseline_add_circle_box),
             contentDescription = "Button",
             modifier = Modifier
-                .layoutId("addFlashcard")
+                .layoutId("addBoxButton")
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
+                    showDialogState.value = true
                 }
         )
-    }
-}
 
-@Composable
-fun FlashcardItem(
-    flashcard: Flashcard,
-    onPlayAudioFromUrl: (String) -> Unit,
-    onDeleteFlashcard: (String) -> Unit
-) {
-    val showDialogState = remember { mutableStateOf(false) }
-    val color = remember { mutableStateOf(Black) } // Domyślny kolor
-
-    when (flashcard.knowledgeLevel) {
-        KnowledgeLevel.KNOW.value -> color.value = Green
-        KnowledgeLevel.DO_NOT_KNOW.value -> color.value = Red
-        KnowledgeLevel.SOMEWHAT_KNOW.value -> color.value = Blue
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 6.dp,
-                start = 2.dp,
-                end = 2.dp
-            )
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    // Obsługa zdarzenia dotknięcia (LongClick)
-                    onLongPress = {
-                        showDialogState.value = true
-                    }
-                )
-            },
-        contentAlignment = Alignment.Center,
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .border(3.dp, color.value, RoundedCornerShape(20.dp)),
-            ) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = flashcard.word.toString(),
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(top = 12.dp, bottom = 2.dp)
-                    )
-
-                    Image(
-                        painter = painterResource(
-
-                            id = if (flashcard.audioUrl!!.isNotEmpty()) {
-                                R.drawable.baseline_volume
-                            } else {
-                                R.drawable.baseline_volume_off
-                            }
-                        ),
-                        contentDescription = "Button",
-                        modifier = Modifier
-                            .padding(top = 12.dp, bottom = 2.dp, start = 4.dp)
-                            .align(Alignment.CenterVertically)
-                            .size(32.dp)
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                if (flashcard.audioUrl.isNotEmpty()) {
-                                    onPlayAudioFromUrl(flashcard.audioUrl)
-                                }
-                            }
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
+        if (showDialogState.value) {
+            ShowCustomAlertDialog(
+                { nameInput, describeInput ->
+                    onAddBox(nameInput, describeInput)
+                },
+                {
+                    showDialogState.value = false
                 }
-
-                Spacer(modifier = Modifier.height(0.dp))
-
-                Text(
-                    text = flashcard.pronunciation.toString(),
-                    fontSize = 21.sp,
-                    textAlign = TextAlign.Center,
-                    color = Orange,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 14.dp)
-                )
-            }
+            )
         }
-    )
 
-    // Delete flashcard alert dialog
-    if (showDialogState.value) {
-        ShowCustomAlertDialog(
-            flashcard.word.toString(),
-            {
-                onDeleteFlashcard(flashcard.uid.toString())
+        AnimatedLearningButton(
+            onClick = {
+                // Kod rozpoczynający lekcję nauki fiszek
             }
-        ) {
-            showDialogState.value = false
-        }
+        )
     }
 }
 
 @Composable
 fun ShowCustomAlertDialog(
-    word: String,
-    onDelete: () -> Unit,
+    onAddBox: (nameInput: String, describeInput: String) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val deleteFlashcard = buildAnnotatedString {
-        append("Do you want to delete flashcard: ")
-        pushStyle(
-            SpanStyle(
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline
-            )
-        )
-        append(word)
-        pop() // Kończy zastosowanie pogrubienia
-        append("?")
-    }
+    var nameInput by remember { mutableStateOf("") }
+    var describeInput by remember { mutableStateOf("") }
 
     AlertDialog(
         modifier = Modifier
-            .height(150.dp)
-            .width(300.dp)
+            .height(270.dp)
+            .width(340.dp)
             .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
             .border(3.dp, Black, RoundedCornerShape(20.dp))
             .background(White), // Białe tło z zaokrąglonymi rogami
         onDismissRequest = { /* Touching the screen turns off it */ },
         title = {
             Text(
-                text = deleteFlashcard,
+                text = "Create Box:",
+                fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 modifier = Modifier
-                    .padding(start = 12.dp, end = 12.dp, bottom = 20.dp)
-                    .wrapContentWidth(Alignment.CenterHorizontally) // Wyśrodkowanie w poziomie
+                    .padding(bottom = 6.dp)
             )
+        },
+        text = {
+            Column {
+                TextField(
+                    value = nameInput,
+                    placeholder = { Text("name") },
+                    onValueChange = { nameInput = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                )
+
+                TextField(
+                    value = describeInput,
+                    placeholder = { Text("description") },
+                    onValueChange = { describeInput = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         },
         buttons = {
             Row(
@@ -343,15 +237,14 @@ fun ShowCustomAlertDialog(
                 Spacer(modifier = Modifier.width(14.dp))
 
                 Button(
-                    // Button background
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Red),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                     onClick = {
-                        onDelete()
+                        onAddBox(nameInput, describeInput)
                         onDismiss()
                     }
                 ) {
                     Text(
-                        text = "Delete",
+                        text = "OK",
                         color = Black
                     )
                 }
@@ -359,3 +252,93 @@ fun ShowCustomAlertDialog(
         }
     )
 }
+
+@Composable
+fun BoxItem(box: Box, navController: NavController) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = 6.dp,
+                start = 2.dp,
+                end = 2.dp
+            )
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                val boxUid = box.uid
+                navController.navigate("${NavigationSupport.BoxScreen}/$boxUid")
+            },
+        contentAlignment = Alignment.Center,
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(3.dp, Black, RoundedCornerShape(20.dp)),
+            ) {
+                Text(
+                    text = box.name.toString(),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 10.dp, bottom = 6.dp)
+                )
+
+                Spacer(modifier = Modifier.height(0.dp))
+
+                Text(
+                    text = box.describe.toString(),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 10.dp)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun AnimatedLearningButton(onClick: () -> Unit) {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val size by infiniteTransition.animateValue(
+        initialValue = 66.dp,
+        targetValue = 98.dp,
+        typeConverter = Dp.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = ""
+    )
+
+    Column(
+        modifier = Modifier
+            .size(size)
+            .layoutId("repeatButton")
+            .background(Transparent)
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onClick()
+            }
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.flashcard4),
+            contentDescription = "Learning Image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .weight(1f)
+        )
+    }
+}
+
+
+
