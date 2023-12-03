@@ -71,10 +71,10 @@ fun LessonRepeatScreenPreview() {
         currentFlashcard = Flashcard(),
         onPlayAudio = { },
         onKnowFlashcard = { },
-        onSomewhatKnowFlashcard = { }
-    ) {
-
-    }
+        onSomewhatKnowFlashcard = { },
+        onDoNotKnowFlashcard = { },
+        onExitFromSection = { }
+    )
 }
 
 @Composable
@@ -97,7 +97,8 @@ fun LessonRepeatScreen(
     onPlayAudio: (String) -> Unit,
     onKnowFlashcard: () -> Unit,
     onSomewhatKnowFlashcard: () -> Unit,
-    onDoNotKnowFlashcard: () -> Unit
+    onDoNotKnowFlashcard: () -> Unit,
+    onExitFromSection: () -> Unit
 ) {
 
     var isVisibleLeft by remember { mutableStateOf(false) }
@@ -203,17 +204,36 @@ fun LessonRepeatScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
 
-        // Dodaj tekst z numerem bieżącej fiszki i całkowitą liczbą fiszek
-        Text(
-            text = progressText,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            color = Gray,
-            fontSize = 16.sp
-        )
+        Row  {
+
+            Image(
+                painter = painterResource(id = R.drawable.baseline_close_24),
+                contentDescription = "returnButton",
+                modifier = Modifier
+                    .size(38.dp)
+                    .padding(start = 4.dp, top = 6.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        onExitFromSection()
+                    }
+            )
+
+
+            // Dodaj tekst z numerem bieżącej fiszki i całkowitą liczbą fiszek
+            Text(
+                text = progressText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 42.dp, top = 10.dp),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                color = Gray,
+                fontSize = 16.sp
+            )
+
+        }
 
         // Dodaj pasek postępu tutaj
         LinearProgressIndicator(
@@ -339,7 +359,7 @@ fun LessonRepeatScreen(
             verticalAlignment = Alignment.Bottom
         ) {
 
-            Image(painter = painterResource(id = R.drawable.baseline_close_24),
+            Image(painter = painterResource(id = R.drawable.baseline_close_78),
                 contentDescription = "Button",
                 modifier = Modifier
                     .size(110.dp)

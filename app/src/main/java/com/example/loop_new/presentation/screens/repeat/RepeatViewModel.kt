@@ -78,7 +78,7 @@ class RepeatViewModel(
 
             progress = calculateProgress(currentIndex + 1, totalFlashcards)
             // Nawiguj do innego ekranu, jeśli jesteś na ostatniej karcie
-            navController.navigate(NavigationSupport.MainScreen)
+            navController.navigate(NavigationSupport.BoxScreen)
 
             // Zablokuj przewijanie, gdy użytkownik osiągnął ostatnią kartę
             flashcardList.value = emptyList()
@@ -95,18 +95,21 @@ class RepeatViewModel(
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
             interfaceFirebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
+            interfaceFirebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
         }
     }
 
     fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
             interfaceFirebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
+            interfaceFirebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
         }
     }
 
     fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
             interfaceFirebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
+            interfaceFirebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
         }
     }
 

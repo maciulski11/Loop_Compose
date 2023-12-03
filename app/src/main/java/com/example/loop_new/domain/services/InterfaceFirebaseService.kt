@@ -22,6 +22,8 @@ interface InterfaceFirebaseService {
 
     fun addFlashcardsToRepeatSection()
 
+    fun deleteFlashcardFromRepeatSection(flashcardUid: String)
+
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String)
 
     fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String)

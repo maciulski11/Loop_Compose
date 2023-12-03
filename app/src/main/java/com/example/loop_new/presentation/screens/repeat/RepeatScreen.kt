@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
+import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.LessonRepeatScreen
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -52,6 +53,9 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
                         flashcardUid = flashcardUid
                     )
                     viewModel.moveToNextFlashcard(navController)
+                },
+                {
+                    navController.navigate(NavigationSupport.BoxScreen)
                 }
             )
         }

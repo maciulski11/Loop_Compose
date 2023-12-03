@@ -101,6 +101,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
     }
 
+    //TODO: problem z tym
     override fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
 
         calendar.time = currentTime.toDate()
@@ -108,7 +109,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         val newTimestamp = Timestamp(calendar.time)
 
         val updateData = mapOf(
-            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.DO_NOT_KNOW.value,
+            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.KNOW.value,
             FlashcardFields.LAST_STUDIED_DATE to currentTime.toDate(),
             FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
@@ -223,28 +224,6 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         }
     }
 
-//    override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
-//        val repeatCollectionRef = firestore.collection(REPEAT)
-//
-//        return  callbackFlow {
-//            // Wykonaj jednorazowe zapytanie do Firestore
-//            repeatCollectionRef.get()
-//                .addOnSuccessListener { flashcardsSnapshot ->
-//                    val flashcards = flashcardsSnapshot.documents.mapNotNull { document ->
-//                        document.toObject(Flashcard::class.java)
-//                    }
-//                    trySend(flashcards).isSuccess
-//                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Success!")
-//                }
-//                .addOnFailureListener { error ->
-//                    close(error)
-//                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
-//                }
-//
-//            awaitClose { }
-//        }
-//    }
-
     override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
         val repeatCollectionRef = firestore.collection(REPEAT)
 
@@ -310,7 +289,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
                         .addOnSuccessListener { documentReference ->
                             Log.d(
                                 LogTags.FIREBASE_SERVICES,
-                                "addFlashcardToRepeatSection: Successfully added flashcard to repeat collection!"
+                                "addFlashcardToRepeatSection: Successfully added flashcard: $documentReference"
                             )
                         }
                         .addOnFailureListener { exception ->
@@ -324,5 +303,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
             .addOnFailureListener { exception ->
                 Log.e(LogTags.FIREBASE_SERVICES, "addFlashcardToRepeatSection: $exception")
             }
+    }
+
+    override fun deleteFlashcardFromRepeatSection(flashcardUid: String) {
+        firestore.collection(REPEAT).document(flashcardUid).delete()
     }
 }

@@ -59,7 +59,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
-import com.example.loop_new.presentation.screens.visible
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -274,7 +273,7 @@ fun BoxItem(box: Box, navController: NavController) {
                 interactionSource = remember { MutableInteractionSource() }
             ) {
                 val boxUid = box.uid
-                navController.navigate("${NavigationSupport.BoxScreen}/$boxUid")
+                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid")
             },
         contentAlignment = Alignment.Center,
         content = {

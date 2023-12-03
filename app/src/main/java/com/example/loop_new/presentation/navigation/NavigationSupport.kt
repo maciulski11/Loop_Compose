@@ -18,12 +18,11 @@ import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
-import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 object NavigationSupport {
-    const val MainScreen = "main_screen"
     const val BoxScreen = "box_screen"
+    const val FlashcardScreen = "flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
@@ -36,17 +35,17 @@ fun NavigationScreens() {
 
     NavHost(
         navController = navController,
-        startDestination = NavigationSupport.MainScreen
+        startDestination = NavigationSupport.BoxScreen
     ) {
 
-        composable(NavigationSupport.MainScreen) {
+        composable(NavigationSupport.BoxScreen) {
             val viewModel = remember { BoxViewModel(DependencyProvider().firebaseServices) }
 
             BoxScreen(navController, viewModel)
         }
 
         composable(
-            "${NavigationSupport.BoxScreen}/{boxUid}",
+            "${NavigationSupport.FlashcardScreen}/{boxUid}",
             arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
         ) { backStackEntry ->
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
