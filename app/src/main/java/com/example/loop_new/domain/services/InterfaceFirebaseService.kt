@@ -2,7 +2,6 @@ package com.example.loop_new.domain.services
 
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import kotlinx.coroutines.flow.Flow
 
 interface InterfaceFirebaseService {
@@ -15,11 +14,13 @@ interface InterfaceFirebaseService {
 
     fun fetchListOfBox(): Flow<List<Box>>
 
-    fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>>
-
     fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>>
 
-    fun fetchRepeatFlashcards()
+    fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>>
+
+    fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>>
+
+    fun addFlashcardsToRepeatSection()
 
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String)
 

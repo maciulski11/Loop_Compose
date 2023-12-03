@@ -9,9 +9,13 @@ import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.services.InterfaceFirebaseService
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
 
@@ -112,10 +116,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
     }
 
-
     override fun addFlashcard(flashcard: Flashcard, boxUid: String) {
         val uid = UUID.randomUUID().toString()
-        val data = flashcard.copy(uid = uid)
+        val data = flashcard.copy(uid = uid, boxUid = boxUid)
 
         try {
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD).document(uid).set(data)
@@ -220,7 +223,44 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         }
     }
 
-    override fun fetchRepeatFlashcards() {
+//    override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
+//        val repeatCollectionRef = firestore.collection(REPEAT)
+//
+//        return  callbackFlow {
+//            // Wykonaj jednorazowe zapytanie do Firestore
+//            repeatCollectionRef.get()
+//                .addOnSuccessListener { flashcardsSnapshot ->
+//                    val flashcards = flashcardsSnapshot.documents.mapNotNull { document ->
+//                        document.toObject(Flashcard::class.java)
+//                    }
+//                    trySend(flashcards).isSuccess
+//                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Success!")
+//                }
+//                .addOnFailureListener { error ->
+//                    close(error)
+//                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
+//                }
+//
+//            awaitClose { }
+//        }
+//    }
+
+    override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
+        val repeatCollectionRef = firestore.collection(REPEAT)
+
+        return flow {
+            // Wykonaj zapytanie do Firestore i przekonwertuj dane na listę fiszek
+            val flashcardsSnapshot = repeatCollectionRef.get().await()
+            val flashcards = flashcardsSnapshot.documents.mapNotNull { document ->
+                document.toObject(Flashcard::class.java)
+            }
+
+            emit(flashcards) // Wyemituj listę fiszek
+            Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInRepeat: Success!")
+        }.flowOn(Dispatchers.IO)
+    }
+
+    override fun addFlashcardsToRepeatSection() {
         firestore.collection(BOX)
             .get()
             .addOnSuccessListener { boxSnapshot ->
@@ -236,9 +276,9 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
                                 // Iteracja przez fiszki w danym boxie
                                 val flashcard = flashcardDocument.toObject(Flashcard::class.java)
 
-                                if (flashcard != null && flashcard.nextStudyDate!! <= currentTime) {
+                                if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
 
-                                    addFlashcardToRepeatSection(flashcard)
+                                    addFlashcardToRepeat(flashcard)
 
                                     Log.d(
                                         LogTags.FIREBASE_SERVICES,
@@ -257,7 +297,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
             }
     }
 
-    private fun addFlashcardToRepeatSection(flashcard: Flashcard) {
+    private fun addFlashcardToRepeat(flashcard: Flashcard) {
         firestore.collection(REPEAT)
             .whereEqualTo("uid", flashcard.uid)
             .get()
