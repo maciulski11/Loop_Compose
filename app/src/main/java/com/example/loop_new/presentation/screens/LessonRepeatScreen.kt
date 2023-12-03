@@ -280,7 +280,7 @@ fun LessonRepeatScreen(
                         }
 
                         Text(
-                            text = "flashcardList[flashcard].pronunciation.toString()",
+                            text = flashcardList[flashcard].pronunciation.toString(),
                             fontWeight = FontWeight.Bold,
                             fontSize = 21.sp,
                             color = Orange

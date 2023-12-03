@@ -59,6 +59,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
+import com.example.loop_new.presentation.screens.visible
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -66,7 +67,7 @@ fun ScreenPreview() {
     val navController = rememberNavController()
     val sampleData = createSampleData()
 
-    Screen(navController, sampleData) { _, _ -> }
+//    Screen(navController, sampleData) { _, _ -> }
 }
 
 @Composable
@@ -86,6 +87,7 @@ fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
     Screen(
         navController = navController,
         list = viewModel.boxList.value ?: emptyList(),
+        viewModel,
     ) { nameInput, describeInput ->
         viewModel.addBox(nameInput, describeInput)
     }
@@ -95,7 +97,8 @@ fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
 fun Screen(
     navController: NavController,
     list: List<Box>,
-    onAddBox: (nameInput: String, describeInput: String) -> Unit
+    viewModel: BoxViewModel,
+    onAddBox: (nameInput: String, describeInput: String) -> Unit,
 ) {
     val showDialogState = remember { mutableStateOf(false) }
 
@@ -163,11 +166,13 @@ fun Screen(
             )
         }
 
-        AnimatedLearningButton(
-            onClick = {
-                // Kod rozpoczynający lekcję nauki fiszek
-            }
-        )
+        if (!viewModel.isListEmpty) {
+            AnimatedLearningButton(
+                onClick = {
+                    navController.navigate(NavigationSupport.RepeatScreen)
+                }
+            )
+        }
     }
 }
 

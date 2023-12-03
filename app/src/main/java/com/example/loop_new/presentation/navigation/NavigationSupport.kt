@@ -16,6 +16,8 @@ import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
+import com.example.loop_new.presentation.screens.repeat.RepeatScreen
+import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 
@@ -24,6 +26,7 @@ object NavigationSupport {
     const val BoxScreen = "box_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
+    const val RepeatScreen = "repeat_screen"
 }
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -54,7 +57,6 @@ fun NavigationScreens() {
                     boxUid
                 )
             }
-
             FlashcardScreen(navController, boxUid, viewModel)
         }
 
@@ -71,7 +73,6 @@ fun NavigationScreens() {
                         DependencyProvider().dictionaryService
                     )
                 }
-
             AddFlashcardScreen(navController, boxUid, viewModel)
         }
 
@@ -87,8 +88,17 @@ fun NavigationScreens() {
                     boxUid
                 )
             }
-
             LessonScreen(navController, viewModel, boxUid)
+        }
+
+        composable(NavigationSupport.RepeatScreen) {
+            val viewModel = remember {
+                RepeatViewModel(
+                    DependencyProvider().firebaseServices,
+                    DependencyProvider().mainViewModel
+                )
+            }
+            RepeatScreen(navController, viewModel)
         }
     }
 }

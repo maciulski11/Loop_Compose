@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LessonViewModel(
-    private val interfaceFirebaseServices: InterfaceFirebaseService,
+    private val interfaceFirebaseService: InterfaceFirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String,
 ) : ViewModel() {
@@ -37,13 +37,12 @@ class LessonViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                interfaceFirebaseServices.fetchListOfFlashcardInLesson(boxUid)
+                interfaceFirebaseService.fetchListOfFlashcardInLesson(boxUid)
                     .collect { newFlashcardList ->
                         flashcardList.value = newFlashcardList
                         _currentFlashcard.value = newFlashcardList.firstOrNull()
 
                         progressText = currentFlashcard.let { "0 / ${flashcardList.value.size}" }
-
                     }
 
                 Log.d(LogTags.LESSON_VIEW_MODEL, "fetchListOfFlashcard: Success!")
@@ -90,19 +89,19 @@ class LessonViewModel(
 
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseServices.updateFlashcardToKnow(boxUid, flashcardUid)
+            interfaceFirebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
         }
     }
 
     fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseServices.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
+            interfaceFirebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
         }
     }
 
     fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseServices.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
+            interfaceFirebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
         }
     }
 

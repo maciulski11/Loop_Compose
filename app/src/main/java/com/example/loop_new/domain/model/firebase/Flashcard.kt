@@ -11,6 +11,7 @@ data class Flashcard(
     val pronunciation: String? = null,
     val audioUrl: String? = null,
     val uid: String? = null,
+    val boxUid: String? = null,
     val knowledgeLevel: String? = KnowledgeLevel.NEW_WORD.value,
     var lastStudiedDate: Timestamp? = null,
     var nextStudyDate: Timestamp? = null,

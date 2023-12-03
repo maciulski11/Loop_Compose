@@ -4,15 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.loop_new.presentation.screens.LessonRepeatScreen
-
-@Preview(showBackground = true)
-@Composable
-fun LessonScreenPreview() {
-//    LessonScreen(boxUid = "")
-}
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable

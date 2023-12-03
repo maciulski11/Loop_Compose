@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         GlobalScope.launch(Dispatchers.IO) {
-            interfaceFirebaseServices.fetchRepeatFlashcards()
+            interfaceFirebaseServices.addFlashcardsToRepeatSection()
         }
 
         setContent {
