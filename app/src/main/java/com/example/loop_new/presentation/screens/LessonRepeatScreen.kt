@@ -161,24 +161,24 @@ fun LessonRepeatScreen(
             }
 
             swipeableStateX.currentValue == -1 -> {
-                onSomewhatKnowFlashcard()
+                onDoNotKnowFlashcard()
                 swipeableStateX.snapTo(0)
             }
 
             isVisibleLeft -> {
                 delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
-                onSomewhatKnowFlashcard()
+                onDoNotKnowFlashcard()
                 isVisibleLeft = false
             }
 
             swipeableStateY.currentValue == 2 -> {
-                onDoNotKnowFlashcard()
+                onSomewhatKnowFlashcard()
                 swipeableStateY.snapTo(0)
             }
 
             isVisibleUp -> {
                 delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
-                onDoNotKnowFlashcard()
+                onSomewhatKnowFlashcard()
                 isVisibleUp = false
             }
         }

@@ -109,7 +109,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
         val newTimestamp = Timestamp(calendar.time)
 
         val updateData = mapOf(
-            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.KNOW.value,
+            FlashcardFields.KNOWLEDGE_LEVEL to KnowledgeLevel.DO_NOT_KNOW.value,
             FlashcardFields.LAST_STUDIED_DATE to currentTime.toDate(),
             FlashcardFields.NEXT_STUDY_DATE to newTimestamp
         )
