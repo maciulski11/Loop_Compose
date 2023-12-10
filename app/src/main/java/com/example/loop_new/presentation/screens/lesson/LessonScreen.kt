@@ -18,6 +18,8 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
 
     currentFlashcard?.let {
         LessonRepeatScreen(
+            navController = navController,
+            boxUid = boxUid,
             flashcardList = flashcardList,
             progressText = viewModel.progressText,
             progress = viewModel.progress,
@@ -45,9 +47,6 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
                 viewModel.moveToNextFlashcard(navController, boxUid)
-            },
-            {
-                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid")
             }
         )
     }

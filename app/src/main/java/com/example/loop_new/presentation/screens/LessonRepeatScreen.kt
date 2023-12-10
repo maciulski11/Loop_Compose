@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -21,7 +22,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.LinearProgressIndicator
@@ -40,23 +46,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Gray2
 import com.example.loop_new.ui.theme.Orange
+import com.example.loop_new.ui.theme.Red
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -64,7 +79,11 @@ import kotlin.math.roundToInt
 @Preview(showBackground = true)
 @Composable
 fun LessonRepeatScreenPreview() {
+    val navController = rememberNavController()
+
     LessonRepeatScreen(
+        navController = navController,
+        boxUid = "",
         flashcardList = createSampleData(),
         progressText = "1/22",
         progress = 1f,
@@ -73,7 +92,6 @@ fun LessonRepeatScreenPreview() {
         onKnowFlashcard = { },
         onSomewhatKnowFlashcard = { },
         onDoNotKnowFlashcard = { },
-        onExitFromSection = { }
     )
 }
 
@@ -90,6 +108,8 @@ fun createSampleData(): List<Flashcard> {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LessonRepeatScreen(
+    navController: NavController,
+    boxUid: String,
     flashcardList: List<Flashcard>,
     progressText: String,
     progress: Float,
@@ -98,8 +118,9 @@ fun LessonRepeatScreen(
     onKnowFlashcard: () -> Unit,
     onSomewhatKnowFlashcard: () -> Unit,
     onDoNotKnowFlashcard: () -> Unit,
-    onExitFromSection: () -> Unit
 ) {
+
+    val showDialogBackState = remember { mutableStateOf(false) }
 
     var isVisibleLeft by remember { mutableStateOf(false) }
     var isVisibleRight by remember { mutableStateOf(false) }
@@ -204,7 +225,7 @@ fun LessonRepeatScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
 
-        Row  {
+        Row {
 
             Image(
                 painter = painterResource(id = R.drawable.baseline_close_24),
@@ -216,7 +237,7 @@ fun LessonRepeatScreen(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
-                        onExitFromSection()
+                        showDialogBackState.value = true
                     }
             )
 
@@ -397,6 +418,22 @@ fun LessonRepeatScreen(
             )
         }
     }
+
+    // Obsługa niestandardowego zachowania powrotu
+    BackHandler {
+        showDialogBackState.value = true
+    }
+
+    if (showDialogBackState.value) {
+        ShowCustomAlertDialog(
+            {
+                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid")
+            },
+            {
+                showDialogBackState.value = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -521,6 +558,85 @@ fun BackSide(flashcard: Flashcard) {
             color = Color.Gray
         )
     }
+}
+
+@Composable
+fun ShowCustomAlertDialog(
+    onBack: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val deleteFlashcard = buildAnnotatedString {
+        append("Are you sure you want to finish the lesson?")
+        pushStyle(
+            SpanStyle(
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline
+            )
+        )
+    }
+
+    AlertDialog(
+        modifier = Modifier
+            .height(150.dp)
+            .width(300.dp)
+            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
+            .border(3.dp, Black, RoundedCornerShape(20.dp))
+            .background(Color.White), // Białe tło z zaokrąglonymi rogami
+        onDismissRequest = { /* Touching the screen turns off it */ },
+        title = {
+            Text(
+                text = deleteFlashcard,
+                fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(start = 12.dp, end = 12.dp, bottom = 20.dp)
+                    .wrapContentWidth(Alignment.CenterHorizontally) // Wyśrodkowanie w poziomie
+            )
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 22.dp),
+                horizontalArrangement = Arrangement.Absolute.Right
+            ) {
+                Button(
+                    modifier = Modifier
+                        .width(78.dp)
+                        .height(42.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Green),
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = "No",
+                        color = Black,
+                        fontSize = 21.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Button(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .align(Alignment.Bottom)
+                        .height(32.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Red),
+                    onClick = {
+                        onBack()
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = "Yes",
+                        color = Black,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+    )
 }
 
 @Composable

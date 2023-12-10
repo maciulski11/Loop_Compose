@@ -1,5 +1,7 @@
 package com.example.loop_new.presentation.screens.box
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
@@ -59,6 +61,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
+import com.example.loop_new.presentation.screens.box.ShowCustomAlertDialog as ShowCustomAlertDialog
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -99,6 +102,9 @@ fun Screen(
     viewModel: BoxViewModel,
     onAddBox: (nameInput: String, describeInput: String) -> Unit,
 ) {
+
+    BackHandler { /* gesture return is off */ }
+
     val showDialogState = remember { mutableStateOf(false) }
 
     val constraints = ConstraintSet {

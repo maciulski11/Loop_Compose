@@ -26,6 +26,8 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
 
         currentFlashcard?.let {
             LessonRepeatScreen(
+                navController = navController,
+                boxUid = boxUid,
                 flashcardList = flashcardList,
                 progressText = viewModel.progressText,
                 progress = viewModel.progress,
@@ -53,9 +55,6 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
                         flashcardUid = flashcardUid
                     )
                     viewModel.moveToNextFlashcard(navController)
-                },
-                {
-                    navController.navigate(NavigationSupport.BoxScreen)
                 }
             )
         }
