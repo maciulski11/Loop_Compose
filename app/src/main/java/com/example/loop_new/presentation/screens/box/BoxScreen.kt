@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -114,7 +115,7 @@ fun Screen(
 
         constrain(boxList) {
             top.linkTo(parent.top)
-            start.linkTo(parent.start)
+            start.linkTo(parent.start, margin = 12.dp)
             end.linkTo(parent.end)
         }
 
@@ -269,11 +270,6 @@ fun BoxItem(box: Box, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                top = 6.dp,
-                start = 2.dp,
-                end = 2.dp
-            )
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -283,31 +279,40 @@ fun BoxItem(box: Box, navController: NavController) {
             },
         contentAlignment = Alignment.Center,
         content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .border(3.dp, Black, RoundedCornerShape(20.dp)),
-            ) {
-                Text(
-                    text = box.name.toString(),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
+            Row {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp, bottom = 6.dp)
-                )
+                        .height(170.dp)
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(bottom = 2.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.box_flashcards),
+                        contentDescription = "Button"
+                    )
 
-                Spacer(modifier = Modifier.height(0.dp))
+                    Text(
+                        text = box.name.toString(),
+                        style = TextStyle(color = White, fontSize = 20.sp),
+                        maxLines = 3,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(
+                                top = 50.dp,
+                                start = 8.dp,
+                                end = 8.dp
+                            )
+                    )
 
-                Text(
-                    text = box.describe.toString(),
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 10.dp)
-                )
+                    Text(
+                        text = "1/50",
+                        style = TextStyle(color = White, fontSize = 12.sp),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = 8.dp, end = 22.dp)
+                    )
+                }
             }
         }
     )
