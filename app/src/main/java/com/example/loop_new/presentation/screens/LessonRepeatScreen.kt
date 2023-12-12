@@ -83,7 +83,6 @@ fun LessonRepeatScreenPreview() {
 
     LessonRepeatScreen(
         navController = navController,
-        boxUid = "",
         flashcardList = createSampleData(),
         progressText = "1/22",
         progress = 1f,
@@ -109,7 +108,6 @@ fun createSampleData(): List<Flashcard> {
 @Composable
 fun LessonRepeatScreen(
     navController: NavController,
-    boxUid: String,
     flashcardList: List<Flashcard>,
     progressText: String,
     progress: Float,
@@ -271,7 +269,7 @@ fun LessonRepeatScreen(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .background(Color.White)
+                .background(White)
         ) {
 
             Box(
@@ -427,7 +425,7 @@ fun LessonRepeatScreen(
     if (showDialogBackState.value) {
         ShowCustomAlertDialog(
             {
-                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid")
+                navController.navigate(NavigationSupport.BoxScreen)
             },
             {
                 showDialogBackState.value = false
@@ -449,7 +447,7 @@ fun FlashcardItem(
             .padding(top = 34.dp, bottom = 40.dp, start = 40.dp, end = 40.dp)
             .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
             .border(3.dp, Blue, RoundedCornerShape(20.dp))
-            .background(Color.White), // Białe tło z zaokrąglonymi rogami
+            .background(White), // Białe tło z zaokrąglonymi rogami
         contentAlignment = Alignment.Center
     ) {
         if (!isAnimating) {
@@ -581,7 +579,7 @@ fun ShowCustomAlertDialog(
             .width(300.dp)
             .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
             .border(3.dp, Black, RoundedCornerShape(20.dp))
-            .background(Color.White), // Białe tło z zaokrąglonymi rogami
+            .background(White), // Białe tło z zaokrąglonymi rogami
         onDismissRequest = { /* Touching the screen turns off it */ },
         title = {
             Text(
