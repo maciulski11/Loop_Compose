@@ -1,6 +1,5 @@
 package com.example.loop_new.presentation.screens.box
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -26,11 +25,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -41,16 +41,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Green
-import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -62,6 +56,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.R
+import com.example.loop_new.ui.theme.*
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.window.Dialog
 import com.example.loop_new.presentation.screens.box.ShowCustomAlertDialog as ShowCustomAlertDialog
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -78,7 +82,7 @@ fun createSampleData(): List<Box> {
     val sampleData = mutableListOf<Box>()
 
     for (i in 1..22) {
-        sampleData.add(Box("Box $i", "Description $i"))
+//        sampleData.add(Box("Box $i", "Description $i"))
     }
     return sampleData
 }
@@ -91,8 +95,8 @@ fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
         navController = navController,
         list = viewModel.boxList.value ?: emptyList(),
         viewModel,
-    ) { nameInput, describeInput ->
-        viewModel.addBox(nameInput, describeInput)
+    ) { nameInput, describeInput, groupColor ->
+        viewModel.addBox(nameInput, describeInput, groupColor)
     }
 }
 
@@ -101,7 +105,7 @@ fun Screen(
     navController: NavController,
     list: List<Box>,
     viewModel: BoxViewModel,
-    onAddBox: (nameInput: String, describeInput: String) -> Unit,
+    onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
 ) {
 
     BackHandler { /* gesture return is off */ }
@@ -115,7 +119,7 @@ fun Screen(
 
         constrain(boxList) {
             top.linkTo(parent.top)
-            start.linkTo(parent.start, margin = 12.dp)
+            start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
 
@@ -161,14 +165,16 @@ fun Screen(
                 }
         )
 
+
         if (showDialogState.value) {
             ShowCustomAlertDialog(
-                { nameInput, describeInput ->
-                    onAddBox(nameInput, describeInput)
+                { nameInput, describeInput, groupColor ->
+                    onAddBox(nameInput, describeInput, groupColor)
                 },
                 {
                     showDialogState.value = false
-                }
+                },
+                showDialogState.value
             )
         }
 
@@ -182,90 +188,188 @@ fun Screen(
     }
 }
 
+enum class SnackbarMessage {
+    None,
+    MaxCharactersExceededName,
+    MaxCharactersExceededDescription
+}
+
 @Composable
 fun ShowCustomAlertDialog(
-    onAddBox: (nameInput: String, describeInput: String) -> Unit,
+    onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
     onDismiss: () -> Unit,
+    showDialog: Boolean
 ) {
     var nameInput by remember { mutableStateOf("") }
     var describeInput by remember { mutableStateOf("") }
+    var backgroundColor by remember { mutableStateOf(PastelWhite) }
+    // // Initialize the selected Color Group with the default color group
+    var selectedColorGroup by remember {
+        mutableStateOf(listOf(PastelWhite, PastelWhite1, PastelWhite2))
+    }
+    val colorGroups = listOf(
+        listOf(PastelMint, PastelMint1, PastelMint2),
+        listOf(PastelYellow, PastelYellow1, PastelYellow2),
+        listOf(PastelRose, PastelRose1, PastelRose2),
+        listOf(PastelWhite, PastelWhite1, PastelWhite2),
+        listOf(PastelBlue, PastelBlue1, PastelBlue2),
+        listOf(PastelPurple, PastelPurple1, PastelPurple2)
+    )
 
-    AlertDialog(
-        modifier = Modifier
-            .height(270.dp)
-            .width(340.dp)
-            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
-            .border(3.dp, Black, RoundedCornerShape(20.dp))
-            .background(White), // Białe tło z zaokrąglonymi rogami
-        onDismissRequest = { /* Touching the screen turns off it */ },
-        title = {
-            Text(
-                text = "Create Box:",
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                modifier = Modifier
-                    .padding(bottom = 6.dp)
-            )
-        },
-        text = {
-            Column {
-                TextField(
-                    value = nameInput,
-                    placeholder = { Text("name") },
-                    onValueChange = { nameInput = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                )
+    val snackbarHostState = remember { SnackbarHostState() }
+    var snackbarMessage by remember { mutableStateOf(SnackbarMessage.None) }
 
-                TextField(
-                    value = describeInput,
-                    placeholder = { Text("description") },
-                    onValueChange = { describeInput = it },
-                    modifier = Modifier.fillMaxWidth()
+    // Display Snackbar
+    LaunchedEffect(snackbarMessage) {
+        when (snackbarMessage) {
+            SnackbarMessage.MaxCharactersExceededName -> {
+                snackbarHostState.showSnackbar(
+                    message = "The maximum number of characters for box name is 35!",
+                    duration = SnackbarDuration.Short
                 )
             }
-        },
-        buttons = {
-            Row(
+
+            SnackbarMessage.MaxCharactersExceededDescription -> {
+                snackbarHostState.showSnackbar(
+                    message = "The maximum number of characters for description is 60!",
+                    duration = SnackbarDuration.Short
+                )
+            }
+
+            SnackbarMessage.None -> { /* Don't do anything */
+            }
+        }
+        snackbarMessage = SnackbarMessage.None // Status reset
+    }
+
+    if (showDialog) {
+        Dialog(onDismissRequest = { onDismiss() }) {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 22.dp),
-                horizontalArrangement = Arrangement.Absolute.Right
+                    .width(350.dp)
+                    .heightIn(min = 300.dp, max = 450.dp)
+                    .background(backgroundColor, shape = RoundedCornerShape(20.dp))
+                    .padding(16.dp)
             ) {
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Black),
-                    onClick = {
-                        onDismiss()
-                    }
-                ) {
+                Column {
                     Text(
-                        text = "Cancel",
-                        color = White
+                        text = "Create Box:",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp
                     )
-                }
 
-                Spacer(modifier = Modifier.width(14.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Green),
-                    onClick = {
-                        onAddBox(nameInput, describeInput)
-                        onDismiss()
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        items(colorGroups) { group ->
+                            val representativeColor = group.first()
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(representativeColor, shape = CircleShape)
+                                    .border(1.dp, Black, shape = CircleShape)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ) {
+                                        backgroundColor = representativeColor
+                                        selectedColorGroup = group
+                                    }
+                            )
+                        }
                     }
-                ) {
-                    Text(
-                        text = "OK",
-                        color = Black
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    TextField(
+                        value = nameInput,
+                        onValueChange = {
+                            if (it.length <= 35) {
+                                nameInput = it
+                            } else {
+                                snackbarMessage = SnackbarMessage.MaxCharactersExceededName
+                            }
+                        },
+                        placeholder = { Text("Box Name - 35 characters") }
                     )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    TextField(
+                        value = describeInput,
+                        maxLines = 3,
+                        onValueChange = {
+                            if (it.length <= 60) {
+                                describeInput = it
+                            } else {
+                                snackbarMessage = SnackbarMessage.MaxCharactersExceededDescription
+                            }
+                        },
+                        placeholder = { Text("Description - 60 characters") }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 22.dp),
+                        horizontalArrangement = Arrangement.Absolute.Right
+                    ) {
+
+                        Button(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(84.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Black),
+                            onClick = {
+                                onDismiss()
+                            }
+                        ) {
+                            Text(
+                                text = "Cancel",
+                                color = White
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(14.dp))
+
+                        Button(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(84.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Green),
+                            onClick = {
+                                onAddBox(nameInput, describeInput, selectedColorGroup)
+                                onDismiss()
+                            }
+                        ) {
+                            Text(
+                                text = "OK",
+                                color = Black
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Kontener na Snackbar
+                    SnackbarHost(hostState = snackbarHostState)
                 }
             }
         }
-    )
+    }
 }
 
 @Composable
 fun BoxItem(box: Box, navController: NavController) {
+
+    val color1 = hexToColor(box.color1 ?: "F0EFEF") // Convert HEX to Color
+    val color2 = hexToColor(box.color2 ?: "C9C9CC")
+    val color3 = hexToColor(box.color3 ?: "B3B5B8")
 
     Box(
         modifier = Modifier
@@ -282,40 +386,80 @@ fun BoxItem(box: Box, navController: NavController) {
             Row {
                 Box(
                     modifier = Modifier
-                        .height(170.dp)
-                        .fillMaxWidth()
+                        .size(190.dp, 160.dp)
                         .weight(1f)
-                        .padding(bottom = 2.dp)
+                        .padding(top = 4.dp, bottom = 4.dp),
+                    contentAlignment = Alignment.BottomCenter
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.box_flashcards),
-                        contentDescription = "Button"
+                    Box(
+                        modifier = Modifier
+                            .size(172.dp, 155.dp)
+                            .background(color3, shape = RoundedCornerShape(10.dp))
+                            .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
                     )
 
-                    Text(
-                        text = box.name.toString(),
-                        style = TextStyle(color = White, fontSize = 20.sp),
-                        maxLines = 3,
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(
-                                top = 50.dp,
-                                start = 8.dp,
-                                end = 8.dp
-                            )
+                            .size(180.dp, 144.dp)
+                            .align(Alignment.BottomCenter)
+                            .background(color2, shape = RoundedCornerShape(10.dp))
+                            .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
                     )
 
-                    Text(
-                        text = "1/50",
-                        style = TextStyle(color = White, fontSize = 12.sp),
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(bottom = 8.dp, end = 22.dp)
-                    )
+                            .size(190.dp, 130.dp)
+                            .align(Alignment.BottomCenter)
+                            .background(color1, shape = RoundedCornerShape(10.dp))
+                            .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
+                    ) {
+                        Text(
+                            text = box.name.toString(),
+                            style = TextStyle(
+                                color = Color.Black,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            minLines = 1,
+                            maxLines = 2,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(
+                                    top = 14.dp,
+                                    start = 10.dp,
+                                    end = 10.dp
+                                )
+                        )
+
+                        Text(
+                            text = box.describe.toString(),
+                            style = TextStyle(color = Color.Black, fontSize = 14.5.sp),
+                            maxLines = 3,
+                            modifier = Modifier
+                                .padding(
+                                    top = 70.dp,
+                                    start = 12.dp,
+                                    end = 10.dp
+                                )
+                        )
+
+                        Text(
+                            text = "1/50",
+                            style = TextStyle(color = Black, fontSize = 12.sp),
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 8.dp, end = 12.dp)
+                        )
+                    }
                 }
             }
         }
     )
+}
+
+// HEX to Color conversion
+private fun hexToColor(hex: String): Color {
+    return Color(android.graphics.Color.parseColor(hex))
 }
 
 @Composable

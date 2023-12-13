@@ -3,6 +3,7 @@ package com.example.loop_new.presentation.screens.box
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
@@ -73,8 +74,14 @@ class BoxViewModel(private val interfaceFirebaseService: InterfaceFirebaseServic
         }
     }
 
-    fun addBox(name: String, describe: String) {
-        val box = Box(name = name, describe = describe)
+    fun addBox(name: String, describe: String, colorGroup: List<Color>) {
+
+        // Przekształć kolory do formatu HEX
+        val color1 = colorToHex(colorGroup[0])
+        val color2 = colorToHex(colorGroup[1])
+        val color3 = colorToHex(colorGroup[2])
+
+        val box = Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
         viewModelScope.launch {
             try {
                 interfaceFirebaseService.addBox(box)
@@ -86,6 +93,15 @@ class BoxViewModel(private val interfaceFirebaseService: InterfaceFirebaseServic
                 Log.e(LogTags.MAIN_VIEW_MODEL, "addBox: Error: $e")
             }
         }
+    }
+
+    // Helper function to convert color to HEX format
+    private fun colorToHex(color: Color): String {
+        return "#%02x%02x%02x".format(
+            (color.red * 255).toInt(),
+            (color.green * 255).toInt(),
+            (color.blue * 255).toInt()
+        )
     }
 }
 

@@ -34,7 +34,7 @@ class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFire
 
     override fun addBox(box: Box) {
         val uid = UUID.randomUUID().toString()
-        val data = Box(box.name, box.describe, uid)
+        val data = Box(box.name, box.describe, uid, box.color1, box.color2, box.color3)
 
         try {
             firestore.collection(BOX).document(uid).set(data)
