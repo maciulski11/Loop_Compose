@@ -1,13 +1,24 @@
 package com.example.loop_new.presentation.navigation
 
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.loop_new.DependencyProvider
+import com.example.loop_new.data.firebase.GoogleAuthService
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard.FlashcardScreen
@@ -18,9 +29,13 @@ import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
+import com.example.loop_new.presentation.screens.sign_in.SignInScreen
+import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.launch
 
 object NavigationSupport {
+    const val SignInScreen = "sign_in_screen"
     const val BoxScreen = "box_screen"
     const val FlashcardScreen = "flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
@@ -30,16 +45,70 @@ object NavigationSupport {
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun NavigationScreens() {
+fun NavigationScreens(googleAuthService: GoogleAuthService) {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     NavHost(
         navController = navController,
-        startDestination = NavigationSupport.BoxScreen
+        startDestination = NavigationSupport.SignInScreen
     ) {
 
+        composable(NavigationSupport.SignInScreen){
+            val viewModel = remember { SignInViewModel() }
+            val state by viewModel.state.collectAsState()
+
+            LaunchedEffect(key1 = Unit) {
+                if (googleAuthService.getSignedInUser() != null) {
+                    navController.navigate(NavigationSupport.BoxScreen)
+                }
+            }
+
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartIntentSenderForResult(),
+                onResult = { result ->
+                    if (result.resultCode == ComponentActivity.RESULT_OK) {
+                        viewModel.viewModelScope.launch {
+                            val signInResult = googleAuthService.signInWithIntent(
+                                intent = result.data ?: return@launch
+                            )
+                            viewModel.onSignInResult(signInResult)
+                        }
+                    }
+                }
+            )
+
+            LaunchedEffect(key1 = state.isSignInSuccessful) {
+                if (state.isSignInSuccessful) {
+                    Toast.makeText(
+                        context,
+                        "Sign in successful",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    googleAuthService.createNewGoogleUser()
+                    navController.navigate(NavigationSupport.BoxScreen)
+                    viewModel.resetState()
+                }
+            }
+
+            SignInScreen(
+                state = state,
+                onSignInClick = {
+                    viewModel.viewModelScope.launch {
+                        val signInIntentSender = googleAuthService.signIn()
+                        launcher.launch(
+                            IntentSenderRequest.Builder(
+                                signInIntentSender ?: return@launch
+                            ).build()
+                        )
+                    }
+                }
+            )
+        }
+
         composable(NavigationSupport.BoxScreen) {
-            val viewModel = remember { BoxViewModel(DependencyProvider().firebaseServices) }
+            val viewModel = remember { BoxViewModel(DependencyProvider().firebaseService) }
 
             BoxScreen(navController, viewModel)
         }
@@ -51,7 +120,7 @@ fun NavigationScreens() {
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
             val viewModel = remember {
                 FlashcardViewModel(
-                    DependencyProvider().firebaseServices,
+                    DependencyProvider().firebaseService,
                     DependencyProvider().mainViewModel,
                     boxUid
                 )
@@ -67,7 +136,7 @@ fun NavigationScreens() {
             val viewModel =
                 remember {
                     AddFlashcardViewModel(
-                        DependencyProvider().firebaseServices,
+                        DependencyProvider().firebaseService,
                         DependencyProvider().translateService,
                         DependencyProvider().dictionaryService
                     )
@@ -82,7 +151,7 @@ fun NavigationScreens() {
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
             val viewModel = remember {
                 LessonViewModel(
-                    DependencyProvider().firebaseServices,
+                    DependencyProvider().firebaseService,
                     DependencyProvider().mainViewModel,
                     boxUid
                 )
@@ -93,7 +162,7 @@ fun NavigationScreens() {
         composable(NavigationSupport.RepeatScreen) {
             val viewModel = remember {
                 RepeatViewModel(
-                    DependencyProvider().firebaseServices,
+                    DependencyProvider().firebaseService,
                     DependencyProvider().mainViewModel
                 )
             }
