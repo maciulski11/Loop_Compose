@@ -1,6 +1,6 @@
 package com.example.loop_new.domain.services
 
-interface InterfaceService {
+interface Service {
 
     fun playAudioFromUrl(audioUrl: String)
 

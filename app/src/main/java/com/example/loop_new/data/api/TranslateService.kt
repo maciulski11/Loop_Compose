@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.api.translate.TranslateRequest
 import com.example.loop_new.domain.model.api.translate.TranslateResponse
-import com.example.loop_new.domain.services.InterfaceTranslateService
+import com.example.loop_new.domain.services.TranslateService
 import com.google.gson.Gson
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 
 @DelicateCoroutinesApi
-class TranslateService : InterfaceTranslateService {
+class TranslateService : TranslateService {
 
     override fun onTranslationResult(word: String, onTranslateWord: (String) -> Unit) {
 

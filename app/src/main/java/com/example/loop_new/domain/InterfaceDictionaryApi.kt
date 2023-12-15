@@ -1,7 +1,6 @@
-package com.example.loop_new.domain.services
+package com.example.loop_new.domain
 
 import com.example.loop_new.domain.model.api.dictionary.DictionaryResponse
-import com.example.loop_new.domain.model.firebase.Flashcard
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

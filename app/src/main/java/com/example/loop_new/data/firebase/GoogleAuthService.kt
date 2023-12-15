@@ -3,10 +3,10 @@ package com.example.loop_new.data.firebase
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
-import android.util.Log
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.User
 import com.example.loop_new.domain.model.firebase.google.SignInResult
+import com.example.loop_new.domain.services.GoogleAuthService
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.GoogleAuthProvider
@@ -29,9 +29,8 @@ import kotlin.coroutines.cancellation.CancellationException
 class GoogleAuthService(
     private val context: Context,
     private val oneTapClient: SignInClient
-) {
+) : GoogleAuthService {
     private val auth = Firebase.auth
-    private val db = FirebaseFirestore.getInstance()
 
     /**
      * Initiates the Google Sign-In process.
@@ -43,7 +42,7 @@ class GoogleAuthService(
      *
      * @return An IntentSender for the sign-in activity, or null if an error occurs.
      */
-    suspend fun signIn(): IntentSender? {
+    override suspend fun signIn(): IntentSender? {
         // Try to start the Google Sign-In process and handle exceptions
         val result = try {
             oneTapClient.beginSignIn(
@@ -93,7 +92,7 @@ class GoogleAuthService(
      * @param intent The Intent received from the Google Sign-In process.
      * @return A SignInResult object containing the user information or an error message.
      */
-    suspend fun signInWithIntent(intent: Intent): SignInResult {
+    override suspend fun signInWithIntent(intent: Intent): SignInResult {
         // Extracting Google Sign-In credentials from the intent
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         // ID token from the Google Sign-In credentials
@@ -129,60 +128,13 @@ class GoogleAuthService(
     }
 
     /**
-     * Creates a new user record in the Firestore database using Google user data.
-     *
-     * This function checks if a Google user is currently signed in and, if so,
-     * adds their information to the Firestore database under the "users" collection.
-     * It handles success and failure scenarios for the database operation.
-     */
-    fun createNewGoogleUser() {
-        // Fetch the currently signed-in Google user.
-        val signedInUser = getSignedInUser()
-
-        if (signedInUser != null) {
-            try {
-                // Attempt to add the Google user's data to the Firestore database
-                db.collection("users").document(signedInUser.uid ?: "")
-                    .set(signedInUser)
-                    .addOnSuccessListener {
-                        Log.d("REPO_CREATE_NEW_GOOGLE_USER", "Successful, created new google user!")
-                    }
-                    .addOnFailureListener { e ->
-                        // Error: Failed to create new user
-                        Log.d("REPO_CREATE_NEW_GOOGLE_USER", "${e.printStackTrace()}")
-                    }
-            } catch (e: Exception) {
-                // General error
-                Log.d("REPO_CREATE_NEW_GOOGLE_USER", "${e.printStackTrace()}")
-            }
-        }
-    }
-
-    /**
-     * Fetch the currently signed-in Google user's data.
-     *
-     * This function checks the Firebase Authentication's current user and, if a user is signed in,
-     * creates and returns a User object containing the user's data
-     *
-     * @return A User object with the signed-in user's data, or null if no user is signed in.
-     */
-    fun getSignedInUser(): User? = auth.currentUser?.run {
-        User(
-            email = email,
-            uid = uid,
-            username = displayName,
-            profilePictureUrl = photoUrl?.toString()
-        )
-    }
-
-    /**
      * Signs out the currently signed-in Google user.
      *
      * This is a suspending function that first signs out of the Google One Tap Sign-In API,
      * and then signs out from Firebase Authentication. The coroutine is suspended until
      * Google's sign-out process is completed.
      */
-    suspend fun signOut() {
+    override suspend fun signOut() {
         try {
             oneTapClient.signOut().await() // Sign out from Google One Tap Sign-In
             auth.signOut()                 // Sign out from Firebase Authentication

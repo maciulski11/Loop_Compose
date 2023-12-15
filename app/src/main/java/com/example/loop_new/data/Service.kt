@@ -1,10 +1,10 @@
 package com.example.loop_new.data
 
 import android.media.MediaPlayer
-import com.example.loop_new.domain.services.InterfaceService
+import com.example.loop_new.domain.services.Service
 import java.io.IOException
 
-class Service: InterfaceService {
+class Service: Service {
     override fun playAudioFromUrl(audioUrl: String) {
 
         MediaPlayer().apply {

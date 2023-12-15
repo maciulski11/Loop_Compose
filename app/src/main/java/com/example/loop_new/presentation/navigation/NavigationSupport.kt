@@ -17,8 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.loop_new.DependencyProvider
-import com.example.loop_new.data.firebase.GoogleAuthService
+import com.example.loop_new.di.DependencyProvider
+import com.example.loop_new.domain.services.GoogleAuthService
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard.FlashcardScreen
@@ -59,7 +59,7 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
             val state by viewModel.state.collectAsState()
 
             LaunchedEffect(key1 = Unit) {
-                if (googleAuthService.getSignedInUser() != null) {
+                if (DependencyProvider().firebaseService.getSignedInUser() != null) {
                     navController.navigate(NavigationSupport.BoxScreen)
                 }
             }
@@ -86,7 +86,7 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
                         Toast.LENGTH_LONG
                     ).show()
 
-                    googleAuthService.createNewGoogleUser()
+                    DependencyProvider().firebaseService.createNewGoogleUser()
                     navController.navigate(NavigationSupport.BoxScreen)
                     viewModel.resetState()
                 }

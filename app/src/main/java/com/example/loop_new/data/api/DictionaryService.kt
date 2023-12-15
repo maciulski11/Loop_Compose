@@ -4,15 +4,16 @@ import android.util.Log
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.api.dictionary.DictionaryResponse
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.InterfaceDictionaryApi
-import com.example.loop_new.domain.services.InterfaceDictionaryService
+import com.example.loop_new.domain.InterfaceDictionaryApi
+import com.example.loop_new.domain.services.DictionaryService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class DictionaryService : InterfaceDictionaryService {
+class DictionaryService :
+    DictionaryService {
 
     private val dictionaryRetrofit = Retrofit.Builder()
         .baseUrl("https://api.dictionaryapi.dev/api/v2/entries/en/")// Main url which will be use to every ask

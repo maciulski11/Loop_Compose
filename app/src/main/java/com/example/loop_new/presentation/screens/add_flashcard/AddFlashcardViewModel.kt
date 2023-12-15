@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.InterfaceDictionaryService
-import com.example.loop_new.domain.services.InterfaceFirebaseService
-import com.example.loop_new.domain.services.InterfaceTranslateService
+import com.example.loop_new.domain.services.DictionaryService
+import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.domain.services.TranslateService
 import kotlinx.coroutines.launch
 
 class AddFlashcardViewModel(
-    private val interfaceFirebaseService: InterfaceFirebaseService,
-    private val interfaceTranslateService: InterfaceTranslateService,
-    private val interfaceDictionaryService: InterfaceDictionaryService
+    private val firebaseService: FirebaseService,
+    private val translateService: TranslateService,
+    private val dictionaryService: DictionaryService
 ) : ViewModel() {
 
     var translate: String by mutableStateOf("")
@@ -44,7 +44,7 @@ class AddFlashcardViewModel(
 
         viewModelScope.launch {
             try {
-                interfaceFirebaseService.addFlashcard(flashcardData, boxUid)
+                firebaseService.addFlashcard(flashcardData, boxUid)
                 Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Success")
 
             } catch (e: Exception) {
@@ -56,13 +56,13 @@ class AddFlashcardViewModel(
 
     fun fetchInfoOfWord(word: String) {
 
-        interfaceTranslateService.onTranslationResult(word) { translateWord ->
+        translateService.onTranslationResult(word) { translateWord ->
 
             translate = translateWord
             Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "Translation successful: $translateWord")
         }
 
-        interfaceDictionaryService.onFetchWordInfo(word) { flashcard ->
+        dictionaryService.onFetchWordInfo(word) { flashcard ->
 
             meaning = flashcard.meaning.toString()
             example = flashcard.example.toString()

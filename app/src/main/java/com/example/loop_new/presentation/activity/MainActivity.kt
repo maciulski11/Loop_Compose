@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
-import com.example.loop_new.DependencyProvider
-import com.example.loop_new.data.firebase.FirebaseService
+import com.example.loop_new.di.DependencyProvider
 import com.example.loop_new.data.firebase.GoogleAuthService
-import com.example.loop_new.domain.services.InterfaceFirebaseService
 import com.example.loop_new.presentation.navigation.NavigationScreens
 import com.example.loop_new.ui.theme.Loop_NewTheme
 import com.google.android.gms.auth.api.identity.Identity
@@ -15,9 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-
-    private val interfaceFirebaseService: InterfaceFirebaseService =
-        FirebaseService(DependencyProvider().firebaseFirestore)
 
     /**
      * Definition of the `googleAuthService` variable with lazy initialization.
@@ -41,7 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            interfaceFirebaseService.addFlashcardsToRepeatSection()
+            DependencyProvider().firebaseService.addFlashcardsToRepeatSection()
         }
 
         setContent {

@@ -2,9 +2,15 @@ package com.example.loop_new.domain.services
 
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.User
 import kotlinx.coroutines.flow.Flow
 
-interface InterfaceFirebaseService {
+interface FirebaseService {
+
+    //TODO: do zmiany na ogolnie usera, chyba
+    fun createNewGoogleUser()
+
+    fun getSignedInUser(): User?
 
     fun addBox(box: Box)
 
@@ -31,5 +37,3 @@ interface InterfaceFirebaseService {
     fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String)
 
 }
-
-class SampleDataRepository

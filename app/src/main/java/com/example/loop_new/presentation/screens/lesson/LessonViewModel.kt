@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LessonViewModel(
-    private val interfaceFirebaseService: InterfaceFirebaseService,
+    private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String,
 ) : ViewModel() {
@@ -37,7 +37,7 @@ class LessonViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                interfaceFirebaseService.fetchListOfFlashcardInLesson(boxUid)
+                firebaseService.fetchListOfFlashcardInLesson(boxUid)
                     .collect { newFlashcardList ->
                         flashcardList.value = newFlashcardList
                         _currentFlashcard.value = newFlashcardList.firstOrNull()
@@ -89,19 +89,19 @@ class LessonViewModel(
 
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
+            firebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
         }
     }
 
     fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
+            firebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
         }
     }
 
     fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
+            firebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
         }
     }
 

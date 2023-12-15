@@ -7,12 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
 class FlashcardViewModel(
-    private val interfaceFirebaseService: InterfaceFirebaseService,
+    private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String
 ) : ViewModel() {
@@ -26,7 +26,7 @@ class FlashcardViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                val flashcardFlow = interfaceFirebaseService.fetchListOfFlashcardInBox(boxUid)
+                val flashcardFlow = firebaseService.fetchListOfFlashcardInBox(boxUid)
 
                 flashcardFlow.collect {
                     flashcardList.value = it
@@ -43,7 +43,7 @@ class FlashcardViewModel(
 
     fun deleteFlashcard(boxUid: String, flashcardUid: String) {
         try {
-            interfaceFirebaseService.deleteFlashcard(boxUid, flashcardUid)
+            firebaseService.deleteFlashcard(boxUid, flashcardUid)
             Log.d(LogTags.BOX_VIEW_MODEL, "deleteFlashcard: Success")
 
         } catch (e: Exception) {

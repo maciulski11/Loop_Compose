@@ -6,9 +6,12 @@ import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
-import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.model.firebase.User
+import com.example.loop_new.domain.services.FirebaseService
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +22,8 @@ import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
 
-class FirebaseService(private val firestore: FirebaseFirestore) : InterfaceFirebaseService {
+class FirebaseService(private val firestore: FirebaseFirestore) :
+    FirebaseService {
 
     companion object {
         const val BOX = "box"
@@ -27,10 +31,58 @@ class FirebaseService(private val firestore: FirebaseFirestore) : InterfaceFireb
         const val REPEAT = "repeat"
     }
 
-    private val currentTime = Timestamp.now()
+    private val auth = Firebase.auth
 
+    private val currentTime = Timestamp.now()
     // Create a calendar with date
     private val calendar = Calendar.getInstance()
+
+    /**
+     * Creates a new user record in the Firestore database using Google user data.
+     *
+     * This function checks if a Google user is currently signed in and, if so,
+     * adds their information to the Firestore database under the "users" collection.
+     * It handles success and failure scenarios for the database operation.
+     */
+    override fun createNewGoogleUser() {
+        // Fetch the currently signed-in Google user.
+        val signedInUser = getSignedInUser()
+
+        if (signedInUser != null) {
+            try {
+                // Attempt to add the Google user's data to the Firestore database
+                firestore.collection("users").document(signedInUser.uid ?: "")
+                    .set(signedInUser)
+                    .addOnSuccessListener {
+                        Log.d("REPO_CREATE_NEW_GOOGLE_USER", "Successful, created new google user!")
+                    }
+                    .addOnFailureListener { e ->
+                        // Error: Failed to create new user
+                        Log.d("REPO_CREATE_NEW_GOOGLE_USER", "${e.printStackTrace()}")
+                    }
+            } catch (e: Exception) {
+                // General error
+                Log.d("REPO_CREATE_NEW_GOOGLE_USER", "${e.printStackTrace()}")
+            }
+        }
+    }
+
+    /**
+     * Fetch the currently signed-in Google user's data.
+     *
+     * This function checks the Firebase Authentication's current user and, if a user is signed in,
+     * creates and returns a User object containing the user's data
+     *
+     * @return A User object with the signed-in user's data, or null if no user is signed in.
+     */
+    override fun getSignedInUser(): User? = auth.currentUser?.run {
+        User(
+            email = email,
+            uid = uid,
+            username = displayName,
+            profilePictureUrl = photoUrl?.toString()
+        )
+    }
 
     override fun addBox(box: Box) {
         val uid = UUID.randomUUID().toString()

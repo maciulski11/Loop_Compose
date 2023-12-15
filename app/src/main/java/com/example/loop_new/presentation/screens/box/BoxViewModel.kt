@@ -8,12 +8,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.services.FirebaseService
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
 
-class BoxViewModel(private val interfaceFirebaseService: InterfaceFirebaseService) : ViewModel() {
+class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
 
     val boxList: MutableState<List<Box>?> = mutableStateOf(null)
 
@@ -61,7 +61,7 @@ class BoxViewModel(private val interfaceFirebaseService: InterfaceFirebaseServic
     private fun fetchListOfBox() {
         viewModelScope.launch {
             try {
-                val boxFlow = interfaceFirebaseService.fetchListOfBox()
+                val boxFlow = firebaseService.fetchListOfBox()
                 boxFlow.collect { boxes ->
                     boxList.value = boxes
 
@@ -84,7 +84,7 @@ class BoxViewModel(private val interfaceFirebaseService: InterfaceFirebaseServic
         val box = Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
         viewModelScope.launch {
             try {
-                interfaceFirebaseService.addBox(box)
+                firebaseService.addBox(box)
 
                 Log.d(LogTags.MAIN_VIEW_MODEL, "addBox: Correct addition of box")
 

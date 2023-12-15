@@ -1,4 +1,4 @@
-package com.example.loop_new
+package com.example.loop_new.di
 
 import com.example.loop_new.data.Service
 import com.example.loop_new.data.api.DictionaryService
@@ -11,7 +11,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 @OptIn(DelicateCoroutinesApi::class)
 class DependencyProvider {
     // Firebase
-    val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val firebaseFirestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     val firebaseService: FirebaseService = FirebaseService(firebaseFirestore)
     // Translate Api
     val translateService: TranslateService = TranslateService()

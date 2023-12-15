@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.InterfaceFirebaseService
+import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RepeatViewModel(
-    private val interfaceFirebaseService: InterfaceFirebaseService,
+    private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class RepeatViewModel(
     private fun fetchListOfFlashcard() {
         viewModelScope.launch {
             try {
-                interfaceFirebaseService.fetchListOfFlashcardInRepeat()
+                firebaseService.fetchListOfFlashcardInRepeat()
                     .collect { newFlashcardList ->
                         flashcardList.value = newFlashcardList
                         Log.d("RepeatViewModel", "New flashcard list: $newFlashcardList")
@@ -94,22 +94,22 @@ class RepeatViewModel(
 
     fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
-            interfaceFirebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
+            firebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
+            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
         }
     }
 
     fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
-            interfaceFirebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
+            firebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
+            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
         }
     }
 
     fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
         viewModelScope.launch {
-            interfaceFirebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
-            interfaceFirebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
+            firebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
+            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
         }
     }
 
