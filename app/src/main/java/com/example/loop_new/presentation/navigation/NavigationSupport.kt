@@ -17,8 +17,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.loop_new.di.DependencyProvider
+import com.example.loop_new.domain.services.DictionaryService
+import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.GoogleAuthService
+import com.example.loop_new.domain.services.Service
+import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard.FlashcardScreen
@@ -31,7 +34,7 @@ import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
 import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
+import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
 object NavigationSupport {
@@ -43,9 +46,8 @@ object NavigationSupport {
     const val RepeatScreen = "repeat_screen"
 }
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun NavigationScreens(googleAuthService: GoogleAuthService) {
+fun NavigationScreens(googleAuthService: GoogleAuthService, firebaseService: FirebaseService, service: Service, translateService: TranslateService, dictionaryService: DictionaryService) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
@@ -59,7 +61,7 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
             val state by viewModel.state.collectAsState()
 
             LaunchedEffect(key1 = Unit) {
-                if (DependencyProvider().firebaseService.getSignedInUser() != null) {
+                if (firebaseService.getSignedInUser() != null) {
                     navController.navigate(NavigationSupport.BoxScreen)
                 }
             }
@@ -86,7 +88,7 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
                         Toast.LENGTH_LONG
                     ).show()
 
-                    DependencyProvider().firebaseService.createNewGoogleUser()
+                    firebaseService.createNewGoogleUser()
                     navController.navigate(NavigationSupport.BoxScreen)
                     viewModel.resetState()
                 }
@@ -108,7 +110,7 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
         }
 
         composable(NavigationSupport.BoxScreen) {
-            val viewModel = remember { BoxViewModel(DependencyProvider().firebaseService) }
+            val viewModel = remember { BoxViewModel(firebaseService) }
 
             BoxScreen(navController, viewModel)
         }
@@ -120,8 +122,8 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
             val viewModel = remember {
                 FlashcardViewModel(
-                    DependencyProvider().firebaseService,
-                    DependencyProvider().mainViewModel,
+                    firebaseService,
+                    MainViewModel(service),
                     boxUid
                 )
             }
@@ -136,9 +138,9 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
             val viewModel =
                 remember {
                     AddFlashcardViewModel(
-                        DependencyProvider().firebaseService,
-                        DependencyProvider().translateService,
-                        DependencyProvider().dictionaryService
+                        firebaseService,
+                        translateService,
+                        dictionaryService
                     )
                 }
             AddFlashcardScreen(navController, boxUid, viewModel)
@@ -151,8 +153,8 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
             val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
             val viewModel = remember {
                 LessonViewModel(
-                    DependencyProvider().firebaseService,
-                    DependencyProvider().mainViewModel,
+                    firebaseService,
+                    MainViewModel(service),
                     boxUid
                 )
             }
@@ -162,8 +164,8 @@ fun NavigationScreens(googleAuthService: GoogleAuthService) {
         composable(NavigationSupport.RepeatScreen) {
             val viewModel = remember {
                 RepeatViewModel(
-                    DependencyProvider().firebaseService,
-                    DependencyProvider().mainViewModel
+                    firebaseService,
+                    MainViewModel(service)
                 )
             }
             RepeatScreen(navController, viewModel)

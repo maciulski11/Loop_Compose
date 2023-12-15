@@ -9,10 +9,14 @@ import com.example.loop_new.data.firebase.GoogleAuthService
 import com.example.loop_new.presentation.navigation.NavigationScreens
 import com.example.loop_new.ui.theme.Loop_NewTheme
 import com.google.android.gms.auth.api.identity.Identity
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 class MainActivity : ComponentActivity() {
+
+    private val dependencyProvider = DependencyProvider()
 
     /**
      * Definition of the `googleAuthService` variable with lazy initialization.
@@ -32,16 +36,39 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private val firebaseService by lazy {
+        dependencyProvider.firebaseService
+    }
+
+    private val translateService by lazy {
+        dependencyProvider.translateService
+    }
+
+    private val dictionaryService by lazy {
+        dependencyProvider.dictionaryService
+    }
+
+    private val service by lazy {
+        dependencyProvider.service
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            DependencyProvider().firebaseService.addFlashcardsToRepeatSection()
+            firebaseService.addFlashcardsToRepeatSection()
         }
 
         setContent {
             Loop_NewTheme {
-                NavigationScreens(googleAuthService)
+                NavigationScreens(
+                    googleAuthService = googleAuthService,
+                    firebaseService = firebaseService,
+                    translateService = translateService,
+                    dictionaryService = dictionaryService,
+                    service = service
+                )
             }
         }
     }
