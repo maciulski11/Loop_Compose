@@ -19,7 +19,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
 
-class FirebaseServices(private val firestore: FirebaseFirestore) : InterfaceFirebaseService {
+class FirebaseService(private val firestore: FirebaseFirestore) : InterfaceFirebaseService {
 
     companion object {
         const val BOX = "box"

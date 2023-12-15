@@ -12,7 +12,7 @@ import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
 class FlashcardViewModel(
-    private val interfaceFirebaseServices: InterfaceFirebaseService,
+    private val interfaceFirebaseService: InterfaceFirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String
 ) : ViewModel() {
@@ -26,7 +26,7 @@ class FlashcardViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                val flashcardFlow = interfaceFirebaseServices.fetchListOfFlashcardInBox(boxUid)
+                val flashcardFlow = interfaceFirebaseService.fetchListOfFlashcardInBox(boxUid)
 
                 flashcardFlow.collect {
                     flashcardList.value = it
@@ -43,7 +43,7 @@ class FlashcardViewModel(
 
     fun deleteFlashcard(boxUid: String, flashcardUid: String) {
         try {
-            interfaceFirebaseServices.deleteFlashcard(boxUid, flashcardUid)
+            interfaceFirebaseService.deleteFlashcard(boxUid, flashcardUid)
             Log.d(LogTags.BOX_VIEW_MODEL, "deleteFlashcard: Success")
 
         } catch (e: Exception) {

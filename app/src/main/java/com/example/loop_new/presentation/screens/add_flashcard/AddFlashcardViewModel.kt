@@ -10,12 +10,12 @@ import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.InterfaceDictionaryService
 import com.example.loop_new.domain.services.InterfaceFirebaseService
-import com.example.loop_new.domain.services.InterfaceTranslateServices
+import com.example.loop_new.domain.services.InterfaceTranslateService
 import kotlinx.coroutines.launch
 
 class AddFlashcardViewModel(
     private val interfaceFirebaseService: InterfaceFirebaseService,
-    private val interfaceTranslateServices: InterfaceTranslateServices,
+    private val interfaceTranslateService: InterfaceTranslateService,
     private val interfaceDictionaryService: InterfaceDictionaryService
 ) : ViewModel() {
 
@@ -56,7 +56,7 @@ class AddFlashcardViewModel(
 
     fun fetchInfoOfWord(word: String) {
 
-        interfaceTranslateServices.onTranslationResult(word) { translateWord ->
+        interfaceTranslateService.onTranslationResult(word) { translateWord ->
 
             translate = translateWord
             Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "Translation successful: $translateWord")

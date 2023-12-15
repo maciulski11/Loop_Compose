@@ -32,8 +32,4 @@ interface InterfaceFirebaseService {
 
 }
 
-class SampleDataRepository {
-
-
-
-}
+class SampleDataRepository

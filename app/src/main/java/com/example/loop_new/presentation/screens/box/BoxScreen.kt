@@ -59,12 +59,15 @@ import com.example.loop_new.R
 import com.example.loop_new.ui.theme.*
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
 import com.example.loop_new.presentation.screens.box.ShowCustomAlertDialog as ShowCustomAlertDialog
 
@@ -286,6 +289,7 @@ fun ShowCustomAlertDialog(
 
                     TextField(
                         value = nameInput,
+                        maxLines = 2,
                         onValueChange = {
                             if (it.length <= 35) {
                                 nameInput = it
@@ -293,7 +297,20 @@ fun ShowCustomAlertDialog(
                                 snackbarMessage = SnackbarMessage.MaxCharactersExceededName
                             }
                         },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Go,
+                        ),
                         placeholder = { Text("Box Name - 35 characters") }
+                    )
+
+                    // Licznik znaków jako adnotacja
+                    Text(
+                        text = "${nameInput.length}/${35}",
+                        modifier = Modifier
+                            .padding(top = 4.dp, end = 12.dp)
+                            .align(Alignment.End),
+                        style = TextStyle(color = Gray),
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -308,7 +325,19 @@ fun ShowCustomAlertDialog(
                                 snackbarMessage = SnackbarMessage.MaxCharactersExceededDescription
                             }
                         },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Go,
+                        ),
                         placeholder = { Text("Description - 60 characters") }
+                    )
+
+                    Text(
+                        text = "${describeInput.length}/${60}",
+                        modifier = Modifier
+                            .padding(top = 4.dp, end = 12.dp)
+                            .align(Alignment.End),
+                        style = TextStyle(color = Gray),
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -367,7 +396,8 @@ fun ShowCustomAlertDialog(
 @Composable
 fun BoxItem(box: Box, navController: NavController) {
 
-    val color1 = hexToColor(box.color1 ?: "F0EFEF") // Convert HEX to Color
+    // Convert HEX to Color
+    val color1 = hexToColor(box.color1 ?: "F0EFEF")
     val color2 = hexToColor(box.color2 ?: "C9C9CC")
     val color3 = hexToColor(box.color3 ?: "B3B5B8")
 

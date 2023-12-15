@@ -19,7 +19,7 @@ val Green = Color(0xFF299C2D)
 val Red = Color(0xFFBD271C)
 val Gray = Color(0xFF888888)
 val Gray2 = Color(0xFFA5A5A5)
-val Test = Color(0xFFBCBDBC)
+val Test = Color(0xFF91795B)
 
 val PastelWhite = Color(0xFFF0EFEF)
 val PastelWhite1 = Color(0xFFC9C9CC)

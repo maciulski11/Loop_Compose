@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.api.translate.TranslateRequest
 import com.example.loop_new.domain.model.api.translate.TranslateResponse
-import com.example.loop_new.domain.services.InterfaceTranslateServices
+import com.example.loop_new.domain.services.InterfaceTranslateService
 import com.google.gson.Gson
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 
 @DelicateCoroutinesApi
-class TranslateService : InterfaceTranslateServices {
+class TranslateService : InterfaceTranslateService {
 
     override fun onTranslationResult(word: String, onTranslateWord: (String) -> Unit) {
 
@@ -65,7 +65,7 @@ class TranslateService : InterfaceTranslateServices {
             .url("https://api-free.deepl.com/v2/translate")
             .addHeader("Authorization", "DeepL-Auth-Key $authKey")
             .addHeader("Content-Type", "application/json")
-            .post(RequestBody.create(mediaType, requestBodyJson))
+            .post(requestBodyJson.toRequestBody(mediaType))
             .build()
 
         return client.newCall(request).execute()

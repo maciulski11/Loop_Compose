@@ -372,7 +372,7 @@ fun LessonRepeatScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(White)
                 .padding(start = 14.dp, end = 14.dp, bottom = 30.dp, top = 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
