@@ -29,11 +29,14 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         const val BOX = "box"
         const val FLASHCARD = "flashcard"
         const val REPEAT = "repeat"
+        const val USERS = "users"
     }
 
     private val auth = Firebase.auth
+    private val currentUser = auth.currentUser?.uid ?: ""
 
     private val currentTime = Timestamp.now()
+
     // Create a calendar with date
     private val calendar = Calendar.getInstance()
 
@@ -51,7 +54,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         if (signedInUser != null) {
             try {
                 // Attempt to add the Google user's data to the Firestore database
-                firestore.collection("users").document(signedInUser.uid ?: "")
+                firestore.collection(USERS).document(signedInUser.uid ?: "")
                     .set(signedInUser)
                     .addOnSuccessListener {
                         Log.d("REPO_CREATE_NEW_GOOGLE_USER", "Successful, created new google user!")
@@ -82,6 +85,67 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             username = displayName,
             profilePictureUrl = photoUrl?.toString()
         )
+    }
+
+    override fun addBoxToUserLearningSection(boxUid: String) {
+        // Pobierz box
+        firestore.collection(BOX).document(boxUid).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val boxData = document.data
+                    if (boxData != null) {
+                        // Teraz pobierz fiszki związane z tym boxem
+                        firestore.collection(BOX).document(boxUid)
+                            .collection(FLASHCARD).whereEqualTo("boxUid", boxUid).get()
+                            .addOnSuccessListener { querySnapshot ->
+                                val flashcards = querySnapshot.documents.mapNotNull { document ->
+                                    document.toObject(Flashcard::class.java)
+                                }
+                                Log.d("Firestore", "Flashcards: $flashcards")
+
+                                // Teraz masz boxData i listę flashcards
+                                // Możesz przekazać te dane tam, gdzie są potrzebne
+                                // Na przykład, możesz je dodać do kolekcji użytkownika
+                                addUserBoxWithFlashcards(currentUser, boxUid, boxData, flashcards)
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("FirestoreError", "Błąd pobierania fiszek: ${e.message}")
+                            }
+                    }
+                } else {
+                    Log.d("Firestore", "Box nie istnieje")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirestoreError", "Błąd pobierania boxa: ${e.message}")
+            }
+
+    }
+
+    private fun addUserBoxWithFlashcards(
+        userUid: String,
+        boxUid: String,
+        boxData: Map<String, Any>,
+        flashcards: List<Flashcard>
+    ) {
+        // Dodaj box i fiszki do kolekcji użytkownika
+        val userBoxRef = firestore.collection(USERS).document(userUid)
+            .collection(BOX).document(boxUid)
+
+        firestore.runBatch { batch ->
+            // Dodaj box
+            batch.set(userBoxRef, boxData)
+
+            // Dodaj każdą fiszkę
+            flashcards.forEach { flashcard ->
+                val flashcardRef = userBoxRef.collection(FLASHCARD).document(flashcard.uid ?: "")
+                batch.set(flashcardRef, flashcard)
+            }
+        }.addOnSuccessListener {
+            Log.d("FirestoreSuccess", "Box i fiszki dodane pomyślnie do kolekcji użytkownika")
+        }.addOnFailureListener { e ->
+            Log.e("FirestoreError", "Błąd dodawania boxa i fiszek: ${e.message}")
+        }
     }
 
     override fun addBox(box: Box) {

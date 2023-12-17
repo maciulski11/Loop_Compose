@@ -81,6 +81,8 @@ dependencies {
     implementation("androidx.compose.material:material:1.5.4")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
+    implementation("androidx.compose.animation:animation:1.0.0")
+
     // Firebase
     implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")

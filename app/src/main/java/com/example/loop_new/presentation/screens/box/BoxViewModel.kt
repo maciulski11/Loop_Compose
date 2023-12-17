@@ -65,11 +65,11 @@ class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
                 boxFlow.collect { boxes ->
                     boxList.value = boxes
 
-                    Log.d(LogTags.MAIN_VIEW_MODEL, "fetchListOfBox: Success!")
+                    Log.d(LogTags.BOX_VIEW_MODEL, "fetchListOfBox: Success!")
                 }
             } catch (e: Exception) {
 
-                Log.e(LogTags.MAIN_VIEW_MODEL, "fetchListOfBox: Error: $e")
+                Log.e(LogTags.BOX_VIEW_MODEL, "fetchListOfBox: Error: $e")
             }
         }
     }
@@ -86,11 +86,11 @@ class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
             try {
                 firebaseService.addBox(box)
 
-                Log.d(LogTags.MAIN_VIEW_MODEL, "addBox: Correct addition of box")
+                Log.d(LogTags.BOX_VIEW_MODEL, "addBox: Correct addition of box")
 
             } catch (e: Exception) {
 
-                Log.e(LogTags.MAIN_VIEW_MODEL, "addBox: Error: $e")
+                Log.e(LogTags.BOX_VIEW_MODEL, "addBox: Error: $e")
             }
         }
     }

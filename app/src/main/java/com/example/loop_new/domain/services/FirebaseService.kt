@@ -12,6 +12,8 @@ interface FirebaseService {
 
     fun getSignedInUser(): User?
 
+    fun addBoxToUserLearningSection(boxUid: String)
+
     fun addBox(box: Box)
 
     fun addFlashcard(flashcard: Flashcard, boxUid: String)

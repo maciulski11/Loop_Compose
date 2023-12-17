@@ -32,11 +32,24 @@ class FlashcardViewModel(
                     flashcardList.value = it
                 }
 
-                Log.d(LogTags.BOX_VIEW_MODEL, "fetchListOfFlashcard: Success")
+                Log.d(LogTags.FLASHCARD_VIEW_MODEL, "fetchListOfFlashcard: Success")
 
             } catch (e: Exception) {
 
-                Log.e(LogTags.BOX_VIEW_MODEL, "fetchListOfFlashcard: Error: $e")
+                Log.e(LogTags.FLASHCARD_VIEW_MODEL, "fetchListOfFlashcard: Error: $e")
+            }
+        }
+    }
+
+    fun addBoxToUserLearningSection(boxUid: String) {
+        viewModelScope.launch {
+            try {
+                firebaseService.addBoxToUserLearningSection(boxUid)
+                Log.d(LogTags.FLASHCARD_VIEW_MODEL, "addBoxToUserLearningSection: Success")
+
+            } catch (e: Exception) {
+
+                Log.e(LogTags.FLASHCARD_VIEW_MODEL, "addBoxToUserLearningSection: Error: $e")
             }
         }
     }
@@ -44,11 +57,11 @@ class FlashcardViewModel(
     fun deleteFlashcard(boxUid: String, flashcardUid: String) {
         try {
             firebaseService.deleteFlashcard(boxUid, flashcardUid)
-            Log.d(LogTags.BOX_VIEW_MODEL, "deleteFlashcard: Success")
+            Log.d(LogTags.FLASHCARD_VIEW_MODEL, "deleteFlashcard: Success")
 
         } catch (e: Exception) {
 
-            Log.e(LogTags.BOX_VIEW_MODEL, "deleteFlashcard: Error: $e")
+            Log.e(LogTags.FLASHCARD_VIEW_MODEL, "deleteFlashcard: Error: $e")
         }
     }
 
