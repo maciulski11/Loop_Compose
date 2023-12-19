@@ -132,7 +132,7 @@ fun Screen(
         }
 
         constrain(repeatButton) {
-            bottom.linkTo(parent.bottom, margin = 10.dp)
+            bottom.linkTo(parent.bottom, margin = 8.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
@@ -142,7 +142,9 @@ fun Screen(
 
     ConstraintLayout(
         constraints,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 50.dp)
     ) {
         LazyVerticalGrid(
             modifier = Modifier
