@@ -1,15 +1,19 @@
 package com.example.loop_new.presentation.navigation
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavType
@@ -30,6 +34,7 @@ import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
+import com.example.loop_new.presentation.screens.boxUser.BoxUSerScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
@@ -40,135 +45,170 @@ import kotlinx.coroutines.launch
 object NavigationSupport {
     const val SignInScreen = "sign_in_screen"
     const val BoxScreen = "box_screen"
+    const val BoxUserScreen = "box_user_screen"
     const val FlashcardScreen = "flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun NavigationScreens(googleAuthService: GoogleAuthService, firebaseService: FirebaseService, service: Service, translateService: TranslateService, dictionaryService: DictionaryService) {
+fun NavigationScreens(
+    googleAuthService: GoogleAuthService,
+    firebaseService: FirebaseService,
+    service: Service,
+    translateService: TranslateService,
+    dictionaryService: DictionaryService,
+) {
+    val mainViewModel = remember { MainViewModel(service, googleAuthService) }
+
     val navController = rememberNavController()
     val context = LocalContext.current
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
 
-    NavHost(
-        navController = navController,
-        startDestination = NavigationSupport.SignInScreen
-    ) {
-
-        composable(NavigationSupport.SignInScreen){
-            val viewModel = remember { SignInViewModel() }
-            val state by viewModel.state.collectAsState()
-
-            LaunchedEffect(key1 = Unit) {
-                if (firebaseService.getSignedInUser() != null) {
-                    navController.navigate(NavigationSupport.BoxScreen)
-                }
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            if (showDrawerTopBar(navController = navController)) {
+                TopBarOfDrawer(scaffoldState, scope)
             }
+        },
+        bottomBar = {
+            if (showBottomNavigationBar(navController = navController)) {
+                BottomNavigationBar(navController)
+            }
+        },
+        drawerContent = {
+            DrawerHeader()
+            Drawer(scaffoldState, scope, navController, MainViewModel(service, googleAuthService))
+        }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = NavigationSupport.SignInScreen
+        ) {
 
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartIntentSenderForResult(),
-                onResult = { result ->
-                    if (result.resultCode == ComponentActivity.RESULT_OK) {
-                        viewModel.viewModelScope.launch {
-                            val signInResult = googleAuthService.signInWithIntent(
-                                intent = result.data ?: return@launch
-                            )
-                            viewModel.onSignInResult(signInResult)
+            composable(NavigationSupport.SignInScreen) {
+                val viewModel = remember { SignInViewModel() }
+                val state by viewModel.state.collectAsState()
+
+                LaunchedEffect(key1 = Unit) {
+                    if (firebaseService.getSignedInUser() != null) {
+                        navController.navigate(NavigationSupport.BoxScreen)
+                    }
+                }
+
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartIntentSenderForResult(),
+                    onResult = { result ->
+                        if (result.resultCode == ComponentActivity.RESULT_OK) {
+                            viewModel.viewModelScope.launch {
+                                val signInResult = googleAuthService.signInWithIntent(
+                                    intent = result.data ?: return@launch
+                                )
+                                viewModel.onSignInResult(signInResult)
+                            }
                         }
                     }
-                }
-            )
+                )
 
-            LaunchedEffect(key1 = state.isSignInSuccessful) {
-                if (state.isSignInSuccessful) {
-                    Toast.makeText(
-                        context,
-                        "Sign in successful",
-                        Toast.LENGTH_LONG
-                    ).show()
+                LaunchedEffect(key1 = state.isSignInSuccessful) {
+                    if (state.isSignInSuccessful) {
+                        Toast.makeText(
+                            context,
+                            "Sign in successful",
+                            Toast.LENGTH_LONG
+                        ).show()
 
-                    firebaseService.createNewGoogleUser()
-                    navController.navigate(NavigationSupport.BoxScreen)
-                    viewModel.resetState()
-                }
-            }
-
-            SignInScreen(
-                state = state,
-                onSignInClick = {
-                    viewModel.viewModelScope.launch {
-                        val signInIntentSender = googleAuthService.signIn()
-                        launcher.launch(
-                            IntentSenderRequest.Builder(
-                                signInIntentSender ?: return@launch
-                            ).build()
-                        )
+                        firebaseService.createNewGoogleUser()
+                        navController.navigate(NavigationSupport.BoxScreen)
+                        viewModel.resetState()
                     }
                 }
-            )
-        }
 
-        composable(NavigationSupport.BoxScreen) {
-            val viewModel = remember { BoxViewModel(firebaseService) }
-
-            BoxScreen(navController, viewModel)
-        }
-
-        composable(
-            "${NavigationSupport.FlashcardScreen}/{boxUid}",
-            arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val viewModel = remember {
-                FlashcardViewModel(
-                    firebaseService,
-                    MainViewModel(service),
-                    boxUid
+                SignInScreen(
+                    state = state,
+                    onSignInClick = {
+                        viewModel.viewModelScope.launch {
+                            val signInIntentSender = googleAuthService.signIn()
+                            launcher.launch(
+                                IntentSenderRequest.Builder(
+                                    signInIntentSender ?: return@launch
+                                ).build()
+                            )
+                        }
+                    }
                 )
             }
-            FlashcardScreen(navController, boxUid, viewModel)
-        }
 
-        composable(
-            "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
-            arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val viewModel =
-                remember {
-                    AddFlashcardViewModel(
+            composable(NavigationSupport.BoxScreen) {
+                val viewModel = remember { BoxViewModel(firebaseService) }
+
+                BoxScreen(navController, viewModel)
+            }
+
+            composable(NavigationSupport.BoxUserScreen) {
+
+                BoxUSerScreen()
+            }
+
+            composable(
+                "${NavigationSupport.FlashcardScreen}/{boxUid}",
+                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val viewModel = remember {
+                    FlashcardViewModel(
                         firebaseService,
-                        translateService,
-                        dictionaryService
+                        mainViewModel,
+                        boxUid
                     )
                 }
-            AddFlashcardScreen(navController, boxUid, viewModel)
-        }
-
-        composable(
-            "${NavigationSupport.LessonScreen}/{boxUid}",
-            arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-            val viewModel = remember {
-                LessonViewModel(
-                    firebaseService,
-                    MainViewModel(service),
-                    boxUid
-                )
+                FlashcardScreen(navController, boxUid, viewModel)
             }
-            LessonScreen(navController, viewModel, boxUid)
-        }
 
-        composable(NavigationSupport.RepeatScreen) {
-            val viewModel = remember {
-                RepeatViewModel(
-                    firebaseService,
-                    MainViewModel(service)
-                )
+            composable(
+                "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
+                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val viewModel =
+                    remember {
+                        AddFlashcardViewModel(
+                            firebaseService,
+                            translateService,
+                            dictionaryService
+                        )
+                    }
+                AddFlashcardScreen(navController, boxUid, viewModel)
             }
-            RepeatScreen(navController, viewModel)
+
+            composable(
+                "${NavigationSupport.LessonScreen}/{boxUid}",
+                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val viewModel = remember {
+                    LessonViewModel(
+                        firebaseService,
+                        mainViewModel,
+                        boxUid
+                    )
+                }
+                LessonScreen(navController, viewModel, boxUid)
+            }
+
+            composable(NavigationSupport.RepeatScreen) {
+                val viewModel = remember {
+                    RepeatViewModel(
+                        firebaseService,
+                        mainViewModel
+                    )
+                }
+                RepeatScreen(navController, viewModel)
+            }
         }
     }
 }
