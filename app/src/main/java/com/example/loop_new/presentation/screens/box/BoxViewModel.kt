@@ -81,7 +81,8 @@ class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
         val color2 = colorToHex(colorGroup[1])
         val color3 = colorToHex(colorGroup[2])
 
-        val box = Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
+        val box =
+            Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
         viewModelScope.launch {
             try {
                 firebaseService.addBox(box)

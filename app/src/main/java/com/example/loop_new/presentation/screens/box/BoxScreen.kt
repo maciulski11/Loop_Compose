@@ -77,7 +77,7 @@ fun ScreenPreview() {
     val navController = rememberNavController()
     val sampleData = createSampleData()
 
-//    Screen(navController, sampleData) { _, _ -> }
+//    Screen(navController, sampleData) { _, _, _ -> }
 }
 
 @Composable
@@ -85,7 +85,7 @@ fun createSampleData(): List<Box> {
     val sampleData = mutableListOf<Box>()
 
     for (i in 1..22) {
-//        sampleData.add(Box("Box $i", "Description $i"))
+        sampleData.add(Box("Box $i", "Description $i"))
     }
     return sampleData
 }
@@ -203,7 +203,7 @@ enum class SnackbarMessage {
 fun ShowCustomAlertDialog(
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
     onDismiss: () -> Unit,
-    showDialog: Boolean
+    showDialog: Boolean,
 ) {
     var nameInput by remember { mutableStateOf("") }
     var describeInput by remember { mutableStateOf("") }

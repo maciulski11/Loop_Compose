@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class FlashcardViewModel(
     private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
-    boxUid: String
+    boxUid: String,
 ) : ViewModel() {
 
     val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)

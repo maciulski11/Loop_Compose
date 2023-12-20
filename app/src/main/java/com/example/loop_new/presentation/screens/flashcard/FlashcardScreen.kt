@@ -110,7 +110,7 @@ fun Screen(
     list: List<Flashcard>,
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
-    onAddBoxToLessonSection: () -> Unit
+    onAddBoxToLessonSection: () -> Unit,
 ) {
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
@@ -191,7 +191,7 @@ fun Screen(
 fun FlashcardItem(
     flashcard: Flashcard,
     onPlayAudioFromUrl: (String) -> Unit,
-    onDeleteFlashcard: (String) -> Unit
+    onDeleteFlashcard: (String) -> Unit,
 ) {
     val showDialogState = remember { mutableStateOf(false) }
     val color = remember { mutableStateOf(Black) } // Domyślny kolor

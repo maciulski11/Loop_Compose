@@ -53,7 +53,7 @@ fun TopBarOfDrawer(scaffoldState: ScaffoldState, scope: CoroutineScope) {
                 Icon(Icons.Filled.Menu, contentDescription = "Menu")
             }
         },
-        backgroundColor = White, // Ustaw kolor tła
+        backgroundColor = White,
     )
 }
 
@@ -81,7 +81,6 @@ fun Drawer(
 
     LaunchedEffect(isSignedOut) {
         if (isSignedOut) {
-            // Tu wykonujesz nawigację do ekranu logowania
             navController.navigate(NavigationSupport.SignInScreen) {
                 // Opcjonalnie czyścisz stos nawigacyjny
                 popUpTo(navController.graph.startDestinationId) {

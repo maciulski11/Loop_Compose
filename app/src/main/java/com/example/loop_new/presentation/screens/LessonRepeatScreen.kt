@@ -439,7 +439,7 @@ fun FlashcardItem(
     flashcard: Flashcard,
     front: Boolean,
     isAnimating: Boolean,
-    onPlayAudioFromUrl: (String) -> Unit
+    onPlayAudioFromUrl: (String) -> Unit,
 ) {
     Box(
         modifier = Modifier

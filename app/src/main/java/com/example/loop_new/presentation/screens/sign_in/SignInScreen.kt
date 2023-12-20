@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.loop_new.domain.model.firebase.google.SignInState
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SignIn_Preview() {
@@ -39,7 +40,7 @@ fun SignIn_Preview() {
 @Composable
 fun SignInScreen(
     state: SignInState,
-    onSignInClick: () -> Unit
+    onSignInClick: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
