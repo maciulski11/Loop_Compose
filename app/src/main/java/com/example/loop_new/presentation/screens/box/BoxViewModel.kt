@@ -8,16 +8,45 @@ import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 abstract class BoxViewModel(
-    private val fetchBoxes: suspend () -> Flow<List<Box>>
+    private val firebaseService: FirebaseService,
+    private val fetchBoxes: suspend () -> Flow<List<Box>>,
 ) : ViewModel() {
 
     val boxList = mutableStateOf<List<Box>?>(null)
 
+    private val firestore = Firebase.firestore
+    private val _isListEmpty = mutableStateOf(true)
+    val isListEmpty: Boolean
+        get() = _isListEmpty.value
+
     init {
+        // Wywołaj funkcję sprawdzającą stan listy w Firestore w konstruktorze lub odpowiednim miejscu
+        checkRepeatCollectionWhetherIsEmpty()
+        setupRepeatCollectionListener()
+        fetchListOfBox()
+    }
+
+    private fun setupRepeatCollectionListener() {
+        viewModelScope.launch {
+            firebaseService.setupRepeatCollectionListener { isEmpty ->
+                _isListEmpty.value = isEmpty
+            }
+        }
+    }
+
+    private fun checkRepeatCollectionWhetherIsEmpty() {
+        viewModelScope.launch {
+            _isListEmpty.value = firebaseService.checkRepeatCollectionWhetherIsEmpty()
+        }
+    }
+
+    private fun fetchListOfBox() {
         viewModelScope.launch {
             try {
                 fetchBoxes().collect { boxes ->
@@ -33,7 +62,7 @@ abstract class BoxViewModel(
 // ViewModel Common Factory
 class BoxViewModelFactory(
     private val firebaseService: FirebaseService,
-    private val isPublic: Boolean
+    private val isPublic: Boolean,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel = if (isPublic) {
@@ -50,7 +79,7 @@ class BoxViewModelFactory(
 
 // ViewModel Implementations
 class PublicBoxViewModel(firebaseService: FirebaseService) :
-    BoxViewModel(firebaseService::fetchListOfBox)
+    BoxViewModel(firebaseService, firebaseService::fetchListOfBox)
 
 class PrivateBoxViewModel(firebaseService: FirebaseService) :
-    BoxViewModel(firebaseService::fetchListOfBoxUser)
+    BoxViewModel(firebaseService, firebaseService::fetchListOfBoxUser)

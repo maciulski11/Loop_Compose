@@ -1,6 +1,7 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
@@ -126,7 +127,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         userUid: String,
         boxUid: String,
         boxData: Map<String, Any>,
-        flashcards: List<Flashcard>
+        flashcards: List<Flashcard>,
     ) {
         // Dodaj box i fiszki do kolekcji użytkownika
         val userBoxRef = firestore.collection(USERS).document(userUid)
@@ -164,7 +165,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     private fun setKnowledgeLevelOfFlashcard(
         boxUid: String,
         flashcardUid: String,
-        updateData: Map<String, *>
+        updateData: Map<String, *>,
     ) {
         try {
             firestore.collection(BOX).document(boxUid)
@@ -231,6 +232,32 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         )
 
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
+    }
+
+    override fun setupRepeatCollectionListener(onCollectionUpdate: (Boolean) -> Unit) {
+        firestore.collection("repeat")
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    // Loguj błąd, ale nie zatrzymuj aplikacji
+                    Log.e("FirestoreRepository", "Firestore listener error: $error")
+                    return@addSnapshotListener
+                }
+
+                // Aktualizuj stan na podstawie danych z Firestore
+                querySnapshot?.let {
+                    onCollectionUpdate(it.isEmpty)
+                }
+            }
+    }
+
+    override suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean {
+        return try {
+            val querySnapshot = firestore.collection("repeat").get().await()
+            querySnapshot.isEmpty
+        } catch (exception: Exception) {
+            Log.e("FirestoreRepository", "checkFirestoreCollection: $exception")
+            false
+        }
     }
 
     override fun addFlashcard(flashcard: Flashcard, boxUid: String) {
