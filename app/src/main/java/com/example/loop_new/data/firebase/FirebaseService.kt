@@ -288,6 +288,33 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    override fun fetchListOfBoxUser(): Flow<List<Box>> {
+        val collection = firestore.collection(USERS).document(currentUser).collection(BOX)
+
+        return callbackFlow {
+            val listenerRegistration = collection.addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    close(error)
+                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Error: $error")
+                    return@addSnapshotListener
+                }
+
+                val tempList = mutableListOf<Box>()
+                for (document in querySnapshot!!) {
+                    val box = document.toObject(Box::class.java)
+                    tempList.add(box)
+                }
+
+                trySend(tempList).isSuccess
+                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Success!")
+            }
+
+            awaitClose {
+                listenerRegistration.remove()
+            }
+        }
+    }
+
     override fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD)

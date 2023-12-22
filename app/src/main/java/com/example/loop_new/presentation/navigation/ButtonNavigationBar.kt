@@ -19,8 +19,8 @@ import com.example.loop_new.ui.theme.White
 data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)
 
 val bottomNavItems = listOf(
-    BottomNavItem(NavigationSupport.BoxScreen, Icons.Default.Search, "Public"),
-    BottomNavItem(NavigationSupport.BoxUserScreen, Icons.Default.Add, "Private")
+    BottomNavItem("${NavigationSupport.BoxScreen}/Public", Icons.Default.Search, "Public"),
+    BottomNavItem("${NavigationSupport.BoxScreen}/Private", Icons.Default.Add, "Private")
 )
 
 @Composable
@@ -49,12 +49,16 @@ fun BottomNavigationBar(navController: NavController) {
     }
 }
 
+//@Composable
+//fun showBottomNavigationBar(navController: NavController): Boolean {
+//    return when (navController.currentBackStackEntryAsState().value?.destination?.route) {
+//        // Nie pokazuj BottomNav i Drawer na tych ekranach
+//        NavigationSupport.BoxScreen -> true
+//        else -> false  // Pokaż BottomNav i Drawer na wszystkich innych ekranach
+//    }
+//}
+
 @Composable
 fun showBottomNavigationBar(navController: NavController): Boolean {
-    return when (navController.currentBackStackEntryAsState().value?.destination?.route) {
-        // Nie pokazuj BottomNav i Drawer na tych ekranach
-        NavigationSupport.BoxScreen -> true
-        NavigationSupport.BoxUserScreen -> true
-        else -> false  // Pokaż BottomNav i Drawer na wszystkich innych ekranach
-    }
+    return navController.currentBackStackEntryAsState().value?.destination?.route != NavigationSupport.SignInScreen
 }

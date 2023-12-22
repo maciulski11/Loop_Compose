@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,7 +35,7 @@ import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
-import com.example.loop_new.presentation.screens.boxUser.BoxUSerScreen
+import com.example.loop_new.presentation.screens.box.BoxViewModelFactory
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
@@ -96,7 +97,7 @@ fun NavigationScreens(
 
                 LaunchedEffect(key1 = Unit) {
                     if (firebaseService.getSignedInUser() != null) {
-                        navController.navigate(NavigationSupport.BoxScreen)
+                        navController.navigate("${NavigationSupport.BoxScreen}/Public")
                     }
                 }
 
@@ -123,7 +124,7 @@ fun NavigationScreens(
                         ).show()
 
                         firebaseService.createNewGoogleUser()
-                        navController.navigate(NavigationSupport.BoxScreen)
+                        navController.navigate("${NavigationSupport.BoxScreen}/Public")
                         viewModel.resetState()
                     }
                 }
@@ -143,15 +144,15 @@ fun NavigationScreens(
                 )
             }
 
-            composable(NavigationSupport.BoxScreen) {
-                val viewModel = remember { BoxViewModel(firebaseService) }
+            composable("${NavigationSupport.BoxScreen}/{mode}",
+                arguments = listOf(navArgument("mode") { type = NavType.StringType })) { backStackEntry ->
+
+                val mode = backStackEntry.arguments?.getString("mode") ?: "Public"
+
+                val viewModel: BoxViewModel = viewModel(factory = BoxViewModelFactory(firebaseService, mode == "Public"))
 
                 BoxScreen(navController, viewModel)
-            }
 
-            composable(NavigationSupport.BoxUserScreen) {
-
-                BoxUSerScreen()
             }
 
             composable(

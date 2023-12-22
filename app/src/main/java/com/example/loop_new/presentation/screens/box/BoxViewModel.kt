@@ -1,110 +1,56 @@
 package com.example.loop_new.presentation.screens.box
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
+abstract class BoxViewModel(
+    private val fetchBoxes: suspend () -> Flow<List<Box>>
+) : ViewModel() {
 
-    val boxList: MutableState<List<Box>?> = mutableStateOf(null)
-
-    private val firestore = Firebase.firestore
-    private val _isListEmpty = mutableStateOf(true)
-    val isListEmpty: Boolean
-        get() = _isListEmpty.value
+    val boxList = mutableStateOf<List<Box>?>(null)
 
     init {
-        // Wywołaj funkcję sprawdzającą stan listy w Firestore w konstruktorze lub odpowiednim miejscu
-        checkFirestoreCollection()
-        setupFirestoreListener()
-        fetchListOfBox()
-    }
-
-    private fun setupFirestoreListener() {
-        firestore.collection("repeat")
-            .addSnapshotListener { querySnapshot, error ->
-                if (error != null) {
-                    // Obsłuż błąd
-                    Log.e("YourViewModel", "Firestore listener error: $error")
-                    return@addSnapshotListener
-                }
-
-                if (querySnapshot != null) {
-                    // Aktualizuj stan na podstawie aktualnych danych z Firestore
-                    _isListEmpty.value = querySnapshot.isEmpty
-                }
-            }
-    }
-
-    private fun checkFirestoreCollection() {
-        firestore.collection("repeat")
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                // Sprawdź czy kolekcja jest pusta i ustaw odpowiedni stan
-                _isListEmpty.value = querySnapshot.isEmpty
-            }
-            .addOnFailureListener { exception ->
-                // Obsłuż ewentualny błąd
-                Log.e("YourViewModel", "checkFirestoreCollection: $exception")
-            }
-    }
-
-    private fun fetchListOfBox() {
         viewModelScope.launch {
             try {
-                val boxFlow = firebaseService.fetchListOfBox()
-                boxFlow.collect { boxes ->
+                fetchBoxes().collect { boxes ->
                     boxList.value = boxes
-
-                    Log.d(LogTags.BOX_VIEW_MODEL, "fetchListOfBox: Success!")
                 }
             } catch (e: Exception) {
-
-                Log.e(LogTags.BOX_VIEW_MODEL, "fetchListOfBox: Error: $e")
+                Log.e(LogTags.BOX_VIEW_MODEL, "Error: ${e.message}")
             }
         }
-    }
-
-    fun addBox(name: String, describe: String, colorGroup: List<Color>) {
-
-        // Przekształć kolory do formatu HEX
-        val color1 = colorToHex(colorGroup[0])
-        val color2 = colorToHex(colorGroup[1])
-        val color3 = colorToHex(colorGroup[2])
-
-        val box =
-            Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
-        viewModelScope.launch {
-            try {
-                firebaseService.addBox(box)
-
-                Log.d(LogTags.BOX_VIEW_MODEL, "addBox: Correct addition of box")
-
-            } catch (e: Exception) {
-
-                Log.e(LogTags.BOX_VIEW_MODEL, "addBox: Error: $e")
-            }
-        }
-    }
-
-    // Helper function to convert color to HEX format
-    private fun colorToHex(color: Color): String {
-        return "#%02x%02x%02x".format(
-            (color.red * 255).toInt(),
-            (color.green * 255).toInt(),
-            (color.blue * 255).toInt()
-        )
     }
 }
 
+// ViewModel Common Factory
+class BoxViewModelFactory(
+    private val firebaseService: FirebaseService,
+    private val isPublic: Boolean
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val viewModel = if (isPublic) {
+            PublicBoxViewModel(firebaseService)
+        } else {
+            PrivateBoxViewModel(firebaseService)
+        }
+        if (modelClass.isAssignableFrom(viewModel::class.java)) {
+            return viewModel as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
 
+// ViewModel Implementations
+class PublicBoxViewModel(firebaseService: FirebaseService) :
+    BoxViewModel(firebaseService::fetchListOfBox)
 
+class PrivateBoxViewModel(firebaseService: FirebaseService) :
+    BoxViewModel(firebaseService::fetchListOfBoxUser)

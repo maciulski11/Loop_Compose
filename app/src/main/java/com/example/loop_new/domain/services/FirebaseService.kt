@@ -22,6 +22,8 @@ interface FirebaseService {
 
     fun fetchListOfBox(): Flow<List<Box>>
 
+    fun fetchListOfBoxUser(): Flow<List<Box>>
+
     fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>>
 
     fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>>
