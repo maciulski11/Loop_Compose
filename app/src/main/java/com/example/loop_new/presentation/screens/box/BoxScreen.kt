@@ -92,14 +92,16 @@ fun createSampleData(): List<Box> {
 
 // UI
 @Composable
-fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
+fun BoxScreen(navController: NavController, viewModel: BoxViewModel, isPrivateSection: Boolean) {
 
     Screen(
         navController = navController,
         list = viewModel.boxList.value ?: emptyList(),
         viewModel,
-    ) { nameInput, describeInput, groupColor ->
-        viewModel.addBox(nameInput, describeInput, groupColor)
+        isPrivateSection,
+        )
+    { nameInput, describeInput, groupColor ->
+        viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
     }
 }
 
@@ -108,6 +110,7 @@ fun Screen(
     navController: NavController,
     list: List<Box>,
     viewModel: BoxViewModel,
+    isPrivateSection: Boolean,
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
 ) {
 
@@ -157,18 +160,20 @@ fun Screen(
             }
         }
 
-        Image(
-            painter = painterResource(id = R.drawable.baseline_add_circle_box),
-            contentDescription = "Button",
-            modifier = Modifier
-                .layoutId("addBoxButton")
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    showDialogState.value = true
-                }
-        )
+        if (isPrivateSection) {
+            Image(
+                painter = painterResource(id = R.drawable.baseline_add_circle_box),
+                contentDescription = "Button",
+                modifier = Modifier
+                    .layoutId("addBoxButton")
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        showDialogState.value = true
+                    }
+            )
+        }
 
 
         if (showDialogState.value) {

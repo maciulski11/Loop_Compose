@@ -425,7 +425,7 @@ fun LessonRepeatScreen(
     if (showDialogBackState.value) {
         ShowCustomAlertDialog(
             {
-                navController.navigate(NavigationSupport.BoxScreen)
+                navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
             },
             {
                 showDialogBackState.value = false

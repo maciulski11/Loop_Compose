@@ -132,10 +132,6 @@ fun DrawerItem(text: String, icon: ImageVector, onClick: () -> Unit) {
 
 @Composable
 fun showDrawerTopBar(navController: NavController): Boolean {
-    return when (navController.currentBackStackEntryAsState().value?.destination?.route) {
-        // Nie pokazuj BottomNav i Drawer na tych ekranach
-        NavigationSupport.BoxScreen -> true
-        NavigationSupport.BoxUserScreen -> true
-        else -> false  // Pokaż BottomNav i Drawer na wszystkich innych ekranach
-    }
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    return currentRoute?.startsWith(NavigationSupport.BoxScreen) == true
 }

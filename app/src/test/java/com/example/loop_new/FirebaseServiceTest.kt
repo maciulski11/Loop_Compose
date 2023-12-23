@@ -39,7 +39,7 @@ class FirebaseServiceTest {
         val data = Box(name = name, describe = describe)
 
         // Wywołanie metody, którą testujemy
-        repository.addBox(data)
+        repository.createBoxInPrivateSection(data)
 
         // Weryfikacja, czy odpowiednie metody Firestore zostały wywołane
         verify(documentReference).set(Mockito.any())

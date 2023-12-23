@@ -84,7 +84,7 @@ fun FlashcardScreen(navController: NavController, boxUid: String, viewModel: Fla
     // Obsługa niestandardowego zachowania powrotu
     BackHandler {
         // Logika decydująca, dokąd ma cofnąć, np.:
-        navController.navigate(NavigationSupport.BoxScreen)
+        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
     }
 
     Screen(
