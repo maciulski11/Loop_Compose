@@ -51,6 +51,10 @@ object NavigationSupport {
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
+
+    const val Public = "public"
+    const val Private = "private"
+    const val BoxUid = "boxUid"
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -97,7 +101,7 @@ fun NavigationScreens(
 
                 LaunchedEffect(key1 = Unit) {
                     if (firebaseService.getSignedInUser() != null) {
-                        navController.navigate("${NavigationSupport.BoxScreen}/Public")
+                        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
                     }
                 }
 
@@ -124,7 +128,7 @@ fun NavigationScreens(
                         ).show()
 
                         firebaseService.createNewGoogleUser()
-                        navController.navigate("${NavigationSupport.BoxScreen}/Public")
+                        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
                         viewModel.resetState()
                     }
                 }
@@ -144,14 +148,24 @@ fun NavigationScreens(
                 )
             }
 
-            composable("${NavigationSupport.BoxScreen}/{mode}",
-                arguments = listOf(navArgument("mode") { type = NavType.StringType })) { backStackEntry ->
+            composable(
+                "${NavigationSupport.BoxScreen}/{mode}",
+                arguments = listOf(navArgument("mode") { type = NavType.StringType })
+            ) { backStackEntry ->
 
-                val mode = backStackEntry.arguments?.getString("mode") ?: "Public"
+                val mode = backStackEntry.arguments?.getString("mode") ?: NavigationSupport.Public
 
-                val viewModel: BoxViewModel = viewModel(factory = BoxViewModelFactory(firebaseService, mode == "Public"))
+                val viewModel: BoxViewModel =
+                    viewModel(
+                        factory = BoxViewModelFactory(
+                            firebaseService,
+                            mode == NavigationSupport.Public
+                        )
+                    )
 
-                BoxScreen(navController, viewModel)
+                BoxScreen(
+                    navController, viewModel, isPrivateSection = mode == NavigationSupport.Private
+                )
 
             }
 

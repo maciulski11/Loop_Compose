@@ -14,7 +14,7 @@ interface FirebaseService {
 
     fun addBoxToUserLearningSection(boxUid: String)
 
-    fun addBox(box: Box)
+    fun createBoxInPrivateSection(box: Box)
 
     fun addFlashcard(flashcard: Flashcard, boxUid: String)
 
@@ -25,6 +25,8 @@ interface FirebaseService {
     fun fetchListOfBoxUser(): Flow<List<Box>>
 
     fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>>
+
+    fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>>
 
     fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>>
 

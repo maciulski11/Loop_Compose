@@ -149,12 +149,15 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun addBox(box: Box) {
+    override fun createBoxInPrivateSection(box: Box) {
         val uid = UUID.randomUUID().toString()
         val data = Box(box.name, box.describe, uid, box.color1, box.color2, box.color3)
 
         try {
-            firestore.collection(BOX).document(uid).set(data)
+            firestore.collection(USERS).document()
+                .collection(BOX).document(uid)
+                .set(data)
+
             Log.d(LogTags.FIREBASE_SERVICES, "addBox: Correct addition of box")
         } catch (e: Exception) {
             Log.e(LogTags.FIREBASE_SERVICES, "addBox: Error: $e")
@@ -345,6 +348,36 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     override fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
+
+        return callbackFlow {
+            val listenerRegistration =
+                flashcardsCollectionRef.addSnapshotListener { flashcardsSnapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Error: $error")
+                        return@addSnapshotListener
+                    }
+
+                    val flashcards = mutableListOf<Flashcard>()
+                    for (document in flashcardsSnapshot!!) {
+                        val flashcard = document.toObject(Flashcard::class.java)
+                        flashcards.add(flashcard)
+                    }
+
+                    trySend(flashcards).isSuccess
+                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcard: Success!")
+                }
+
+            awaitClose {
+                listenerRegistration.remove()
+            }
+        }
+    }
+
+    override fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>> {
+        val flashcardsCollectionRef =
+            firestore.collection(USERS).document(currentUser)
+                .collection(BOX).document(boxUid).collection(FLASHCARD)
 
         return callbackFlow {
             val listenerRegistration =
