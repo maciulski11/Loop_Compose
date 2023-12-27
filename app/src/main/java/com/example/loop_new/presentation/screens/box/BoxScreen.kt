@@ -99,7 +99,7 @@ fun BoxScreen(navController: NavController, viewModel: BoxViewModel, isPrivateSe
         list = viewModel.boxList.value ?: emptyList(),
         viewModel,
         isPrivateSection,
-        )
+    )
     { nameInput, describeInput, groupColor ->
         viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
     }
@@ -130,8 +130,8 @@ fun Screen(
         }
 
         constrain(addBoxButton) {
-            bottom.linkTo(parent.bottom, margin = 14.dp)
-            end.linkTo(parent.end, margin = 16.dp)
+            bottom.linkTo(parent.bottom, margin = 10.dp)
+            end.linkTo(parent.end, margin = 10.dp)
         }
 
         constrain(repeatButton) {
@@ -166,6 +166,7 @@ fun Screen(
                 contentDescription = "Button",
                 modifier = Modifier
                     .layoutId("addBoxButton")
+                    .size(60.dp)
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
@@ -416,7 +417,7 @@ fun BoxItem(box: Box, navController: NavController) {
                 interactionSource = remember { MutableInteractionSource() }
             ) {
                 val boxUid = box.uid
-                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid")
+                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid/${box.name}")
             },
         contentAlignment = Alignment.Center,
         content = {

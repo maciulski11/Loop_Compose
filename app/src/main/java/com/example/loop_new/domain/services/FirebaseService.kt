@@ -12,7 +12,7 @@ interface FirebaseService {
 
     fun getSignedInUser(): User?
 
-    fun addBoxToUserLearningSection(boxUid: String)
+    fun addPublicBoxToPrivateSection(boxUid: String)
 
     fun createBoxInPrivateSection(box: Box)
 

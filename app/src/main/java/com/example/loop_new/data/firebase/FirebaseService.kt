@@ -87,7 +87,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         )
     }
 
-    override fun addBoxToUserLearningSection(boxUid: String) {
+    override fun addPublicBoxToPrivateSection(boxUid: String) {
         // Pobierz box
         firestore.collection(BOX).document(boxUid).get()
             .addOnSuccessListener { document ->
@@ -106,7 +106,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                                 // Teraz masz boxData i listę flashcards
                                 // Możesz przekazać te dane tam, gdzie są potrzebne
                                 // Na przykład, możesz je dodać do kolekcji użytkownika
-                                addPrivateBoxWithFlashcards(currentUser, boxUid, boxData, flashcards)
+                                addPrivateBoxWithFlashcards(boxUid, boxData, flashcards)
                             }
                             .addOnFailureListener { e ->
                                 Log.e("FirestoreError", "Błąd pobierania fiszek: ${e.message}")
@@ -123,13 +123,12 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     private fun addPrivateBoxWithFlashcards(
-        userUid: String,
         boxUid: String,
         boxData: Map<String, Any>,
         flashcards: List<Flashcard>,
     ) {
         // Dodaj box i fiszki do kolekcji użytkownika
-        val userBoxRef = firestore.collection(USERS).document(userUid)
+        val userBoxRef = firestore.collection(USERS).document(currentUser)
             .collection(BOX).document(boxUid)
 
         firestore.runBatch { batch ->
@@ -238,7 +237,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun setupRepeatCollectionListener(onCollectionUpdate: (Boolean) -> Unit) {
-        firestore.collection("repeat")
+        firestore.collection(USERS).document(currentUser)
+            .collection(REPEAT)
             .addSnapshotListener { querySnapshot, error ->
                 if (error != null) {
                     // Loguj błąd, ale nie zatrzymuj aplikacji
@@ -255,7 +255,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean {
         return try {
-            val querySnapshot = firestore.collection("repeat").get().await()
+            val querySnapshot = firestore.collection(USERS).document(currentUser)
+                .collection(REPEAT).get().await()
             querySnapshot.isEmpty
         } catch (exception: Exception) {
             Log.e("FirestoreRepository", "checkFirestoreCollection: $exception")
@@ -283,7 +284,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun deleteFlashcard(boxUid: String, flashcardUid: String) {
         try {
-            firestore.collection(BOX).document(boxUid)
+            firestore.collection(USERS).document(currentUser)
+                .collection(BOX).document(boxUid)
                 .collection(FLASHCARD).document(flashcardUid)
                 .delete()
 
@@ -323,7 +325,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun fetchListOfPrivateBox(): Flow<List<Box>> {
-        val collection = firestore.collection(USERS).document(currentUser).collection(BOX)
+        val collection = firestore.collection(USERS).document(currentUser)
+            .collection(BOX)
 
         return callbackFlow {
             val listenerRegistration = collection.addSnapshotListener { querySnapshot, error ->
@@ -351,7 +354,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
-            firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
+            firestore.collection(BOX).document(boxUid)
+                .collection(FLASHCARD)
 
         return callbackFlow {
             val listenerRegistration =
@@ -381,7 +385,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     override fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
             firestore.collection(USERS).document(currentUser)
-                .collection(BOX).document(boxUid).collection(FLASHCARD)
+                .collection(BOX).document(boxUid)
+                .collection(FLASHCARD)
 
         return callbackFlow {
             val listenerRegistration =
@@ -410,7 +415,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
-            firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
+            firestore.collection(USERS).document(currentUser)
+                .collection(BOX).document(boxUid).collection(FLASHCARD)
 
         return callbackFlow {
             // Wykonaj jednorazowe zapytanie do Firestore

@@ -47,7 +47,6 @@ import kotlinx.coroutines.launch
 object NavigationSupport {
     const val SignInScreen = "sign_in_screen"
     const val BoxScreen = "box_screen"
-    const val BoxUserScreen = "box_user_screen"
     const val FlashcardScreen = "flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
@@ -55,7 +54,6 @@ object NavigationSupport {
 
     const val Public = "public"
     const val Private = "private"
-    const val BoxUid = "boxUid"
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -74,7 +72,7 @@ fun NavigationScreens(
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     // Info of Public or Private Box
-    val currentSection = remember { mutableStateOf("Public") } // Stan przechowujący obecną sekcję
+    val currentSection = remember { mutableStateOf("") } // Stan przechowujący obecną sekcję
 
 
     Scaffold(
@@ -158,7 +156,11 @@ fun NavigationScreens(
             ) { backStackEntry ->
 
                 val mode = backStackEntry.arguments?.getString("mode") ?: NavigationSupport.Public
-                currentSection.value = if (mode == NavigationSupport.Public) "Public" else "Private"
+
+                LaunchedEffect(Unit) {
+                    currentSection.value =
+                        if (mode == NavigationSupport.Public) "Loop - Public" else "Loop - Private"
+                }
 
                 val viewModel: BoxViewModel =
                     viewModel(
@@ -175,10 +177,19 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.FlashcardScreen}/{boxUid}",
-                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+                "${NavigationSupport.FlashcardScreen}/{boxUid}/{boxName}",
+                arguments = listOf(
+                    navArgument("boxUid") { type = NavType.StringType },
+                    navArgument("boxName") { type = NavType.StringType }
+                )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxName = backStackEntry.arguments?.getString("boxName") ?: ""
+
+                LaunchedEffect(boxUid) {
+                    currentSection.value = boxName
+                }
+
                 val viewModel = remember {
                     FlashcardViewModel(
                         firebaseService,

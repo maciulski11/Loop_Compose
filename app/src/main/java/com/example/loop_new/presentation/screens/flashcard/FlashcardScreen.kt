@@ -89,9 +89,9 @@ fun createSampleData(): List<Flashcard> {
 @Composable
 fun FlashcardScreen(navController: NavController, boxUid: String, viewModel: FlashcardViewModel) {
 
-    // Obsługa niestandardowego zachowania powrotu
+    // Support for custom return behavior
     BackHandler {
-        // Logika decydująca, dokąd ma cofnąć, np.:
+        // Where return
         navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
     }
 
@@ -106,7 +106,7 @@ fun FlashcardScreen(navController: NavController, boxUid: String, viewModel: Fla
             viewModel.deleteFlashcard(boxUid, flashcardUid)
         },
         {
-            viewModel.addBoxToUserLearningSection(boxUid)
+            viewModel.addPublicBoxToPrivateBox(boxUid)
         }
     )
 }
@@ -118,7 +118,7 @@ fun Screen(
     list: List<Flashcard>,
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
-    addBoxToUserLearningSection: () -> Unit,
+    addPublicBoxToPrivateSection: () -> Unit,
 ) {
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
@@ -201,7 +201,7 @@ fun Screen(
 
         SlideToUnlockButton(
             onSlideComplete = {
-                    addBoxToUserLearningSection()
+                addPublicBoxToPrivateSection()
             }
         )
     }
@@ -233,7 +233,7 @@ fun FlashcardItem(
             )
             .pointerInput(Unit) {
                 detectTapGestures(
-                    // Obsługa zdarzenia dotknięcia (LongClick)
+                    // LongClick
                     onLongPress = {
                         showDialogState.value = true
                     }
@@ -333,7 +333,6 @@ fun SlideToUnlockButton(onSlideComplete: () -> Unit) {
         val sliderWidthPx = with(LocalDensity.current) { 92.dp.toPx() }
         maxDragDistance.value = constraints.maxWidth - sliderWidthPx
 
-        // Wąski czarny pasek za przyciskiem
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -343,7 +342,6 @@ fun SlideToUnlockButton(onSlideComplete: () -> Unit) {
                 .background(Black.copy(alpha = 0.5f)) // Półprzezroczysty czarny kolor
         )
 
-        // Przycisk przesuwny
         Box(
             modifier = Modifier
                 .offset { IntOffset(dragDistance.value.roundToInt(), 0) }
@@ -392,7 +390,7 @@ fun ShowCustomAlertDialog(
             )
         )
         append(word)
-        pop() // Kończy zastosowanie pogrubienia
+        pop() // Ends the application of bold
         append("?")
     }
 
@@ -400,9 +398,9 @@ fun ShowCustomAlertDialog(
         modifier = Modifier
             .height(150.dp)
             .width(300.dp)
-            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
+            .clip(RoundedCornerShape(20.dp))
             .border(3.dp, Black, RoundedCornerShape(20.dp))
-            .background(White), // Białe tło z zaokrąglonymi rogami
+            .background(White),
         onDismissRequest = { /* Touching the screen turns off it */ },
         title = {
             Text(

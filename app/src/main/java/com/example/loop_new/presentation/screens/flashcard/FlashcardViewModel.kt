@@ -41,10 +41,10 @@ class FlashcardViewModel(
         }
     }
 
-    fun addBoxToUserLearningSection(boxUid: String) {
+    fun addPublicBoxToPrivateBox(boxUid: String) {
         viewModelScope.launch {
             try {
-                firebaseService.addBoxToUserLearningSection(boxUid)
+                firebaseService.addPublicBoxToPrivateSection(boxUid)
                 Log.d(LogTags.FLASHCARD_VIEW_MODEL, "addBoxToUserLearningSection: Success")
 
             } catch (e: Exception) {

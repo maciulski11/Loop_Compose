@@ -16,21 +16,19 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.loop_new.R
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import com.example.loop_new.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +40,7 @@ fun TopBarOfDrawer(scaffoldState: ScaffoldState, scope: CoroutineScope, section:
         modifier = Modifier
             .height(42.dp),
         title = {
-            Text(text = "Loop - $section")
+            Text(text = section)
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -89,17 +87,23 @@ fun Drawer(
     }
 
     Column {
-        DrawerItem(text = "Home", icon = Icons.Default.Home, onClick = {
+        DrawerItem(text = "Home", icon = R.drawable.home, onClick = {
+            scope.launch { scaffoldState.drawerState.close() }
+
+            navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+        })
+
+        DrawerItem(text = "Stats", icon = R.drawable.stats, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
             // Obsługa kliknięcia na "Item 1"
         })
 
-        DrawerItem(text = "Settings", icon = Icons.Default.Settings, onClick = {
+        DrawerItem(text = "Settings", icon = R.drawable.settings2, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
             // Obsługa kliknięcia na "Item 2"
         })
 
-        DrawerItem(text = "Logout", icon = Icons.Default.ExitToApp, onClick = {
+        DrawerItem(text = "Logout", icon = R.drawable.logout2, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
 
             mainViewModel.signOut()
@@ -108,7 +112,7 @@ fun Drawer(
 }
 
 @Composable
-fun DrawerItem(text: String, icon: ImageVector, onClick: () -> Unit) {
+fun DrawerItem(text: String, icon: Int, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,7 +121,7 @@ fun DrawerItem(text: String, icon: ImageVector, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            icon,
+            painterResource(id = icon),
             contentDescription = null, // Zalecane jest dostarczenie opisu dla dostępności
             modifier = Modifier.size(24.dp)
         )
@@ -131,5 +135,9 @@ fun DrawerItem(text: String, icon: ImageVector, onClick: () -> Unit) {
 @Composable
 fun showDrawerTopBar(navController: NavController): Boolean {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    return currentRoute?.startsWith(NavigationSupport.BoxScreen) == true
+    return when { // Drawer is visible
+        currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.FlashcardScreen) == true -> true
+        else -> false
+    }
 }

@@ -2,11 +2,9 @@ package com.example.loop_new.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.GoogleAuthService
 import com.example.loop_new.domain.services.Service
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 

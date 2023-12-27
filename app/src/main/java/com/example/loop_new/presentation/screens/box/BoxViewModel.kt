@@ -24,7 +24,6 @@ abstract class BoxViewModel(
         get() = _isListEmpty.value
 
     init {
-        // Wywołaj funkcję sprawdzającą stan listy w Firestore w konstruktorze lub odpowiednim miejscu
         checkRepeatCollectionWhetherIsEmpty()
         setupRepeatCollectionListener()
         fetchListOfBox()
@@ -58,7 +57,7 @@ abstract class BoxViewModel(
 
     fun createBoxInPrivateSection(name: String, describe: String, colorGroup: List<Color>) {
 
-        // Przekształć kolory do formatu HEX
+        // Convert colors to HEX format
         val color1 = colorToHex(colorGroup[0])
         val color2 = colorToHex(colorGroup[1])
         val color3 = colorToHex(colorGroup[2])
