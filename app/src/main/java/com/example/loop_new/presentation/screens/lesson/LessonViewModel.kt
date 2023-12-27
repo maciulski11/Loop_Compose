@@ -58,7 +58,7 @@ class LessonViewModel(
         return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
     }
 
-    fun moveToNextFlashcard(navController: NavController, boxUid: String) {
+    fun moveToNextFlashcard(navController: NavController) {
         val currentList = flashcardList.value
         val currentIndex = currentList.indexOf(_currentFlashcard.value)
         val totalFlashcards = currentList.size
@@ -107,5 +107,11 @@ class LessonViewModel(
 
     fun playAudioFromUrl(audioUrl: String) {
         mainViewModel.playAudioFromUrl(audioUrl)
+    }
+
+    fun deleteFlashcardFromRepeatSection(flashcardUid: String) {
+        viewModelScope.launch {
+            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
+        }
     }
 }

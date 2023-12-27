@@ -25,26 +25,29 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel, boxUi
             { audioUrl ->
                 viewModel.playAudioFromUrl(audioUrl)
             },
-            {
+            {   // onKnowFlashcard
                 viewModel.updateFlashcardToKnow(
                     boxUid,
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
-                viewModel.moveToNextFlashcard(navController, boxUid)
+                viewModel.moveToNextFlashcard(navController)
+                viewModel.deleteFlashcardFromRepeatSection(flashcardList[indexOfFlashcard].uid.toString())
             },
-            {
+            {   // onSomewhatKnowFlashcard
                 viewModel.updateFlashcardToSomewhatKnow(
                     boxUid,
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
-                viewModel.moveToNextFlashcard(navController, boxUid)
+                viewModel.moveToNextFlashcard(navController)
+                viewModel.deleteFlashcardFromRepeatSection(flashcardList[indexOfFlashcard].uid.toString())
             },
-            {
+            {   // onDoNotKnowFlashcard
                 viewModel.updateFlashcardToDoNotKnow(
                     boxUid,
                     flashcardList[indexOfFlashcard].uid.toString()
                 )
-                viewModel.moveToNextFlashcard(navController, boxUid)
+                viewModel.moveToNextFlashcard(navController)
+                viewModel.deleteFlashcardFromRepeatSection(flashcardList[indexOfFlashcard].uid.toString())
             }
         )
     }
