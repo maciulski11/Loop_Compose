@@ -37,6 +37,7 @@ import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
 import com.example.loop_new.presentation.screens.box.BoxViewModelFactory
+import com.example.loop_new.presentation.screens.box.PrivateBoxScreen
 import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
@@ -49,14 +50,12 @@ import kotlinx.coroutines.launch
 object NavigationSupport {
     const val SignInScreen = "sign_in_screen"
     const val BoxScreen = "box_screen"
+    const val PrivateBoxScreen = "private_box_screen"
     const val FlashcardScreen = "flashcard_screen"
     const val PrivateFlashcardScreen = "private_flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
-
-    const val Public = "public"
-    const val Private = "private"
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -106,7 +105,7 @@ fun NavigationScreens(
 
                 LaunchedEffect(key1 = Unit) {
                     if (firebaseService.getSignedInUser() != null) {
-                        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+                        navController.navigate(NavigationSupport.BoxScreen)
                     }
                 }
 
@@ -133,7 +132,7 @@ fun NavigationScreens(
                         ).show()
 
                         firebaseService.createNewGoogleUser()
-                        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+                        navController.navigate(NavigationSupport.BoxScreen)
                         viewModel.resetState()
                     }
                 }
@@ -154,29 +153,39 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.BoxScreen}/{mode}",
-                arguments = listOf(navArgument("mode") { type = NavType.StringType })
-            ) { backStackEntry ->
-
-                val mode = backStackEntry.arguments?.getString("mode") ?: NavigationSupport.Public
-
+                NavigationSupport.BoxScreen,
+            ) {
                 LaunchedEffect(Unit) {
-                    currentSection.value =
-                        if (mode == NavigationSupport.Public) "Loop - Public" else "Loop - Private"
+                    currentSection.value = "Loop - Public"
                 }
 
                 val viewModel: BoxViewModel =
                     viewModel(
                         factory = BoxViewModelFactory(
                             firebaseService,
-                            mode == NavigationSupport.Public
+                            true
                         )
                     )
 
                 BoxScreen(
-                    navController, viewModel, isPrivateSection = mode == NavigationSupport.Private
+                    navController, viewModel
                 )
+            }
 
+            composable(NavigationSupport.PrivateBoxScreen) {
+                LaunchedEffect(Unit) {
+                    currentSection.value = "Loop - Private"
+                }
+
+                val viewModel: BoxViewModel =
+                    viewModel(
+                        factory = BoxViewModelFactory(
+                            firebaseService,
+                            false
+                        )
+                    )
+
+                PrivateBoxScreen(navController, viewModel)
             }
 
             composable(

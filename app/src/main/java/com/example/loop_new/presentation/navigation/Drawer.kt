@@ -90,7 +90,7 @@ fun Drawer(
         DrawerItem(text = "Home", icon = R.drawable.home, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
 
-            navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+            navController.navigate(NavigationSupport.BoxScreen)
         })
 
         DrawerItem(text = "Stats", icon = R.drawable.stats, onClick = {
@@ -137,7 +137,9 @@ fun showDrawerTopBar(navController: NavController): Boolean {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     return when { // Drawer is visible
         currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> true
         currentRoute?.startsWith(NavigationSupport.FlashcardScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.PrivateFlashcardScreen) == true -> true
         else -> false
     }
 }

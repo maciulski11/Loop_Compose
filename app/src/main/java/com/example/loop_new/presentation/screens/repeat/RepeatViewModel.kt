@@ -78,7 +78,7 @@ class RepeatViewModel(
 
             progress = calculateProgress(currentIndex + 1, totalFlashcards)
             // Nawiguj do innego ekranu, jeśli jesteś na ostatniej karcie
-            navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+            navController.navigate(NavigationSupport.BoxScreen)
 
             // Zablokuj przewijanie, gdy użytkownik osiągnął ostatnią kartę
             flashcardList.value = emptyList()

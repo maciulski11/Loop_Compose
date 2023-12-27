@@ -83,7 +83,7 @@ fun FlashcardScreen(navController: NavController, boxUid: String, viewModel: Fla
     // Support for custom return behavior
     BackHandler {
         // Where return
-        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+        navController.navigate(NavigationSupport.BoxScreen)
     }
 
     Screen(

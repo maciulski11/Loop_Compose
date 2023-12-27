@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,11 +18,11 @@ data class BottomNavItem(val route: String, val icon: Int)
 
 val bottomNavItems = listOf(
     BottomNavItem(
-        "${NavigationSupport.BoxScreen}/${NavigationSupport.Public}",
+        NavigationSupport.BoxScreen,
         icon = R.drawable.ic_public
     ),
     BottomNavItem(
-        "${NavigationSupport.BoxScreen}/${NavigationSupport.Private}",
+        NavigationSupport.PrivateBoxScreen,
         icon = R.drawable.ic_private
     )
 )
@@ -62,5 +61,10 @@ fun BottomNavigationBar(navController: NavController) {
 @Composable
 fun showBottomNavigationBar(navController: NavController): Boolean {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    return currentRoute?.startsWith(NavigationSupport.BoxScreen) == true
+    return when { // ButtonNavBar is visible
+        currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.FlashcardScreen) == true -> true
+        else -> false
+    }
 }

@@ -88,7 +88,7 @@ fun PrivateFlashcardScreen(
     // Support for custom return behavior
     BackHandler {
         // Where return
-        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Private}")
+        navController.navigate(NavigationSupport.PrivateBoxScreen)
     }
 
     PrivateScreen(
