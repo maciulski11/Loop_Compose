@@ -5,18 +5,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,13 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,12 +43,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Black
-import com.example.loop_new.ui.theme.Blue
-import com.example.loop_new.ui.theme.Green
-import com.example.loop_new.ui.theme.Orange
 import com.example.loop_new.ui.theme.Red
 import com.example.loop_new.ui.theme.White
 
@@ -64,7 +54,7 @@ fun PrivateScreenPreview() {
     val navController = rememberNavController()
     val sampleData = privateCreateSampleData()
 
-    PrivateScreen(navController = navController, boxUid = "", sampleData, { }, { })
+//    PrivateScreen(navController = navController, boxUid = "", sampleData, { }, { })
 }
 
 @Composable
@@ -84,7 +74,6 @@ fun PrivateFlashcardScreen(
     boxUid: String,
     viewModel: PrivateFlashcardViewModel,
 ) {
-
     // Support for custom return behavior
     BackHandler {
         // Where return
@@ -112,6 +101,8 @@ fun PrivateScreen(
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
 ) {
+    val showDialogState = remember { mutableStateOf(false) }
+
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
         val startLesson = createRefFor("startLesson")
@@ -151,16 +142,27 @@ fun PrivateScreen(
                 .layoutId("flashcardList")
         ) {
             items(list) { flashcard ->
-                PrivateFlashcardItem(
+                FlashcardItem(
                     flashcard,
                     { audioUrl ->
                         onPlayAudioFromUrl(audioUrl)
-
                     },
-                    { flashcardUid ->
-                        onDeleteFlashcard(flashcardUid)
+                    { longClick ->
+                        showDialogState.value = longClick
                     }
                 )
+
+                // Delete flashcard alert dialog
+                if (showDialogState.value) {
+                    ShowCustomAlertDialog(
+                        flashcard.word.toString(),
+                        {
+                            onDeleteFlashcard(flashcard.uid.toString())
+                        }
+                    ) {
+                        showDialogState.value = false
+                    }
+                }
             }
         }
 
@@ -189,118 +191,6 @@ fun PrivateScreen(
                     navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
                 }
         )
-    }
-}
-
-
-@Composable
-fun PrivateFlashcardItem(
-    flashcard: Flashcard,
-    onPlayAudioFromUrl: (String) -> Unit,
-    onDeleteFlashcard: (String) -> Unit,
-) {
-    val showDialogState = remember { mutableStateOf(false) }
-    val color = remember { mutableStateOf(Black) } // Domyślny kolor
-
-    when (flashcard.knowledgeLevel) {
-        KnowledgeLevel.KNOW.value -> color.value = Green
-        KnowledgeLevel.DO_NOT_KNOW.value -> color.value = Red
-        KnowledgeLevel.SOMEWHAT_KNOW.value -> color.value = Blue
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 6.dp,
-                start = 2.dp,
-                end = 2.dp
-            )
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    // LongClick
-                    onLongPress = {
-                        showDialogState.value = true
-                    }
-                )
-            },
-        contentAlignment = Alignment.Center,
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .border(3.dp, color.value, RoundedCornerShape(20.dp)),
-            ) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = flashcard.word.toString(),
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(top = 12.dp, bottom = 2.dp)
-                    )
-
-                    Image(
-                        painter = painterResource(
-
-                            id = if (flashcard.audioUrl!!.isNotEmpty()) {
-                                R.drawable.baseline_volume
-                            } else {
-                                R.drawable.baseline_volume_off
-                            }
-                        ),
-                        contentDescription = "Button",
-                        modifier = Modifier
-                            .padding(top = 12.dp, bottom = 2.dp, start = 4.dp)
-                            .align(Alignment.CenterVertically)
-                            .size(32.dp)
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                if (flashcard.audioUrl.isNotEmpty()) {
-                                    onPlayAudioFromUrl(flashcard.audioUrl)
-                                }
-                            }
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                }
-
-                Spacer(modifier = Modifier.height(0.dp))
-
-                Text(
-                    text = flashcard.pronunciation.toString(),
-                    fontSize = 21.sp,
-                    textAlign = TextAlign.Center,
-                    color = Orange,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 14.dp)
-                )
-            }
-        }
-    )
-
-    // Delete flashcard alert dialog
-    if (showDialogState.value) {
-        ShowCustomAlertDialog(
-            flashcard.word.toString(),
-            {
-                onDeleteFlashcard(flashcard.uid.toString())
-            }
-        ) {
-            showDialogState.value = false
-        }
     }
 }
 

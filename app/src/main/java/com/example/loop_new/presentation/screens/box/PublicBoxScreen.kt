@@ -21,15 +21,15 @@ import com.example.loop_new.domain.model.firebase.Box
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ScreenPreview() {
+fun PublicScreenPreview() {
     val navController = rememberNavController()
-    val sampleData = createSampleData()
+    val sampleData = publicCreateSampleData()
 
 //    Screen(navController, sampleData) { _, _, _ -> }
 }
 
 @Composable
-fun createSampleData(): List<Box> {
+fun publicCreateSampleData(): List<Box> {
     val sampleData = mutableListOf<Box>()
 
     for (i in 1..22) {
@@ -40,9 +40,9 @@ fun createSampleData(): List<Box> {
 
 // UI
 @Composable
-fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
+fun PublicBoxScreen(navController: NavController, viewModel: BoxViewModel) {
 
-    Screen(
+    PublicScreen(
         navController = navController,
         list = viewModel.boxList.value ?: emptyList(),
         viewModel,
@@ -50,7 +50,7 @@ fun BoxScreen(navController: NavController, viewModel: BoxViewModel) {
 }
 
 @Composable
-fun Screen(
+fun PublicScreen(
     navController: NavController,
     list: List<Box>,
     viewModel: BoxViewModel,

@@ -220,7 +220,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         setKnowledgeLevelOfFlashcard(boxUid, flashcardUid, updateData)
     }
 
-    //TODO: problem z tym
     override fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
 
         calendar.time = currentTime.toDate()

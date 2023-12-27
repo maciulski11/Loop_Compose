@@ -64,7 +64,6 @@ fun showBottomNavigationBar(navController: NavController): Boolean {
     return when { // ButtonNavBar is visible
         currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> true
         currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> true
-        currentRoute?.startsWith(NavigationSupport.FlashcardScreen) == true -> true
         else -> false
     }
 }

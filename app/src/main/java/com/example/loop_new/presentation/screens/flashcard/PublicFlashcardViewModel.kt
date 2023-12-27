@@ -11,7 +11,7 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
-class FlashcardViewModel(
+class PublicFlashcardViewModel(
     private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String,

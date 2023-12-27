@@ -30,11 +30,11 @@ import com.example.loop_new.domain.services.Service
 import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
-import com.example.loop_new.presentation.screens.flashcard.FlashcardScreen
-import com.example.loop_new.presentation.screens.flashcard.FlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard.PublicFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard.PublicFlashcardViewModel
 import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
-import com.example.loop_new.presentation.screens.box.BoxScreen
+import com.example.loop_new.presentation.screens.box.PublicBoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
 import com.example.loop_new.presentation.screens.box.BoxViewModelFactory
 import com.example.loop_new.presentation.screens.box.PrivateBoxScreen
@@ -167,7 +167,7 @@ fun NavigationScreens(
                         )
                     )
 
-                BoxScreen(
+                PublicBoxScreen(
                     navController, viewModel
                 )
             }
@@ -203,14 +203,14 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    FlashcardViewModel(
+                    PublicFlashcardViewModel(
                         firebaseService,
                         mainViewModel,
                         boxUid
                     )
                 }
 
-                FlashcardScreen(navController, boxUid, viewModel)
+                PublicFlashcardScreen(navController, boxUid, viewModel)
             }
 
             composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxName}",
