@@ -108,7 +108,7 @@ class BoxViewModelFactory(
 
 // ViewModel Implementations
 class PublicBoxViewModel(firebaseService: FirebaseService) :
-    BoxViewModel(firebaseService, firebaseService::fetchListOfBox)
+    BoxViewModel(firebaseService, firebaseService::fetchListOfPublicBox)
 
 class PrivateBoxViewModel(firebaseService: FirebaseService) :
-    BoxViewModel(firebaseService, firebaseService::fetchListOfBoxUser)
+    BoxViewModel(firebaseService, firebaseService::fetchListOfPrivateBox)

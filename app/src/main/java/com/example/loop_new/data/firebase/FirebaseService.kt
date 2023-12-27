@@ -1,7 +1,6 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
@@ -107,7 +106,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                                 // Teraz masz boxData i listę flashcards
                                 // Możesz przekazać te dane tam, gdzie są potrzebne
                                 // Na przykład, możesz je dodać do kolekcji użytkownika
-                                addUserBoxWithFlashcards(currentUser, boxUid, boxData, flashcards)
+                                addPrivateBoxWithFlashcards(currentUser, boxUid, boxData, flashcards)
                             }
                             .addOnFailureListener { e ->
                                 Log.e("FirestoreError", "Błąd pobierania fiszek: ${e.message}")
@@ -123,7 +122,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     }
 
-    private fun addUserBoxWithFlashcards(
+    private fun addPrivateBoxWithFlashcards(
         userUid: String,
         boxUid: String,
         boxData: Map<String, Any>,
@@ -154,7 +153,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         val data = Box(box.name, box.describe, uid, box.color1, box.color2, box.color3)
 
         try {
-            firestore.collection(USERS).document()
+            firestore.collection(USERS).document(currentUser)
                 .collection(BOX).document(uid)
                 .set(data)
 
@@ -171,7 +170,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         updateData: Map<String, *>,
     ) {
         try {
-            firestore.collection(BOX).document(boxUid)
+            firestore.collection(USERS).document(currentUser)
+                .collection(BOX).document(boxUid)
                 .collection(FLASHCARD).document(flashcardUid)
                 .update(updateData)
                 .addOnSuccessListener {
@@ -263,12 +263,16 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun addFlashcard(flashcard: Flashcard, boxUid: String) {
+    override fun addFlashcardInPrivateSection(flashcard: Flashcard, boxUid: String) {
         val uid = UUID.randomUUID().toString()
         val data = flashcard.copy(uid = uid, boxUid = boxUid)
 
         try {
-            firestore.collection(BOX).document(boxUid).collection(FLASHCARD).document(uid).set(data)
+            firestore.collection(USERS).document(currentUser)
+                .collection(BOX).document(boxUid)
+                .collection(FLASHCARD).document(uid)
+                .set(data)
+
             Log.d(LogTags.FIREBASE_SERVICES, "addFlashcard: Correct addition of flashcard")
 
         } catch (e: Exception) {
@@ -291,7 +295,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun fetchListOfBox(): Flow<List<Box>> {
+    override fun fetchListOfPublicBox(): Flow<List<Box>> {
         val collection = firestore.collection(BOX)
 
         return callbackFlow {
@@ -318,7 +322,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun fetchListOfBoxUser(): Flow<List<Box>> {
+    override fun fetchListOfPrivateBox(): Flow<List<Box>> {
         val collection = firestore.collection(USERS).document(currentUser).collection(BOX)
 
         return callbackFlow {
@@ -345,7 +349,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>> {
+    override fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
             firestore.collection(BOX).document(boxUid).collection(FLASHCARD)
 
@@ -428,7 +432,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
-        val repeatCollectionRef = firestore.collection(REPEAT)
+        val repeatCollectionRef =
+            firestore.collection(USERS).document(currentUser).collection(REPEAT)
 
         return flow {
             // Wykonaj zapytanie do Firestore i przekonwertuj dane na listę fiszek
@@ -443,14 +448,16 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun addFlashcardsToRepeatSection() {
-        firestore.collection(BOX)
+        firestore.collection(USERS).document(currentUser)
+            .collection(BOX)
             .get()
             .addOnSuccessListener { boxSnapshot ->
                 for (boxDocument in boxSnapshot.documents) {
                     // Iteracja przez dokumenty "box" użytkownika
                     val boxID = boxDocument.id
 
-                    firestore.collection(BOX).document(boxID)
+                    firestore.collection(USERS).document(currentUser)
+                        .collection(BOX).document(boxID)
                         .collection(FLASHCARD)
                         .get()
                         .addOnSuccessListener { flashcardSnapshot ->
@@ -480,13 +487,15 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     private fun addFlashcardToRepeat(flashcard: Flashcard) {
-        firestore.collection(REPEAT)
+        firestore.collection(USERS).document(currentUser)
+            .collection(REPEAT)
             .whereEqualTo("uid", flashcard.uid)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
                     // Fiszka o danym uid nie istnieje, więc możesz ją dodać
-                    firestore.collection(REPEAT)
+                    firestore.collection(USERS).document(currentUser)
+                        .collection(REPEAT)
                         .document(flashcard.uid!!)
                         .set(flashcard)
                         .addOnSuccessListener { documentReference ->
@@ -509,6 +518,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun deleteFlashcardFromRepeatSection(flashcardUid: String) {
-        firestore.collection(REPEAT).document(flashcardUid).delete()
+        firestore.collection(USERS).document(currentUser)
+            .collection(REPEAT).document(flashcardUid)
+            .delete()
     }
 }

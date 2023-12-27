@@ -147,7 +147,7 @@ fun Screen(
         constraints,
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 50.dp)
+            .padding(bottom = 42.dp)
     ) {
         LazyVerticalGrid(
             modifier = Modifier

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -72,12 +73,15 @@ fun NavigationScreens(
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    // Info of Public or Private Box
+    val currentSection = remember { mutableStateOf("Public") } // Stan przechowujący obecną sekcję
+
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             if (showDrawerTopBar(navController = navController)) {
-                TopBarOfDrawer(scaffoldState, scope)
+                TopBarOfDrawer(scaffoldState, scope, currentSection.value)
             }
         },
         bottomBar = {
@@ -154,6 +158,7 @@ fun NavigationScreens(
             ) { backStackEntry ->
 
                 val mode = backStackEntry.arguments?.getString("mode") ?: NavigationSupport.Public
+                currentSection.value = if (mode == NavigationSupport.Public) "Public" else "Private"
 
                 val viewModel: BoxViewModel =
                     viewModel(

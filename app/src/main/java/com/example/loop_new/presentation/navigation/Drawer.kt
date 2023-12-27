@@ -27,24 +27,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.loop_new.R
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import com.example.loop_new.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TopBarOfDrawer(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+fun TopBarOfDrawer(scaffoldState: ScaffoldState, scope: CoroutineScope, section: String) {
     TopAppBar(
         modifier = Modifier
             .height(42.dp),
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            Text(text = "Loop - $section")
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -91,12 +89,12 @@ fun Drawer(
     }
 
     Column {
-        DrawerItem(text = "Item 1", icon = Icons.Default.Home, onClick = {
+        DrawerItem(text = "Home", icon = Icons.Default.Home, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
             // Obsługa kliknięcia na "Item 1"
         })
 
-        DrawerItem(text = "Item 2", icon = Icons.Default.Settings, onClick = {
+        DrawerItem(text = "Settings", icon = Icons.Default.Settings, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
             // Obsługa kliknięcia na "Item 2"
         })

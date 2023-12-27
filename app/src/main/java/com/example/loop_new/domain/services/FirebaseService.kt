@@ -16,15 +16,15 @@ interface FirebaseService {
 
     fun createBoxInPrivateSection(box: Box)
 
-    fun addFlashcard(flashcard: Flashcard, boxUid: String)
+    fun addFlashcardInPrivateSection(flashcard: Flashcard, boxUid: String)
 
     fun deleteFlashcard(boxUid: String, flashcardUid: String)
 
-    fun fetchListOfBox(): Flow<List<Box>>
+    fun fetchListOfPublicBox(): Flow<List<Box>>
 
-    fun fetchListOfBoxUser(): Flow<List<Box>>
+    fun fetchListOfPrivateBox(): Flow<List<Box>>
 
-    fun fetchListOfFlashcardInBox(boxUid: String): Flow<List<Flashcard>>
+    fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>>
 
     fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>>
 

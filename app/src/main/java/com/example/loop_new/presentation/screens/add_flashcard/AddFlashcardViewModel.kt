@@ -44,7 +44,7 @@ class AddFlashcardViewModel(
 
         viewModelScope.launch {
             try {
-                firebaseService.addFlashcard(flashcardData, boxUid)
+                firebaseService.addFlashcardInPrivateSection(flashcardData, boxUid)
                 Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Success")
 
             } catch (e: Exception) {
