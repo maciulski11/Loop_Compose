@@ -5,16 +5,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -57,6 +64,7 @@ import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Green
 import com.example.loop_new.ui.theme.Orange
 import com.example.loop_new.ui.theme.Red
+import kotlin.math.roundToInt
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -110,12 +118,13 @@ fun Screen(
     list: List<Flashcard>,
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
-    onAddBoxToLessonSection: () -> Unit,
+    addBoxToUserLearningSection: () -> Unit,
 ) {
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
         val startLesson = createRefFor("startLesson")
         val addFlashcard = createRefFor("addFlashcard")
+        val slideButton = createRefFor("slideButton")
 
         constrain(flashcardsList) {
             top.linkTo(parent.top)
@@ -131,6 +140,12 @@ fun Screen(
         constrain(addFlashcard) {
             bottom.linkTo(parent.bottom, margin = 14.dp)
             end.linkTo(parent.end, margin = 16.dp)
+        }
+
+        constrain(slideButton) {
+            bottom.linkTo(parent.bottom, margin = 16.dp)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
         }
     }
 
@@ -157,31 +172,37 @@ fun Screen(
             }
         }
 
-        Image(
-            painter = painterResource(id = R.drawable.start_lesson_circle_78),
-            contentDescription = "Button",
-            modifier = Modifier
-                .layoutId("startLesson")
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-//                    navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
-                    onAddBoxToLessonSection()
-                }
-        )
+//        Image(
+//            painter = painterResource(id = R.drawable.start_lesson_circle_78),
+//            contentDescription = "Button",
+//            modifier = Modifier
+//                .layoutId("startLesson")
+//                .clickable(
+//                    indication = null,
+//                    interactionSource = remember { MutableInteractionSource() }
+//                ) {
+////                    navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
+//                    onAddBoxToLessonSection()
+//                }
+//        )
+//
+//        Image(
+//            painter = painterResource(id = R.drawable.baseline_add_circle_box),
+//            contentDescription = "Button",
+//            modifier = Modifier
+//                .layoutId("addFlashcard")
+//                .clickable(
+//                    indication = null,
+//                    interactionSource = remember { MutableInteractionSource() }
+//                ) {
+//                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
+//                }
+//        )
 
-        Image(
-            painter = painterResource(id = R.drawable.baseline_add_circle_box),
-            contentDescription = "Button",
-            modifier = Modifier
-                .layoutId("addFlashcard")
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
-                }
+        SlideToUnlockButton(
+            onSlideComplete = {
+                    addBoxToUserLearningSection()
+            }
         )
     }
 }
@@ -297,6 +318,64 @@ fun FlashcardItem(
         }
     }
 }
+
+@Composable
+fun SlideToUnlockButton(onSlideComplete: () -> Unit) {
+    val dragDistance = remember { mutableStateOf(0f) }
+    val maxDragDistance = remember { mutableStateOf(0f) }
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .height(44.dp) // Wysokość całego komponentu
+            .width(268.dp)
+            .layoutId("slideButton")
+    ) {
+        val sliderWidthPx = with(LocalDensity.current) { 92.dp.toPx() }
+        maxDragDistance.value = constraints.maxWidth - sliderWidthPx
+
+        // Wąski czarny pasek za przyciskiem
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .height(4.dp) // Wysokość paska
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
+                .background(Black.copy(alpha = 0.5f)) // Półprzezroczysty czarny kolor
+        )
+
+        // Przycisk przesuwny
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(dragDistance.value.roundToInt(), 0) }
+                .fillMaxHeight()
+                .width(92.dp)
+                .background(Green, shape = RoundedCornerShape(50))
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragStart = { dragDistance.value = 0f },
+                        onDragEnd = { dragDistance.value = 0f }
+                    ) { change, dragAmount ->
+                        val newDragDistance = dragDistance.value + dragAmount.x
+                        dragDistance.value = newDragDistance.coerceIn(0f, maxDragDistance.value)
+                        change.consumeAllChanges()
+
+                        if (dragDistance.value >= maxDragDistance.value) {
+                            onSlideComplete()
+                        }
+                    }
+                }
+        ) {
+            Text(
+                text = "Let's start!",
+                modifier = Modifier
+                    .align(Alignment.Center),
+                fontSize = 17.sp,
+                color = White
+            )
+        }
+    }
+}
+
 
 @Composable
 fun ShowCustomAlertDialog(
