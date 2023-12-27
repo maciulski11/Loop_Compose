@@ -11,11 +11,11 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
-class FlashcardViewModel(
+class PrivateFlashcardViewModel(
     private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String,
-) : ViewModel() {
+): ViewModel() {
 
     val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
 
@@ -26,7 +26,7 @@ class FlashcardViewModel(
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
-                val flashcardFlow = firebaseService.fetchListOfFlashcardInPublicBox(boxUid)
+                val flashcardFlow = firebaseService.fetchListOfFlashcardInPrivateBox(boxUid)
 
                 flashcardFlow.collect {
                     flashcardList.value = it
@@ -41,16 +41,14 @@ class FlashcardViewModel(
         }
     }
 
-    fun addPublicBoxToPrivateBox(boxUid: String) {
-        viewModelScope.launch {
-            try {
-                firebaseService.addPublicBoxToPrivateSection(boxUid)
-                Log.d(LogTags.FLASHCARD_VIEW_MODEL, "addBoxToUserLearningSection: Success")
+    fun deleteFlashcard(boxUid: String, flashcardUid: String) {
+        try {
+            firebaseService.deleteFlashcard(boxUid, flashcardUid)
+            Log.d(LogTags.FLASHCARD_VIEW_MODEL, "deleteFlashcard: Success")
 
-            } catch (e: Exception) {
+        } catch (e: Exception) {
 
-                Log.e(LogTags.FLASHCARD_VIEW_MODEL, "addBoxToUserLearningSection: Error: $e")
-            }
+            Log.e(LogTags.FLASHCARD_VIEW_MODEL, "deleteFlashcard: Error: $e")
         }
     }
 

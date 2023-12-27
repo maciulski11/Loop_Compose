@@ -37,6 +37,8 @@ import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.box.BoxScreen
 import com.example.loop_new.presentation.screens.box.BoxViewModel
 import com.example.loop_new.presentation.screens.box.BoxViewModelFactory
+import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
@@ -48,6 +50,7 @@ object NavigationSupport {
     const val SignInScreen = "sign_in_screen"
     const val BoxScreen = "box_screen"
     const val FlashcardScreen = "flashcard_screen"
+    const val PrivateFlashcardScreen = "private_flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
@@ -197,8 +200,34 @@ fun NavigationScreens(
                         boxUid
                     )
                 }
+
                 FlashcardScreen(navController, boxUid, viewModel)
             }
+
+            composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxName}",
+                arguments = listOf(
+                    navArgument("boxUid") { type = NavType.StringType },
+                    navArgument("boxName") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxName = backStackEntry.arguments?.getString("boxName") ?: ""
+
+                LaunchedEffect(boxUid) {
+                    currentSection.value = boxName
+                }
+
+                val viewModel = remember {
+                    PrivateFlashcardViewModel(
+                        firebaseService,
+                        mainViewModel,
+                        boxUid
+                    )
+                }
+
+                PrivateFlashcardScreen(navController, boxUid, viewModel)
+            }
+
 
             composable(
                 "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
@@ -213,6 +242,7 @@ fun NavigationScreens(
                             dictionaryService
                         )
                     }
+
                 AddFlashcardScreen(navController, boxUid, viewModel)
             }
 
@@ -228,6 +258,7 @@ fun NavigationScreens(
                         boxUid
                     )
                 }
+
                 LessonScreen(navController, viewModel, boxUid)
             }
 
@@ -238,6 +269,7 @@ fun NavigationScreens(
                         mainViewModel
                     )
                 }
+
                 RepeatScreen(navController, viewModel)
             }
         }

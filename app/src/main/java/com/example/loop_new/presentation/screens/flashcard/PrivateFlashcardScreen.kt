@@ -5,69 +5,70 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
+import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Green
 import com.example.loop_new.ui.theme.Orange
 import com.example.loop_new.ui.theme.Red
-import kotlin.math.roundToInt
+import com.example.loop_new.ui.theme.White
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ScreenPreview() {
+fun PrivateScreenPreview() {
     val navController = rememberNavController()
-    val sampleData = createSampleData()
+    val sampleData = privateCreateSampleData()
 
-    Screen(navController = navController, boxUid = "", sampleData, { }, { })
+    PrivateScreen(navController = navController, boxUid = "", sampleData, { }, { })
 }
 
 @Composable
-fun createSampleData(): List<Flashcard> {
+fun privateCreateSampleData(): List<Flashcard> {
     val sampleData = mutableListOf<Flashcard>()
 
     for (i in 1..12) {
@@ -78,34 +79,38 @@ fun createSampleData(): List<Flashcard> {
 
 // UI
 @Composable
-fun FlashcardScreen(navController: NavController, boxUid: String, viewModel: FlashcardViewModel) {
+fun PrivateFlashcardScreen(
+    navController: NavController,
+    boxUid: String,
+    viewModel: PrivateFlashcardViewModel,
+) {
 
     // Support for custom return behavior
     BackHandler {
         // Where return
-        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Public}")
+        navController.navigate("${NavigationSupport.BoxScreen}/${NavigationSupport.Private}")
     }
 
-    Screen(
+    PrivateScreen(
         navController,
         boxUid,
         viewModel.flashcardList.value ?: emptyList(),
         { audioUrl ->
             viewModel.playAudioFromUrl(audioUrl)
         },
-        {
-            viewModel.addPublicBoxToPrivateBox(boxUid)
+        { flashcardUid ->
+            viewModel.deleteFlashcard(boxUid, flashcardUid)
         }
     )
 }
 
 @Composable
-fun Screen(
+fun PrivateScreen(
     navController: NavController,
     boxUid: String,
     list: List<Flashcard>,
     onPlayAudioFromUrl: (String) -> Unit,
-    addPublicBoxToPrivateSection: () -> Unit,
+    onDeleteFlashcard: (String) -> Unit,
 ) {
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
@@ -146,26 +151,53 @@ fun Screen(
                 .layoutId("flashcardList")
         ) {
             items(list) { flashcard ->
-                FlashcardItem(
-                    flashcard
-                ) { audioUrl ->
-                    onPlayAudioFromUrl(audioUrl)
-                }
+                PrivateFlashcardItem(
+                    flashcard,
+                    { audioUrl ->
+                        onPlayAudioFromUrl(audioUrl)
+
+                    },
+                    { flashcardUid ->
+                        onDeleteFlashcard(flashcardUid)
+                    }
+                )
             }
         }
-        SlideToUnlockButton(
-            onSlideComplete = {
-                addPublicBoxToPrivateSection()
-            }
+
+        Image(
+            painter = painterResource(id = R.drawable.start_lesson_circle_78),
+            contentDescription = "Button",
+            modifier = Modifier
+                .layoutId("startLesson")
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
+                }
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.baseline_add_circle_box),
+            contentDescription = "Button",
+            modifier = Modifier
+                .layoutId("addFlashcard")
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
+                }
         )
     }
 }
 
 
 @Composable
-fun FlashcardItem(
+fun PrivateFlashcardItem(
     flashcard: Flashcard,
     onPlayAudioFromUrl: (String) -> Unit,
+    onDeleteFlashcard: (String) -> Unit,
 ) {
     val showDialogState = remember { mutableStateOf(false) }
     val color = remember { mutableStateOf(Black) } // Domyślny kolor
@@ -258,59 +290,91 @@ fun FlashcardItem(
             }
         }
     )
+
+    // Delete flashcard alert dialog
+    if (showDialogState.value) {
+        ShowCustomAlertDialog(
+            flashcard.word.toString(),
+            {
+                onDeleteFlashcard(flashcard.uid.toString())
+            }
+        ) {
+            showDialogState.value = false
+        }
+    }
 }
 
 @Composable
-fun SlideToUnlockButton(onSlideComplete: () -> Unit) {
-    val dragDistance = remember { mutableStateOf(0f) }
-    val maxDragDistance = remember { mutableStateOf(0f) }
-
-    BoxWithConstraints(
-        modifier = Modifier
-            .height(44.dp) // Wysokość całego komponentu
-            .width(268.dp)
-            .layoutId("slideButton")
-    ) {
-        val sliderWidthPx = with(LocalDensity.current) { 92.dp.toPx() }
-        maxDragDistance.value = constraints.maxWidth - sliderWidthPx
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .height(4.dp) // Wysokość paska
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-                .background(Black.copy(alpha = 0.5f)) // Półprzezroczysty czarny kolor
-        )
-
-        Box(
-            modifier = Modifier
-                .offset { IntOffset(dragDistance.value.roundToInt(), 0) }
-                .fillMaxHeight()
-                .width(92.dp)
-                .background(Green, shape = RoundedCornerShape(50))
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { dragDistance.value = 0f },
-                        onDragEnd = { dragDistance.value = 0f }
-                    ) { change, dragAmount ->
-                        val newDragDistance = dragDistance.value + dragAmount.x
-                        dragDistance.value = newDragDistance.coerceIn(0f, maxDragDistance.value)
-                        change.consumeAllChanges()
-
-                        if (dragDistance.value >= maxDragDistance.value) {
-                            onSlideComplete()
-                        }
-                    }
-                }
-        ) {
-            Text(
-                text = "Let's start!",
-                modifier = Modifier
-                    .align(Alignment.Center),
-                fontSize = 17.sp,
-                color = White
+fun ShowCustomAlertDialog(
+    word: String,
+    onDelete: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val deleteFlashcard = buildAnnotatedString {
+        append("Do you want to delete flashcard: ")
+        pushStyle(
+            SpanStyle(
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline
             )
-        }
+        )
+        append(word)
+        pop() // Ends the application of bold
+        append("?")
     }
+
+    AlertDialog(
+        modifier = Modifier
+            .height(150.dp)
+            .width(300.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .border(3.dp, Black, RoundedCornerShape(20.dp))
+            .background(White),
+        onDismissRequest = { /* Touching the screen turns off it */ },
+        title = {
+            Text(
+                text = deleteFlashcard,
+                fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(start = 12.dp, end = 12.dp, bottom = 20.dp)
+                    .wrapContentWidth(Alignment.CenterHorizontally) // Wyśrodkowanie w poziomie
+            )
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 22.dp),
+                horizontalArrangement = Arrangement.Absolute.Right
+            ) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Black),
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = White
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                Button(
+                    // Button background
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Red),
+                    onClick = {
+                        onDelete()
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = "Delete",
+                        color = Black
+                    )
+                }
+            }
+        }
+    )
 }

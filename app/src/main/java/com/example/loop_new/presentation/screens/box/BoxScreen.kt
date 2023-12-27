@@ -156,7 +156,7 @@ fun Screen(
             columns = GridCells.Fixed(itemsInRow)
         ) {
             items(list) { box ->
-                BoxItem(box, navController)
+                BoxItem(box, navController, isPrivateSection)
             }
         }
 
@@ -393,7 +393,7 @@ fun ShowCustomAlertDialog(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Kontener na Snackbar
+                    // Snackbar container
                     SnackbarHost(hostState = snackbarHostState)
                 }
             }
@@ -402,7 +402,7 @@ fun ShowCustomAlertDialog(
 }
 
 @Composable
-fun BoxItem(box: Box, navController: NavController) {
+fun BoxItem(box: Box, navController: NavController, isPrivateSection: Boolean) {
 
     // Convert HEX to Color
     val color1 = hexToColor(box.color1 ?: "F0EFEF")
@@ -417,7 +417,12 @@ fun BoxItem(box: Box, navController: NavController) {
                 interactionSource = remember { MutableInteractionSource() }
             ) {
                 val boxUid = box.uid
-                navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid/${box.name}")
+
+                if (isPrivateSection) {
+                    navController.navigate("${NavigationSupport.PrivateFlashcardScreen}/$boxUid/${box.name}")
+                } else {
+                    navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid/${box.name}")
+                }
             },
         contentAlignment = Alignment.Center,
         content = {
