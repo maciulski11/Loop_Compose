@@ -3,6 +3,7 @@ package com.example.loop_new.domain.services
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.User
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.Flow
 
 interface FirebaseService {
@@ -20,7 +21,7 @@ interface FirebaseService {
 
     fun deleteFlashcard(boxUid: String, flashcardUid: String)
 
-    fun fetchListOfPublicBox(): Flow<List<Box>>
+    fun fetchListOfPublicBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>>
 
     fun fetchListOfPrivateBox(): Flow<List<Box>>
 
