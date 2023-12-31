@@ -1,13 +1,19 @@
 package com.example.loop_new.presentation.screens.box
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,8 +50,8 @@ fun PublicBoxScreen(navController: NavController, viewModel: BoxViewModel) {
 
     PublicScreen(
         navController = navController,
-        list = viewModel.boxList.value ?: emptyList(),
-        viewModel,
+        list = viewModel.publicBoxList,
+        viewModel
     )
 }
 
@@ -89,9 +95,36 @@ fun PublicScreen(
                 .layoutId("boxList"),
             columns = GridCells.Fixed(itemsInRow)
         ) {
-            items(list) { box ->
+            itemsIndexed(list) { index, box ->
                 BoxItem(box) { boxUid ->
                     navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid/${box.name}")
+                }
+
+                // Sprawdzenie, czy osiągnięto koniec listy i załadowanie więcej boxów
+                if (index == list.size - 1 && viewModel.canLoadMore) {
+                    LaunchedEffect(Unit) {
+                        viewModel.loadMoreBoxes()
+                    }
+                }
+            }
+
+            if (!viewModel.hasMoreData.value) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .height(100.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.BottomCenter,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 16.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -1,32 +1,57 @@
 package com.example.loop_new.presentation.screens.box
 
-import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
-import kotlinx.coroutines.flow.Flow
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
 
-abstract class BoxViewModel(
-    private val firebaseService: FirebaseService,
-    private val fetchBoxes: suspend () -> Flow<List<Box>>,
-) : ViewModel() {
+class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
 
-    val boxList = mutableStateOf<List<Box>?>(null)
+    val publicBoxList = mutableStateListOf<Box>()
+    var hasMoreData = mutableStateOf(false)
 
     private val _isListEmpty = mutableStateOf(true)
     val isListEmpty: Boolean
         get() = _isListEmpty.value
 
+    // Właściwość określająca, czy można załadować więcej boxów
+    val canLoadMore: Boolean
+        get() = lastVisibleDocument != null
+
+    private var lastVisibleDocument: DocumentSnapshot? = null
+
     init {
         checkRepeatCollectionWhetherIsEmpty()
         setupRepeatCollectionListener()
-        fetchListOfBox()
+        loadInitialBoxes()
+    }
+
+    private fun loadInitialBoxes() {
+        viewModelScope.launch {
+            firebaseService.fetchListOfPublicBox(null).collect { (loadedBoxes, lastDoc) ->
+                publicBoxList.addAll(loadedBoxes)
+                lastVisibleDocument = lastDoc
+            }
+        }
+    }
+
+    fun loadMoreBoxes() {
+        viewModelScope.launch {
+            lastVisibleDocument?.let { lastDoc ->
+                firebaseService.fetchListOfPublicBox(lastDoc).collect { (loadedBoxes, lastDoc) ->
+                    if (loadedBoxes.isNotEmpty()) {
+                        publicBoxList.addAll(loadedBoxes)
+                        lastVisibleDocument = lastDoc
+                    }
+                    // Aktualizacja stanu 'hasMoreData'
+                    hasMoreData.value = loadedBoxes.isEmpty()
+                }
+            }
+        }
     }
 
     private fun setupRepeatCollectionListener() {
@@ -43,71 +68,15 @@ abstract class BoxViewModel(
         }
     }
 
-    private fun fetchListOfBox() {
-        viewModelScope.launch {
-            try {
-                fetchBoxes().collect { boxes ->
-                    boxList.value = boxes
-                }
-            } catch (e: Exception) {
-                Log.e(LogTags.BOX_VIEW_MODEL, "Error: ${e.message}")
-            }
-        }
-    }
-
-    fun createBoxInPrivateSection(name: String, describe: String, colorGroup: List<Color>) {
-
-        // Convert colors to HEX format
-        val color1 = colorToHex(colorGroup[0])
-        val color2 = colorToHex(colorGroup[1])
-        val color3 = colorToHex(colorGroup[2])
-
-        val box =
-            Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
-        viewModelScope.launch {
-            try {
-                firebaseService.createBoxInPrivateSection(box)
-
-                Log.d(LogTags.BOX_VIEW_MODEL, "createBoxInPrivateSection: Correct addition of box")
-
-            } catch (e: Exception) {
-
-                Log.e(LogTags.BOX_VIEW_MODEL, "createBoxInPrivateSection: Error: $e")
-            }
-        }
-    }
-
-    // Helper function to convert color to HEX format
-    private fun colorToHex(color: Color): String {
-        return "#%02x%02x%02x".format(
-            (color.red * 255).toInt(),
-            (color.green * 255).toInt(),
-            (color.blue * 255).toInt()
-        )
-    }
+//    private fun fetchListOfBox() {
+//        viewModelScope.launch {
+//            try {
+//                firebaseService.fetchListOfPublicBox().collect { boxes ->
+//                    boxList.value = boxes
+//                }
+//            } catch (e: Exception) {
+//                Log.e(LogTags.BOX_VIEW_MODEL, "Error: ${e.message}")
+//            }
+//        }
+//    }
 }
-
-// ViewModel Common Factory
-class BoxViewModelFactory(
-    private val firebaseService: FirebaseService,
-    private val isPublic: Boolean,
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel = if (isPublic) {
-            PublicBoxViewModel(firebaseService)
-        } else {
-            PrivateBoxViewModel(firebaseService)
-        }
-        if (modelClass.isAssignableFrom(viewModel::class.java)) {
-            return viewModel as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
-
-// ViewModel Implementations
-class PublicBoxViewModel(firebaseService: FirebaseService) :
-    BoxViewModel(firebaseService, firebaseService::fetchListOfPublicBox)
-
-class PrivateBoxViewModel(firebaseService: FirebaseService) :
-    BoxViewModel(firebaseService, firebaseService::fetchListOfPrivateBox)

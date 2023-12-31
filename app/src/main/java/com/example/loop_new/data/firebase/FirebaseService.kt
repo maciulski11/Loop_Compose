@@ -305,9 +305,9 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
             // Zapytanie do Firestore
             val query = if (lastVisibleDocument == null) {
-                firestore.collection(BOX).limit(2)
+                firestore.collection(BOX).limit(10)
             } else {
-                firestore.collection(BOX).startAfter(lastVisibleDocument).limit(2)
+                firestore.collection(BOX).startAfter(lastVisibleDocument).limit(4)
             }
 
             // Wykonaj zapytanie
