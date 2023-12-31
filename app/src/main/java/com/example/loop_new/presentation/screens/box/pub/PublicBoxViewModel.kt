@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.box
+package com.example.loop_new.presentation.screens.box.pub
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +9,7 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
 
-class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
+class PublicBoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
 
     val publicBoxList = mutableStateListOf<Box>()
     var hasMoreData = mutableStateOf(false)
@@ -27,10 +27,10 @@ class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
     init {
         checkRepeatCollectionWhetherIsEmpty()
         setupRepeatCollectionListener()
-        loadInitialBoxes()
+        fetchListOfPublicBox()
     }
 
-    private fun loadInitialBoxes() {
+    private fun fetchListOfPublicBox() {
         viewModelScope.launch {
             firebaseService.fetchListOfPublicBox(null).collect { (loadedBoxes, lastDoc) ->
                 publicBoxList.addAll(loadedBoxes)
@@ -67,16 +67,4 @@ class BoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
             _isListEmpty.value = firebaseService.checkRepeatCollectionWhetherIsEmpty()
         }
     }
-
-//    private fun fetchListOfBox() {
-//        viewModelScope.launch {
-//            try {
-//                firebaseService.fetchListOfPublicBox().collect { boxes ->
-//                    boxList.value = boxes
-//                }
-//            } catch (e: Exception) {
-//                Log.e(LogTags.BOX_VIEW_MODEL, "Error: ${e.message}")
-//            }
-//        }
-//    }
 }

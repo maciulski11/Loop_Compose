@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.box
+package com.example.loop_new.presentation.screens.box.pub
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.presentation.screens.box.AnimatedLearningButton
+import com.example.loop_new.presentation.screens.box.BoxItem
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -46,7 +48,7 @@ fun publicCreateSampleData(): List<Box> {
 
 // UI
 @Composable
-fun PublicBoxScreen(navController: NavController, viewModel: BoxViewModel) {
+fun PublicBoxScreen(navController: NavController, viewModel: PublicBoxViewModel) {
 
     PublicScreen(
         navController = navController,
@@ -59,7 +61,7 @@ fun PublicBoxScreen(navController: NavController, viewModel: BoxViewModel) {
 fun PublicScreen(
     navController: NavController,
     list: List<Box>,
-    viewModel: BoxViewModel,
+    viewModel: PublicBoxViewModel,
 ) {
 
     BackHandler { /* gesture return is off */ }

@@ -1,10 +1,11 @@
-package com.example.loop_new.presentation.screens.box
+package com.example.loop_new.presentation.screens.box.priv
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +22,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
@@ -38,10 +40,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -59,6 +63,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.box.AnimatedLearningButton
+import com.example.loop_new.presentation.screens.box.BoxItem
 import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Green
@@ -105,12 +111,12 @@ fun privateCreateSampleData(): List<Box> {
 @Composable
 fun PrivateBoxScreen(
     navController: NavController,
-    viewModel: BoxViewModel,
+    viewModel: PrivateBoxViewModel,
 ) {
 
     PrivateScreen(
         navController = navController,
-        list = viewModel.boxList.value ?: emptyList(),
+        list = viewModel.privateBoxList,
         viewModel,
     )
     { nameInput, describeInput, groupColor ->
@@ -122,7 +128,7 @@ fun PrivateBoxScreen(
 fun PrivateScreen(
     navController: NavController,
     list: List<Box>,
-    viewModel: BoxViewModel,
+    viewModel: PrivateBoxViewModel,
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
 ) {
 
@@ -155,21 +161,49 @@ fun PrivateScreen(
 
     val itemsInRow = 2 // Ilość elementów w jednym wierszu
 
+
     ConstraintLayout(
         constraints,
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 42.dp)
     ) {
+
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("boxList"),
             columns = GridCells.Fixed(itemsInRow)
         ) {
-            items(list) { box ->
+            itemsIndexed(list) { index, box ->
                 BoxItem(box) { boxUid ->
                     navController.navigate("${NavigationSupport.PrivateFlashcardScreen}/$boxUid/${box.name}")
+                }
+                // Sprawdzenie, czy osiągnięto koniec listy i załadowanie więcej boxów
+                if (index == list.size - 1 && viewModel.canLoadMore) {
+                    LaunchedEffect(Unit) {
+                        viewModel.loadMorePrivateBoxes()
+                    }
+                }
+            }
+
+            if (!viewModel.hasMoreData.value) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .height(100.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.BottomCenter,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 16.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -261,6 +295,7 @@ fun ShowCustomAlertDialog(
             SnackbarMessage.None -> { /* Don't do anything */
             }
         }
+
         snackbarMessage = SnackbarMessage.None // Status reset
     }
 

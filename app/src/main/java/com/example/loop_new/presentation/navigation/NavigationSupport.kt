@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,10 +33,10 @@ import com.example.loop_new.presentation.screens.flashcard.PublicFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard.PublicFlashcardViewModel
 import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
-import com.example.loop_new.presentation.screens.box.PublicBoxScreen
-import com.example.loop_new.presentation.screens.box.BoxViewModel
-import com.example.loop_new.presentation.screens.box.BoxViewModelFactory
-import com.example.loop_new.presentation.screens.box.PrivateBoxScreen
+import com.example.loop_new.presentation.screens.box.pub.PublicBoxScreen
+import com.example.loop_new.presentation.screens.box.pub.PublicBoxViewModel
+import com.example.loop_new.presentation.screens.box.priv.PrivateBoxScreen
+import com.example.loop_new.presentation.screens.box.priv.PrivateBoxViewModel
 import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
@@ -152,24 +151,16 @@ fun NavigationScreens(
                 )
             }
 
-            composable(
-                NavigationSupport.BoxScreen,
-            ) {
+            composable(NavigationSupport.BoxScreen) {
                 LaunchedEffect(Unit) {
                     currentSection.value = "Loop - Public"
                 }
 
-                val viewModel: BoxViewModel =
-                    viewModel(
-                        factory = BoxViewModelFactory(
-                            firebaseService,
-                            true
-                        )
-                    )
+                val viewModel = remember {
+                    PublicBoxViewModel(firebaseService)
+                }
 
-                PublicBoxScreen(
-                    navController, viewModel
-                )
+                PublicBoxScreen(navController, viewModel)
             }
 
             composable(NavigationSupport.PrivateBoxScreen) {
@@ -177,13 +168,9 @@ fun NavigationScreens(
                     currentSection.value = "Loop - Private"
                 }
 
-                val viewModel: BoxViewModel =
-                    viewModel(
-                        factory = BoxViewModelFactory(
-                            firebaseService,
-                            false
-                        )
-                    )
+                val viewModel = remember {
+                    PrivateBoxViewModel(firebaseService)
+                }
 
                 PrivateBoxScreen(navController, viewModel)
             }
