@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.flashcard
+package com.example.loop_new.presentation.screens.flashcard.pub
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -36,6 +36,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.presentation.screens.flashcard.FlashcardItem
 import com.example.loop_new.ui.theme.Green
 import kotlin.math.roundToInt
 

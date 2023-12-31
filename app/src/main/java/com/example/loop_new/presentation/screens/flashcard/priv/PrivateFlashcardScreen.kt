@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.flashcard
+package com.example.loop_new.presentation.screens.flashcard.priv
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -44,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.flashcard.FlashcardItem
 import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Red
 import com.example.loop_new.ui.theme.White

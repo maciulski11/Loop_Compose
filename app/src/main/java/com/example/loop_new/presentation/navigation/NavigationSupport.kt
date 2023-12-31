@@ -29,16 +29,16 @@ import com.example.loop_new.domain.services.Service
 import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
-import com.example.loop_new.presentation.screens.flashcard.PublicFlashcardScreen
-import com.example.loop_new.presentation.screens.flashcard.PublicFlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard.pub.PublicFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard.pub.PublicFlashcardViewModel
 import com.example.loop_new.presentation.screens.lesson.LessonScreen
 import com.example.loop_new.presentation.screens.lesson.LessonViewModel
 import com.example.loop_new.presentation.screens.box.pub.PublicBoxScreen
 import com.example.loop_new.presentation.screens.box.pub.PublicBoxViewModel
 import com.example.loop_new.presentation.screens.box.priv.PrivateBoxScreen
 import com.example.loop_new.presentation.screens.box.priv.PrivateBoxViewModel
-import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardScreen
-import com.example.loop_new.presentation.screens.flashcard.PrivateFlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
@@ -73,8 +73,7 @@ fun NavigationScreens(
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     // Info of Public or Private Box
-    val currentSection = remember { mutableStateOf("") } // Stan przechowujący obecną sekcję
-
+    val currentSection = remember { mutableStateOf("") }
 
     Scaffold(
         scaffoldState = scaffoldState,

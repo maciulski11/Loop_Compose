@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
@@ -35,7 +34,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     private val auth = Firebase.auth
-    private val currentUser = auth.currentUser?.uid ?: ""
+    private val currentUser = auth.currentUser?.uid
 
     private val currentTime = Timestamp.now()
 
@@ -130,7 +129,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         flashcards: List<Flashcard>,
     ) {
         // Dodaj box i fiszki do kolekcji użytkownika
-        val userBoxRef = firestore.collection(USERS).document(currentUser)
+        val userBoxRef = firestore.collection(USERS).document(currentUser ?: "")
             .collection(BOX).document(boxUid)
 
         firestore.runBatch { batch ->
@@ -154,7 +153,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         val data = Box(box.name, box.describe, uid, box.color1, box.color2, box.color3)
 
         try {
-            firestore.collection(USERS).document(currentUser)
+            firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(uid)
                 .set(data)
 
@@ -171,7 +170,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         updateData: Map<String, *>,
     ) {
         try {
-            firestore.collection(USERS).document(currentUser)
+            firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(boxUid)
                 .collection(FLASHCARD).document(flashcardUid)
                 .update(updateData)
@@ -238,31 +237,36 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun setupRepeatCollectionListener(onCollectionUpdate: (Boolean) -> Unit) {
-        firestore.collection(USERS).document(currentUser)
-            .collection(REPEAT)
-            .addSnapshotListener { querySnapshot, error ->
-                if (error != null) {
-                    // Loguj błąd, ale nie zatrzymuj aplikacji
-                    Log.e("FirestoreRepository", "Firestore listener error: $error")
-                    return@addSnapshotListener
-                }
+        if (currentUser != null) {
+            firestore.collection(USERS).document(currentUser)
+                .collection(REPEAT)
+                .addSnapshotListener { querySnapshot, error ->
+                    if (error != null) {
+                        // Loguj błąd, ale nie zatrzymuj aplikacji
+                        Log.e("FirestoreRepository", "Firestore listener error: $error")
+                        return@addSnapshotListener
+                    }
 
-                // Aktualizuj stan na podstawie danych z Firestore
-                querySnapshot?.let {
-                    onCollectionUpdate(it.isEmpty)
+                    // Aktualizuj stan na podstawie danych z Firestore
+                    querySnapshot?.let {
+                        onCollectionUpdate(it.isEmpty)
+                    }
                 }
-            }
+        }
     }
 
     override suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean {
-        return try {
-            val querySnapshot = firestore.collection(USERS).document(currentUser)
-                .collection(REPEAT).get().await()
-            querySnapshot.isEmpty
-        } catch (exception: Exception) {
-            Log.e("FirestoreRepository", "checkFirestoreCollection: $exception")
-            false
+        if (currentUser != null) {
+            return try {
+                val querySnapshot = firestore.collection(USERS).document(currentUser)
+                    .collection(REPEAT).get().await()
+                querySnapshot.isEmpty
+            } catch (exception: Exception) {
+                Log.e("FirestoreRepository", "checkFirestoreCollection: $exception")
+                false
+            }
         }
+        return false
     }
 
     override fun addFlashcardInPrivateSection(flashcard: Flashcard, boxUid: String) {
@@ -270,7 +274,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         val data = flashcard.copy(uid = uid, boxUid = boxUid)
 
         try {
-            firestore.collection(USERS).document(currentUser)
+            firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(boxUid)
                 .collection(FLASHCARD).document(uid)
                 .set(data)
@@ -285,7 +289,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun deleteFlashcard(boxUid: String, flashcardUid: String) {
         try {
-            firestore.collection(USERS).document(currentUser)
+            firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(boxUid)
                 .collection(FLASHCARD).document(flashcardUid)
                 .delete()
@@ -341,38 +345,43 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             var lastVisibleDocument: DocumentSnapshot? = lastDocSnapshot
             val fetchedBoxes = mutableListOf<Box>()
 
-            // Zapytanie do Firestore
-            val query = if (lastVisibleDocument == null) {
-                firestore.collection(USERS).document(currentUser)
-                    .collection(BOX)
-                    .limit(10)
-            } else {
-                firestore.collection(USERS)
-                    .document(currentUser).collection(BOX)
-                    .startAfter(lastVisibleDocument)
-                    .limit(4)
+            if (currentUser != null) {
+
+                // Zapytanie do Firestore
+                val query = if (lastVisibleDocument == null) {
+                    firestore.collection(USERS).document(currentUser)
+                        .collection(BOX)
+                        .limit(10)
+                } else {
+                    firestore.collection(USERS)
+                        .document(currentUser).collection(BOX)
+                        .startAfter(lastVisibleDocument)
+                        .limit(4)
+                }
+
+
+                // Wykonaj zapytanie
+                val querySnapshot = query.get().await()
+                val documents = querySnapshot?.documents
+
+                // Przetwórz wyniki zapytania
+                documents?.forEach { document ->
+                    document.toObject(Box::class.java)?.let { fetchedBoxes.add(it) }
+                    lastVisibleDocument = document
+                }
+
+                // Wyślij pobrane boxy i ostatni widoczny dokument
+                trySend(Pair(fetchedBoxes, lastVisibleDocument)).isSuccess
+
+                // Jeśli nie ma więcej dokumentów, zakończ flow
+                if (documents!!.isEmpty()) {
+                    close()
+                }
+
+                // awaitClose zostanie wywołane, gdy flow zostanie zamknięty lub anulowany
+                awaitClose { }
+
             }
-
-            // Wykonaj zapytanie
-            val querySnapshot = query.get().await()
-            val documents = querySnapshot?.documents
-
-            // Przetwórz wyniki zapytania
-            documents?.forEach { document ->
-                document.toObject(Box::class.java)?.let { fetchedBoxes.add(it) }
-                lastVisibleDocument = document
-            }
-
-            // Wyślij pobrane boxy i ostatni widoczny dokument
-            trySend(Pair(fetchedBoxes, lastVisibleDocument)).isSuccess
-
-            // Jeśli nie ma więcej dokumentów, zakończ flow
-            if (documents!!.isEmpty()) {
-                close()
-            }
-
-            // awaitClose zostanie wywołane, gdy flow zostanie zamknięty lub anulowany
-            awaitClose { }
         }
     }
 
@@ -408,7 +417,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
-            firestore.collection(USERS).document(currentUser)
+            firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(boxUid)
                 .collection(FLASHCARD)
 
@@ -439,7 +448,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>> {
         val flashcardsCollectionRef =
-            firestore.collection(USERS).document(currentUser)
+            firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(boxUid).collection(FLASHCARD)
 
         return callbackFlow {
@@ -463,7 +472,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
         val repeatCollectionRef =
-            firestore.collection(USERS).document(currentUser).collection(REPEAT)
+            firestore.collection(USERS).document(currentUser ?: "")
+                .collection(REPEAT)
 
         return flow {
             // Wykonaj zapytanie do Firestore i przekonwertuj dane na listę fiszek
@@ -478,53 +488,59 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun addFlashcardsToRepeatSection() {
-        firestore.collection(USERS).document(currentUser)
-            .collection(BOX)
-            .get()
-            .addOnSuccessListener { boxSnapshot ->
-                for (boxDocument in boxSnapshot.documents) {
-                    // Iteracja przez dokumenty "box" użytkownika
-                    val boxID = boxDocument.id
+        if (currentUser != null) {
+            firestore.collection(USERS).document(currentUser)
+                .collection(BOX)
+                .get()
+                .addOnSuccessListener { boxSnapshot ->
+                    for (boxDocument in boxSnapshot.documents) {
+                        // Iteracja przez dokumenty "box" użytkownika
+                        val boxID = boxDocument.id
 
-                    firestore.collection(USERS).document(currentUser)
-                        .collection(BOX).document(boxID)
-                        .collection(FLASHCARD)
-                        .get()
-                        .addOnSuccessListener { flashcardSnapshot ->
-                            for (flashcardDocument in flashcardSnapshot.documents) {
-                                // Iteracja przez fiszki w danym boxie
-                                val flashcard = flashcardDocument.toObject(Flashcard::class.java)
+                        firestore.collection(USERS).document(currentUser)
+                            .collection(BOX).document(boxID)
+                            .collection(FLASHCARD)
+                            .get()
+                            .addOnSuccessListener { flashcardSnapshot ->
+                                for (flashcardDocument in flashcardSnapshot.documents) {
+                                    // Iteracja przez fiszki w danym boxie
+                                    val flashcard =
+                                        flashcardDocument.toObject(Flashcard::class.java)
 
-                                if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
+                                    if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
 
-                                    addFlashcardToRepeat(flashcard)
+                                        addFlashcardToRepeat(flashcard)
 
-                                    Log.d(
-                                        LogTags.FIREBASE_SERVICES,
-                                        "fetchRepeatFlashcards: ${flashcard.word}"
-                                    )
+                                        Log.d(
+                                            LogTags.FIREBASE_SERVICES,
+                                            "fetchRepeatFlashcards: ${flashcard.word}"
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e(LogTags.FIREBASE_SERVICES, "fetchRepeatFlashcards: $exception")
-                        }
+                            .addOnFailureListener { exception ->
+                                Log.e(
+                                    LogTags.FIREBASE_SERVICES,
+                                    "fetchRepeatFlashcards: $exception"
+                                )
+                            }
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.e(LogTags.FIREBASE_SERVICES, "fetchRepeatFlashcards: $exception")
-            }
+                .addOnFailureListener { exception ->
+                    Log.e(LogTags.FIREBASE_SERVICES, "fetchRepeatFlashcards: $exception")
+                }
+        }
     }
 
     private fun addFlashcardToRepeat(flashcard: Flashcard) {
-        firestore.collection(USERS).document(currentUser)
+        firestore.collection(USERS).document(currentUser ?: "")
             .collection(REPEAT)
             .whereEqualTo("uid", flashcard.uid)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
                     // Fiszka o danym uid nie istnieje, więc możesz ją dodać
-                    firestore.collection(USERS).document(currentUser)
+                    firestore.collection(USERS).document(currentUser ?: "")
                         .collection(REPEAT)
                         .document(flashcard.uid!!)
                         .set(flashcard)
@@ -548,7 +564,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun deleteFlashcardFromRepeatSection(flashcardUid: String) {
-        firestore.collection(USERS).document(currentUser)
+        firestore.collection(USERS).document(currentUser ?: "")
             .collection(REPEAT).document(flashcardUid)
             .delete()
     }
