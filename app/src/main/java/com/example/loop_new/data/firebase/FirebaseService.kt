@@ -305,9 +305,12 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
             // Zapytanie do Firestore
             val query = if (lastVisibleDocument == null) {
-                firestore.collection(BOX).limit(10)
+                firestore.collection(BOX)
+                    .limit(10)
             } else {
-                firestore.collection(BOX).startAfter(lastVisibleDocument).limit(4)
+                firestore.collection(BOX)
+                    .startAfter(lastVisibleDocument)
+                    .limit(4)
             }
 
             // Wykonaj zapytanie
@@ -333,31 +336,43 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun fetchListOfPrivateBox(): Flow<List<Box>> {
-        val collection = firestore.collection(USERS).document(currentUser)
-            .collection(BOX)
-
+    override fun fetchListOfPrivateBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>> {
         return callbackFlow {
-            val listenerRegistration = collection.addSnapshotListener { querySnapshot, error ->
-                if (error != null) {
-                    close(error)
-                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Error: $error")
-                    return@addSnapshotListener
-                }
+            var lastVisibleDocument: DocumentSnapshot? = lastDocSnapshot
+            val fetchedBoxes = mutableListOf<Box>()
 
-                val tempList = mutableListOf<Box>()
-                for (document in querySnapshot!!) {
-                    val box = document.toObject(Box::class.java)
-                    tempList.add(box)
-                }
-
-                trySend(tempList).isSuccess
-                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Success!")
+            // Zapytanie do Firestore
+            val query = if (lastVisibleDocument == null) {
+                firestore.collection(USERS).document(currentUser)
+                    .collection(BOX)
+                    .limit(10)
+            } else {
+                firestore.collection(USERS)
+                    .document(currentUser).collection(BOX)
+                    .startAfter(lastVisibleDocument)
+                    .limit(4)
             }
 
-            awaitClose {
-                listenerRegistration.remove()
+            // Wykonaj zapytanie
+            val querySnapshot = query.get().await()
+            val documents = querySnapshot?.documents
+
+            // Przetwórz wyniki zapytania
+            documents?.forEach { document ->
+                document.toObject(Box::class.java)?.let { fetchedBoxes.add(it) }
+                lastVisibleDocument = document
             }
+
+            // Wyślij pobrane boxy i ostatni widoczny dokument
+            trySend(Pair(fetchedBoxes, lastVisibleDocument)).isSuccess
+
+            // Jeśli nie ma więcej dokumentów, zakończ flow
+            if (documents!!.isEmpty()) {
+                close()
+            }
+
+            // awaitClose zostanie wywołane, gdy flow zostanie zamknięty lub anulowany
+            awaitClose { }
         }
     }
 
