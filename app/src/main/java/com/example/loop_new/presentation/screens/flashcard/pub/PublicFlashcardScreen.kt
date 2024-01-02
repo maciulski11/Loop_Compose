@@ -89,7 +89,7 @@ fun PublicScreen(
     onPlayAudioFromUrl: (String) -> Unit,
     addPublicBoxToPrivateSection: () -> Unit,
 ) {
-    val showDialogState = remember { mutableStateOf(false) }
+    val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
 
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
@@ -122,7 +122,7 @@ fun PublicScreen(
                     flashcard, { audioUrl ->
                         onPlayAudioFromUrl(audioUrl)
                     })
-                { showDialogState.value = false }
+                { showDialogDeleteFlashcard.value = false }
             }
         }
 

@@ -102,7 +102,7 @@ fun PrivateScreen(
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
 ) {
-    val showDialogState = remember { mutableStateOf(false) }
+    val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
 
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
@@ -149,19 +149,19 @@ fun PrivateScreen(
                         onPlayAudioFromUrl(audioUrl)
                     },
                     { longClick ->
-                        showDialogState.value = longClick
+                        showDialogDeleteFlashcard.value = longClick
                     }
                 )
 
                 // Delete flashcard alert dialog
-                if (showDialogState.value) {
+                if (showDialogDeleteFlashcard.value) {
                     ShowCustomAlertDialog(
                         flashcard.word.toString(),
                         {
                             onDeleteFlashcard(flashcard.uid.toString())
                         }
                     ) {
-                        showDialogState.value = false
+                        showDialogDeleteFlashcard.value = false
                     }
                 }
             }

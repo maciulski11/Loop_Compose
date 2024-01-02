@@ -164,6 +164,20 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    override fun deleteBox(boxUid: String) {
+        try {
+            firestore.collection(USERS).document(currentUser ?: "")
+                .collection(BOX).document(boxUid)
+                .delete()
+
+            Log.d(LogTags.FIREBASE_SERVICES, "deleteBox: Success!")
+
+        } catch (e: Exception) {
+            Log.e(LogTags.FIREBASE_SERVICES, "deleteBox: Error: $e")
+            throw e
+        }
+    }
+
     private fun setKnowledgeLevelOfFlashcard(
         boxUid: String,
         flashcardUid: String,
@@ -358,7 +372,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         .startAfter(lastVisibleDocument)
                         .limit(4)
                 }
-
 
                 // Wykonaj zapytanie
                 val querySnapshot = query.get().await()

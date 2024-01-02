@@ -17,6 +17,8 @@ interface FirebaseService {
 
     fun createBoxInPrivateSection(box: Box)
 
+    fun deleteBox(boxUid: String)
+
     fun addFlashcardInPrivateSection(flashcard: Flashcard, boxUid: String)
 
     fun deleteFlashcard(boxUid: String, flashcardUid: String)
