@@ -9,23 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
-import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
 
 class PrivateBoxViewModel(private val firebaseService: FirebaseService): ViewModel() {
 
     val privateBoxList = mutableStateListOf<Box>()
-    var hasMoreData = mutableStateOf(false)
 
     private val _isListEmpty = mutableStateOf(true)
     val isListEmpty: Boolean
         get() = _isListEmpty.value
-
-    // Właściwość określająca, czy można załadować więcej boxów
-    val canLoadMore: Boolean
-        get() = lastVisibleDocument != null
-
-    private var lastVisibleDocument: DocumentSnapshot? = null
 
     init {
         checkRepeatCollectionWhetherIsEmpty()
@@ -35,24 +27,9 @@ class PrivateBoxViewModel(private val firebaseService: FirebaseService): ViewMod
 
     private fun fetchListOfPrivateBox() {
         viewModelScope.launch {
-            firebaseService.fetchListOfPrivateBox(null).collect { (loadedBoxes, lastDoc) ->
+            firebaseService.fetchListOfPrivateBox().collect { loadedBoxes ->
+                privateBoxList.clear()
                 privateBoxList.addAll(loadedBoxes)
-                lastVisibleDocument = lastDoc
-            }
-        }
-    }
-
-    fun loadMorePrivateBoxes() {
-        viewModelScope.launch {
-            lastVisibleDocument?.let { lastDoc ->
-                firebaseService.fetchListOfPrivateBox(lastDoc).collect { (loadedBoxes, lastDoc) ->
-                    if (loadedBoxes.isNotEmpty()) {
-                        privateBoxList.addAll(loadedBoxes)
-                        lastVisibleDocument = lastDoc
-                    }
-                    // Aktualizacja stanu 'hasMoreData'
-                    hasMoreData.value = loadedBoxes.isEmpty()
-                }
             }
         }
     }

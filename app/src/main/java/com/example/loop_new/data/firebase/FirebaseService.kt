@@ -354,46 +354,30 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-    override fun fetchListOfPrivateBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>> {
+    override fun fetchListOfPrivateBox(): Flow<List<Box>> {
         return callbackFlow {
-            var lastVisibleDocument: DocumentSnapshot? = lastDocSnapshot
-            val fetchedBoxes = mutableListOf<Box>()
-
             if (currentUser != null) {
+                val listenerRegistration = firestore.collection(USERS).document(currentUser)
+                    .collection(BOX)
+                    .addSnapshotListener { querySnapshot, error ->
 
-                // Zapytanie do Firestore
-                val query = if (lastVisibleDocument == null) {
-                    firestore.collection(USERS).document(currentUser)
-                        .collection(BOX)
-                        .limit(10)
-                } else {
-                    firestore.collection(USERS)
-                        .document(currentUser).collection(BOX)
-                        .startAfter(lastVisibleDocument)
-                        .limit(4)
+                        if (error != null) {
+                            close(error)
+                            Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Error: $error")
+                            return@addSnapshotListener
+                        }
+
+                        val tempList = querySnapshot?.documents?.mapNotNull {
+                            it.toObject(Box::class.java)
+                        } ?: mutableListOf()
+
+                        trySend(tempList).isSuccess
+                        Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfBox: Success!")
+                    }
+
+                awaitClose {
+                    listenerRegistration.remove()
                 }
-
-                // Wykonaj zapytanie
-                val querySnapshot = query.get().await()
-                val documents = querySnapshot?.documents
-
-                // Przetwórz wyniki zapytania
-                documents?.forEach { document ->
-                    document.toObject(Box::class.java)?.let { fetchedBoxes.add(it) }
-                    lastVisibleDocument = document
-                }
-
-                // Wyślij pobrane boxy i ostatni widoczny dokument
-                trySend(Pair(fetchedBoxes, lastVisibleDocument)).isSuccess
-
-                // Jeśli nie ma więcej dokumentów, zakończ flow
-                if (documents!!.isEmpty()) {
-                    close()
-                }
-
-                // awaitClose zostanie wywołane, gdy flow zostanie zamknięty lub anulowany
-                awaitClose { }
-
             }
         }
     }

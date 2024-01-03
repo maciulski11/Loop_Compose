@@ -25,7 +25,7 @@ interface FirebaseService {
 
     fun fetchListOfPublicBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>>
 
-    fun fetchListOfPrivateBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>>
+    fun fetchListOfPrivateBox(): Flow<List<Box>>
 
     fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>>
 

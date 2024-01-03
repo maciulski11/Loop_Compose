@@ -7,12 +7,10 @@ import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -80,7 +78,6 @@ fun AnimatedLearningButton(onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
 
@@ -92,38 +89,16 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-//            .clickable(
-//                indication = null,
-//                interactionSource = remember { MutableInteractionSource() }
-//            ) {
-//                val boxUid = box.uid
-//                onClickBoxIem(boxUid.toString())
-//            }
-//            .combinedClickable(
-//                indication = null,
-//                interactionSource = remember { MutableInteractionSource() },
-//                onClick = {
-//                    onClick()
-//                },
-//                onLongClick = {
-//                    onLongClick()
-//                }
-//            )
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onPress = { /* obsługa dotknięcia, opcjonalnie */ },
-                    onDoubleTap = { /* obsługa podwójnego kliknięcia, opcjonalnie */ },
                     onLongPress = {
-                        // Tutaj wstaw logikę dla długiego kliknięcia
                         onLongClick()
                     },
                     onTap = {
-                        // Tutaj wstaw logikę dla zwykłego kliknięcia
                         onClick()
                     }
                 )
-            }
-            ,
+            },
         contentAlignment = Alignment.Center,
         content = {
             Row {

@@ -51,7 +51,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -183,32 +182,6 @@ fun PrivateScreen(
                 }) {
                     selectedBox.value = box
                     showDialogDeleteBox.value = true
-                }
-
-                // Sprawdzenie, czy osiągnięto koniec listy i załadowanie więcej boxów
-                if (index == list.size - 1 && viewModel.canLoadMore) {
-                    LaunchedEffect(Unit) {
-                        viewModel.loadMorePrivateBoxes()
-                    }
-                }
-            }
-
-            if (!viewModel.hasMoreData.value) {
-                item {
-                    Box(
-                        modifier = Modifier.height(100.dp)
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.BottomCenter,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 16.dp)
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    }
                 }
             }
         }
