@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,18 +39,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,6 +87,7 @@ import com.example.loop_new.ui.theme.PastelWhite2
 import com.example.loop_new.ui.theme.PastelYellow
 import com.example.loop_new.ui.theme.PastelYellow1
 import com.example.loop_new.ui.theme.PastelYellow2
+import com.example.loop_new.ui.theme.Red
 import com.example.loop_new.ui.theme.White
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -118,8 +120,7 @@ fun PrivateBoxScreen(
         navController = navController,
         list = viewModel.privateBoxList,
         viewModel,
-    )
-    { nameInput, describeInput, groupColor ->
+    ) { nameInput, describeInput, groupColor ->
         viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
     }
 }
@@ -131,10 +132,11 @@ fun PrivateScreen(
     viewModel: PrivateBoxViewModel,
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
 ) {
-
     BackHandler { /* gesture return is off */ }
 
-    val showDialogState = remember { mutableStateOf(false) }
+    val showDialogCreateBox = remember { mutableStateOf(false) }
+    val showDialogDeleteBox = remember { mutableStateOf(false) }
+    val selectedBox = remember { mutableStateOf<Box?>(null) }
 
     val constraints = ConstraintSet {
         val boxList = createRefFor("boxList")
@@ -163,8 +165,7 @@ fun PrivateScreen(
 
 
     ConstraintLayout(
-        constraints,
-        modifier = Modifier
+        constraints, modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 42.dp)
     ) {
@@ -175,10 +176,15 @@ fun PrivateScreen(
                 .layoutId("boxList"),
             columns = GridCells.Fixed(itemsInRow)
         ) {
+
             itemsIndexed(list) { index, box ->
-                BoxItem(box) { boxUid ->
-                    navController.navigate("${NavigationSupport.PrivateFlashcardScreen}/$boxUid/${box.name}")
+                BoxItem(box, {
+                    navController.navigate("${NavigationSupport.PrivateFlashcardScreen}/${box.uid}/${box.name}")
+                }) {
+                    selectedBox.value = box
+                    showDialogDeleteBox.value = true
                 }
+
                 // Sprawdzenie, czy osiągnięto koniec listy i załadowanie więcej boxów
                 if (index == list.size - 1 && viewModel.canLoadMore) {
                     LaunchedEffect(Unit) {
@@ -190,8 +196,7 @@ fun PrivateScreen(
             if (!viewModel.hasMoreData.value) {
                 item {
                     Box(
-                        modifier = Modifier
-                            .height(100.dp)
+                        modifier = Modifier.height(100.dp)
                     ) {
                         Box(
                             contentAlignment = Alignment.BottomCenter,
@@ -208,50 +213,131 @@ fun PrivateScreen(
             }
         }
 
-        Image(
-            painter = painterResource(id = R.drawable.baseline_add_circle_box),
+        Image(painter = painterResource(id = R.drawable.baseline_add_circle_box),
             contentDescription = "Button",
             modifier = Modifier
                 .layoutId("addBoxButton")
                 .size(60.dp)
                 .clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    showDialogState.value = true
-                }
-        )
+                    interactionSource = remember { MutableInteractionSource() }) {
+                    showDialogCreateBox.value = true
+                })
 
-        if (showDialogState.value) {
-            ShowCustomAlertDialog(
+        if (showDialogCreateBox.value) {
+            ShowCreateBoxAlertDialog(
                 { nameInput, describeInput, groupColor ->
                     onAddBox(nameInput, describeInput, groupColor)
+                }, {
+                    showDialogCreateBox.value = false
                 },
-                {
-                    showDialogState.value = false
-                },
-                showDialogState.value
+                showDialogCreateBox.value
             )
         }
 
+        if (showDialogDeleteBox.value) {
+            selectedBox.value?.let { box ->
+                ShowDeleteBoxAlertDialog(
+                    boxName = box.name.toString(),
+                    showDialog = showDialogDeleteBox.value,
+                    onDelete = {
+                        viewModel.deleteBox(box.uid.toString())
+                    },
+                    onDismiss = {
+                        showDialogDeleteBox.value = false
+                    }
+                )
+            }
+        }
+
         if (!viewModel.isListEmpty) {
-            AnimatedLearningButton(
-                onClick = {
-                    navController.navigate(NavigationSupport.RepeatScreen)
-                }
-            )
+            AnimatedLearningButton(onClick = {
+                navController.navigate(NavigationSupport.RepeatScreen)
+            })
         }
     }
 }
 
-enum class SnackbarMessage {
-    None,
-    MaxCharactersExceededName,
-    MaxCharactersExceededDescription
+@Composable
+fun ShowDeleteBoxAlertDialog(
+    boxName: String,
+    showDialog: Boolean,
+    onDelete: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+
+    if (showDialog) {
+        Dialog(onDismissRequest = { }) {
+            Box(
+                modifier = Modifier
+                    .width(270.dp)
+                    .heightIn(min = 100.dp, max = 200.dp)
+                    .background(White, shape = RoundedCornerShape(20.dp))
+                    .border(3.dp, Black, RoundedCornerShape(20.dp))
+                    .padding(horizontal = 12.dp, vertical = 12.dp)
+            ) {
+                Column {
+
+                    val annotatedString = buildAnnotatedString {
+                        append("Do you want to delete box: ")
+
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(boxName)
+                        }
+
+                        append("?")
+                    }
+
+                    Text(text = annotatedString, fontSize = 22.sp)
+
+
+                    Spacer(modifier = Modifier.height(22.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Absolute.Right
+                    ) {
+
+                        Button(modifier = Modifier
+                            .height(40.dp)
+                            .width(84.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Green),
+                            onClick = {
+                                onDismiss()
+                            }) {
+                            Text(
+                                text = "Cancel",
+                                color = Black
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(14.dp))
+
+                        Button(modifier = Modifier
+                            .height(40.dp)
+                            .width(84.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Red),
+                            onClick = {
+                                onDelete()
+                                onDismiss()
+                            }) {
+                            Text(
+                                text = "OK",
+                                color = Black
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+            }
+        }
+    }
 }
 
 @Composable
-fun ShowCustomAlertDialog(
+fun ShowCreateBoxAlertDialog(
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
     onDismiss: () -> Unit,
     showDialog: Boolean,
@@ -310,9 +396,7 @@ fun ShowCustomAlertDialog(
             ) {
                 Column {
                     Text(
-                        text = "Create Box:",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp
+                        text = "Create Box:", fontWeight = FontWeight.Bold, fontSize = 22.sp
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -323,40 +407,30 @@ fun ShowCustomAlertDialog(
                     ) {
                         items(colorGroups) { group ->
                             val representativeColor = group.first()
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(representativeColor, shape = CircleShape)
-                                    .border(1.dp, Black, shape = CircleShape)
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() }
-                                    ) {
-                                        backgroundColor = representativeColor
-                                        selectedColorGroup = group
-                                    }
-                            )
+                            Box(modifier = Modifier
+                                .size(40.dp)
+                                .background(representativeColor, shape = CircleShape)
+                                .border(1.dp, Black, shape = CircleShape)
+                                .clickable(indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }) {
+                                    backgroundColor = representativeColor
+                                    selectedColorGroup = group
+                                })
                         }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    TextField(
-                        value = nameInput,
-                        maxLines = 2,
-                        onValueChange = {
-                            if (it.length <= 35) {
-                                nameInput = it
-                            } else {
-                                snackbarMessage = SnackbarMessage.MaxCharactersExceededName
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Go,
-                        ),
-                        placeholder = { Text("Box Name - 35 characters") }
-                    )
+                    TextField(value = nameInput, maxLines = 2, onValueChange = {
+                        if (it.length <= 35) {
+                            nameInput = it
+                        } else {
+                            snackbarMessage = SnackbarMessage.MaxCharactersExceededName
+                        }
+                    }, keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                    ), placeholder = { Text("Box Name - 35 characters") })
 
                     // Licznik znaków jako adnotacja
                     Text(
@@ -369,22 +443,16 @@ fun ShowCustomAlertDialog(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    TextField(
-                        value = describeInput,
-                        maxLines = 3,
-                        onValueChange = {
-                            if (it.length <= 60) {
-                                describeInput = it
-                            } else {
-                                snackbarMessage = SnackbarMessage.MaxCharactersExceededDescription
-                            }
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Go,
-                        ),
-                        placeholder = { Text("Description - 60 characters") }
-                    )
+                    TextField(value = describeInput, maxLines = 3, onValueChange = {
+                        if (it.length <= 60) {
+                            describeInput = it
+                        } else {
+                            snackbarMessage = SnackbarMessage.MaxCharactersExceededDescription
+                        }
+                    }, keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Go,
+                    ), placeholder = { Text("Description - 60 characters") })
 
                     Text(
                         text = "${describeInput.length}/${60}",
@@ -403,36 +471,30 @@ fun ShowCustomAlertDialog(
                         horizontalArrangement = Arrangement.Absolute.Right
                     ) {
 
-                        Button(
-                            modifier = Modifier
-                                .height(40.dp)
-                                .width(84.dp),
+                        Button(modifier = Modifier
+                            .height(40.dp)
+                            .width(84.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = Black),
                             onClick = {
                                 onDismiss()
-                            }
-                        ) {
+                            }) {
                             Text(
-                                text = "Cancel",
-                                color = White
+                                text = "Cancel", color = White
                             )
                         }
 
                         Spacer(modifier = Modifier.width(14.dp))
 
-                        Button(
-                            modifier = Modifier
-                                .height(40.dp)
-                                .width(84.dp),
+                        Button(modifier = Modifier
+                            .height(40.dp)
+                            .width(84.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                             onClick = {
                                 onAddBox(nameInput, describeInput, selectedColorGroup)
                                 onDismiss()
-                            }
-                        ) {
+                            }) {
                             Text(
-                                text = "OK",
-                                color = Black
+                                text = "OK", color = Black
                             )
                         }
                     }
@@ -445,4 +507,8 @@ fun ShowCustomAlertDialog(
             }
         }
     }
+}
+
+enum class SnackbarMessage {
+    None, MaxCharactersExceededName, MaxCharactersExceededDescription
 }

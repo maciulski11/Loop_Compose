@@ -7,10 +7,13 @@ import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -76,8 +80,9 @@ fun AnimatedLearningButton(onClick: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BoxItem(box: Box, onClickBoxIem: (String) -> Unit) {
+fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
 
     // Convert HEX to Color
     val color1 = hexToColor(box.color1 ?: "F0EFEF")
@@ -87,13 +92,38 @@ fun BoxItem(box: Box, onClickBoxIem: (String) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                val boxUid = box.uid
-                onClickBoxIem(boxUid.toString())
-            },
+//            .clickable(
+//                indication = null,
+//                interactionSource = remember { MutableInteractionSource() }
+//            ) {
+//                val boxUid = box.uid
+//                onClickBoxIem(boxUid.toString())
+//            }
+//            .combinedClickable(
+//                indication = null,
+//                interactionSource = remember { MutableInteractionSource() },
+//                onClick = {
+//                    onClick()
+//                },
+//                onLongClick = {
+//                    onLongClick()
+//                }
+//            )
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = { /* obsługa dotknięcia, opcjonalnie */ },
+                    onDoubleTap = { /* obsługa podwójnego kliknięcia, opcjonalnie */ },
+                    onLongPress = {
+                        // Tutaj wstaw logikę dla długiego kliknięcia
+                        onLongClick()
+                    },
+                    onTap = {
+                        // Tutaj wstaw logikę dla zwykłego kliknięcia
+                        onClick()
+                    }
+                )
+            }
+            ,
         contentAlignment = Alignment.Center,
         content = {
             Row {

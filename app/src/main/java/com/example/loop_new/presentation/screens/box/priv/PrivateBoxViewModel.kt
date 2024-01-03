@@ -101,4 +101,8 @@ class PrivateBoxViewModel(private val firebaseService: FirebaseService): ViewMod
             (color.blue * 255).toInt()
         )
     }
+
+    fun deleteBox(boxUid: String) {
+        firebaseService.deleteBox(boxUid)
+    }
 }

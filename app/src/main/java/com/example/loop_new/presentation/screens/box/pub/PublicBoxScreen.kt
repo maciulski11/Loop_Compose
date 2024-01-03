@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
@@ -64,6 +66,8 @@ fun PublicScreen(
     viewModel: PublicBoxViewModel,
 ) {
 
+    val showDialogDeleteBox = remember { mutableStateOf(false) }
+
     BackHandler { /* gesture return is off */ }
 
     val constraints = ConstraintSet {
@@ -98,9 +102,11 @@ fun PublicScreen(
             columns = GridCells.Fixed(itemsInRow)
         ) {
             itemsIndexed(list) { index, box ->
-                BoxItem(box) { boxUid ->
-                    navController.navigate("${NavigationSupport.FlashcardScreen}/$boxUid/${box.name}")
-                }
+                BoxItem(box, {
+                    navController
+                        .navigate("${NavigationSupport.FlashcardScreen}/${box.uid}/${box.name}")
+                })
+                { showDialogDeleteBox.value = false }
 
                 // Sprawdzenie, czy osiągnięto koniec listy i załadowanie więcej boxów
                 if (index == list.size - 1 && viewModel.canLoadMore) {
