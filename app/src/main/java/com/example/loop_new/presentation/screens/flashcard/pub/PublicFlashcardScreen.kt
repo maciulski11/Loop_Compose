@@ -78,7 +78,8 @@ fun PublicFlashcardScreen(
             viewModel.playAudioFromUrl(audioUrl)
         },
         {
-            viewModel.addPublicBoxToPrivateBox(boxUid)
+            viewModel.addPublicBoxToPrivateSection(boxUid)
+            navController.navigate("${NavigationSupport.LessonScreen}/${boxUid}")
         }
     )
 }
@@ -141,7 +142,7 @@ fun SlideToUnlockButton(onSlideComplete: () -> Unit) {
 
     BoxWithConstraints(
         modifier = Modifier
-            .height(44.dp) // Wysokość całego komponentu
+            .height(44.dp)
             .width(268.dp)
             .layoutId("slideButton")
     ) {

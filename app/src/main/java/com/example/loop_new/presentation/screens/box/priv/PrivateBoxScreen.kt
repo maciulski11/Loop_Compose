@@ -51,6 +51,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -168,6 +169,36 @@ fun PrivateScreen(
             .fillMaxSize()
             .padding(bottom = 42.dp)
     ) {
+
+        if (list.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 200.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        text = "Welcome to Your Private Section!",
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        color = Gray
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 46.dp),
+                        text = "If you want to start learning you have 2 options:\n" +
+                                "1. You can return to public section and find you favourite box with flashcard.\n" +
+                                "2. You can create your box and flashcards with your preferences.",
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Gray
+                    )
+                }
+            }
+        }
 
         LazyVerticalGrid(
             modifier = Modifier

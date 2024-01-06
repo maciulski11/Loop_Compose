@@ -108,7 +108,9 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     if (boxData != null) {
                         // Next, download all flashcards associated with this box
                         firestore.collection(BOX).document(boxUid)
-                            .collection(FLASHCARD).whereEqualTo("boxUid", boxUid).get()
+                            .collection(FLASHCARD)
+                            .whereEqualTo("boxUid", boxUid)
+                            .get()
                             .addOnSuccessListener { querySnapshot ->
                                 // Convert the snapshot documents to Flashcard objects.
                                 val flashcards = querySnapshot.documents.mapNotNull { document ->

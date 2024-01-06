@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.flashcard.priv
 
+import android.os.Looper
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +8,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,8 +26,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +52,7 @@ import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.flashcard.FlashcardItem
 import com.example.loop_new.ui.theme.Black
+import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Red
 import com.example.loop_new.ui.theme.White
 
@@ -108,7 +115,7 @@ fun PrivateScreen(
         val flashcardsList = createRefFor("flashcardList")
         val startLesson = createRefFor("startLesson")
         val addFlashcard = createRefFor("addFlashcard")
-        val slideButton = createRefFor("slideButton")
+        val emptyAlert = createRefFor("emptyAlert")
 
         constrain(flashcardsList) {
             top.linkTo(parent.top)
@@ -121,15 +128,14 @@ fun PrivateScreen(
             end.linkTo(parent.end, margin = 16.dp)
         }
 
+        constrain(emptyAlert) {
+            bottom.linkTo(parent.bottom, margin = 120.dp)
+            end.linkTo(parent.end, margin = 94.dp)
+        }
+
         constrain(addFlashcard) {
             bottom.linkTo(parent.bottom, margin = 14.dp)
             end.linkTo(parent.end, margin = 16.dp)
-        }
-
-        constrain(slideButton) {
-            bottom.linkTo(parent.bottom, margin = 16.dp)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
         }
     }
 
@@ -137,6 +143,35 @@ fun PrivateScreen(
         constraints,
         modifier = Modifier.fillMaxSize()
     ) {
+
+        if (list.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 200.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 6.dp),
+                        text = "Welcome to Your Box.",
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        color = Gray
+                    )
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 46.dp),
+                        text = "You must have at least three flashcards in your box to start the lesson!",
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Gray
+                    )
+                }
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,6 +202,9 @@ fun PrivateScreen(
             }
         }
 
+        var showPopup by remember { mutableStateOf(false) }
+        var alertText by remember { mutableStateOf("") }
+
         Image(
             painter = painterResource(id = R.drawable.start_lesson_circle_78),
             contentDescription = "Button",
@@ -176,9 +214,47 @@ fun PrivateScreen(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
+
+                    when {
+                        list.isEmpty() -> {
+                            showPopup = true
+                            alertText = "Box is empty!"
+                            // Hide the message after a few seconds
+                            android.os
+                                .Handler(Looper.getMainLooper())
+                                .postDelayed(
+                                    { showPopup = false },
+                                    2000
+                                )
+                        }
+
+                        list.size < 3 -> {
+                            showPopup = true
+                            alertText = "Minimum 3 flashcards!"
+                            // Hide the message after a few seconds
+                            android.os
+                                .Handler(Looper.getMainLooper())
+                                .postDelayed(
+                                    { showPopup = false },
+                                    2000
+                                )
+                        }
+
+                        list.size >= 3 -> {
+                            navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
+                        }
+                    }
                 }
         )
+
+        if (showPopup) {
+            Text(
+                modifier = Modifier
+                    .layoutId("emptyAlert"),
+                text = alertText,
+                fontSize = 18.sp
+            )
+        }
 
         Image(
             painter = painterResource(id = R.drawable.baseline_add_circle_box),

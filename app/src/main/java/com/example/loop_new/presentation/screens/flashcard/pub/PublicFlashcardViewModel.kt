@@ -41,7 +41,7 @@ class PublicFlashcardViewModel(
         }
     }
 
-    fun addPublicBoxToPrivateBox(boxUid: String) {
+    fun addPublicBoxToPrivateSection(boxUid: String) {
         viewModelScope.launch {
             try {
                 firebaseService.addPublicBoxToPrivateSection(boxUid)
