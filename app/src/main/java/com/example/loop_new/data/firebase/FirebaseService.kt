@@ -580,27 +580,30 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 firestore.collection(BOX).document(boxUid)
                     .collection(FLASHCARD)
                     .addSnapshotListener { flashcardsSnapshot, error ->
-                    // Handle any errors encountered during snapshot listening
-                    if (error != null) {
-                        close(error)
-                        Log.e(
+                        // Handle any errors encountered during snapshot listening
+                        if (error != null) {
+                            close(error)
+                            Log.e(
+                                LogTags.FIREBASE_SERVICES,
+                                "fetchListOfFlashcardInPublicBox: Error: $error"
+                            )
+                            return@addSnapshotListener
+                        }
+
+                        // Map each document in the snapshot to a Flashcard object
+                        val flashcards = mutableListOf<Flashcard>()
+                        for (document in flashcardsSnapshot!!) {
+                            val flashcard = document.toObject(Flashcard::class.java)
+                            flashcards.add(flashcard)
+                        }
+
+                        // Send the list of flashcards through the Flow
+                        trySend(flashcards).isSuccess
+                        Log.d(
                             LogTags.FIREBASE_SERVICES,
-                            "fetchListOfFlashcardInPublicBox: Error: $error"
+                            "fetchListOfFlashcardInPublicBox: Success!"
                         )
-                        return@addSnapshotListener
                     }
-
-                    // Map each document in the snapshot to a Flashcard object
-                    val flashcards = mutableListOf<Flashcard>()
-                    for (document in flashcardsSnapshot!!) {
-                        val flashcard = document.toObject(Flashcard::class.java)
-                        flashcards.add(flashcard)
-                    }
-
-                    // Send the list of flashcards through the Flow
-                    trySend(flashcards).isSuccess
-                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInPublicBox: Success!")
-                }
 
             awaitClose {
                 listenerRegistration.remove()
@@ -608,6 +611,17 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    /**
+     * Fetches a list of flashcards from a specified box in the user's private collection in Firestore.
+     *
+     * This function sets up a real-time snapshot listener on the flashcard collection of
+     * a specific box identified by 'boxUid' in the user's private collection. It emits an
+     * updated list of flashcards through a Flow whenever there are changes in the collection.
+     * The function also handles and logs any errors encountered during the listening process.
+     *
+     * @param boxUid The unique identifier of the private box whose flashcards are to be fetched.
+     * @return A Flow emitting a list of flashcards.
+     */
     override fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>> {
         return callbackFlow {
             val listenerRegistration =
@@ -615,24 +629,30 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     .collection(BOX).document(boxUid)
                     .collection(FLASHCARD)
                     .addSnapshotListener { flashcardsSnapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        Log.e(
+                        if (error != null) {
+                            // Handling any errors encountered while listening to the snapshot
+                            close(error)
+                            Log.e(
+                                LogTags.FIREBASE_SERVICES,
+                                "fetchListOfFlashcardInPrivateBox: Error: $error"
+                            )
+                            return@addSnapshotListener
+                        }
+
+                        // Creating a list of Flashcard objects from the snapshot documents
+                        val flashcards = mutableListOf<Flashcard>()
+                        for (document in flashcardsSnapshot!!) {
+                            val flashcard = document.toObject(Flashcard::class.java)
+                            flashcards.add(flashcard)
+                        }
+
+                        // Emitting the list of flashcards through the Flow
+                        trySend(flashcards).isSuccess
+                        Log.d(
                             LogTags.FIREBASE_SERVICES,
-                            "fetchListOfFlashcardInPrivateBox: Error: $error"
+                            "fetchListOfFlashcardInPrivateBox: Success!"
                         )
-                        return@addSnapshotListener
                     }
-
-                    val flashcards = mutableListOf<Flashcard>()
-                    for (document in flashcardsSnapshot!!) {
-                        val flashcard = document.toObject(Flashcard::class.java)
-                        flashcards.add(flashcard)
-                    }
-
-                    trySend(flashcards).isSuccess
-                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInPrivateBox: Success!")
-                }
 
             awaitClose {
                 listenerRegistration.remove()
@@ -640,21 +660,34 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    /**
+     * Fetches a list of flashcards from a specified box for a lesson.
+     *
+     * This function performs a one-time query to Firestore to retrieve all flashcards
+     * from a specific box identified by 'boxUid'. The retrieved flashcards are emitted
+     * through a Flow. The function includes error handling and logs the outcomes of the query.
+     *
+     * @param boxUid The unique identifier of the box from which flashcards are to be fetched.
+     * @return A Flow emitting a list of flashcards.
+     */
     override fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>> {
         return callbackFlow {
-            // Wykonaj jednorazowe zapytanie do Firestore
+            // Perform a one-time query to Firestore to fetch flashcards
             firestore.collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(boxUid)
                 .collection(FLASHCARD)
                 .get()
                 .addOnSuccessListener { flashcardsSnapshot ->
+                    // Map the retrieved documents to Flashcard objects
                     val flashcards = flashcardsSnapshot.documents.mapNotNull { document ->
                         document.toObject(Flashcard::class.java)
                     }
+                    // Emit the list of flashcards through the Flow
                     trySend(flashcards).isSuccess
                     Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInLesson: Success!")
                 }
                 .addOnFailureListener { error ->
+                    // Handle any errors encountered during the query
                     close(error)
                     Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInLesson: Error: $error")
                 }
@@ -663,45 +696,70 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    /**
+     * Fetches a list of flashcards from the user's 'repeat' collection in Firestore.
+     *
+     * This function performs a one-time query to Firestore to retrieve all flashcards
+     * in the 'repeat' collection of the current user. The results are emitted as a list
+     * of Flashcard objects through a Flow. The function operates on the I/O dispatcher
+     * to handle the network request appropriately.
+     *
+     * @return A Flow emitting a list of Flashcard objects from the 'repeat' collection.
+     */
     override fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>> {
         return flow {
-            // Wykonaj zapytanie do Firestore i przekonwertuj dane na listę fiszek
+            // Perform a one-time query to Firestore to fetch flashcards from the 'repeat' collection
             val flashcardsSnapshot =
                 firestore.collection(USERS).document(currentUser ?: "")
-                .collection(REPEAT)
-                .get()
-                .await()
+                    .collection(REPEAT)
+                    .get()
+                    .await()
+
+            // Map the retrieved documents to Flashcard objects
             val flashcards = flashcardsSnapshot.documents.mapNotNull { document ->
                 document.toObject(Flashcard::class.java)
             }
 
-            emit(flashcards) // Wyemituj listę fiszek
+            // Emit the list of flashcards through the Flow
+            emit(flashcards)
             Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInRepeat: Success!")
-        }.flowOn(Dispatchers.IO)
+        }
+            // Specify that the flow should operate on the I/O dispatcher
+            .flowOn(Dispatchers.IO)
     }
 
+    /**
+     * Adds eligible flashcards to the 'repeat' section for the current user.
+     *
+     * This function iterates through all the 'box' documents of the current user. For each box,
+     * it retrieves all flashcards and checks if they meet the criteria to be added to the 'repeat' section
+     * (e.g., based on the 'nextStudyDate'). Eligible flashcards are then added to the 'repeat' section.
+     */
     override fun addFlashcardsToRepeatSection() {
         if (currentUser != null) {
+            // Query all 'box' documents of the current user
             firestore.collection(USERS).document(currentUser)
                 .collection(BOX)
                 .get()
                 .addOnSuccessListener { boxSnapshot ->
                     for (boxDocument in boxSnapshot.documents) {
-                        // Iteracja przez dokumenty "box" użytkownika
+                        // Iterating through each 'box' document
                         val boxID = boxDocument.id
 
+                        // Query all flashcards within the current box
                         firestore.collection(USERS).document(currentUser)
                             .collection(BOX).document(boxID)
                             .collection(FLASHCARD)
                             .get()
                             .addOnSuccessListener { flashcardSnapshot ->
                                 for (flashcardDocument in flashcardSnapshot.documents) {
-                                    // Iteracja przez fiszki w danym boxie
+                                    // Iterating through each flashcard in the box
                                     val flashcard =
                                         flashcardDocument.toObject(Flashcard::class.java)
 
+                                    // Check if the flashcard meets the criteria to be added to 'repeat'
                                     if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
-
+                                        // Add the flashcard to the 'repeat' section
                                         addFlashcardToRepeat(flashcard)
 
                                         Log.d(
@@ -725,14 +783,24 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    /**
+     * Adds a flashcard to the 'repeat' collection for the current user if it's not already present.
+     *
+     * This function first checks if the specified flashcard already exists in the 'repeat'
+     * collection based on its UID. If it doesn't exist, the flashcard is added to the collection.
+     * The function logs the outcome of each operation.
+     *
+     * @param flashcard The flashcard to be added to the 'repeat' collection.
+     */
     private fun addFlashcardToRepeat(flashcard: Flashcard) {
+        // Check if the flashcard already exists in the 'repeat' collection
         firestore.collection(USERS).document(currentUser ?: "")
             .collection(REPEAT)
             .whereEqualTo("uid", flashcard.uid)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
-                    // Fiszka o danym uid nie istnieje, więc możesz ją dodać
+                    // If the flashcard does not exist, add it to the 'repeat' collection
                     firestore.collection(USERS).document(currentUser ?: "")
                         .collection(REPEAT)
                         .document(flashcard.uid!!)
@@ -756,9 +824,31 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
+    /**
+     * Deletes a specified flashcard from the 'repeat' section of the user's collection in Firestore.
+     *
+     * This function removes a flashcard, identified by 'flashcardUid', from the 'repeat' collection
+     * within the current user's Firestore documents. The deletion is a straightforward Firestore operation
+     * and doesn't include explicit error handling or confirmation logging.
+     *
+     * @param flashcardUid The unique identifier of the flashcard to be deleted from the 'repeat' section.
+     */
     override fun deleteFlashcardFromRepeatSection(flashcardUid: String) {
+        // Reference to the Firestore document of the specified flashcard in the 'repeat' collection
         firestore.collection(USERS).document(currentUser ?: "")
             .collection(REPEAT).document(flashcardUid)
-            .delete()
+            .delete() // Perform the deletion of the flashcard document
+            .addOnSuccessListener {
+                Log.d(
+                    LogTags.FIREBASE_SERVICES,
+                    "deleteFlashcardFromRepeatSection: Successfully deleted flashcard with UID: $flashcardUid"
+                )
+            }
+            .addOnFailureListener { exception ->
+                Log.e(
+                    LogTags.FIREBASE_SERVICES,
+                    "deleteFlashcardFromRepeatSection: Error deleting flashcard with UID: $flashcardUid: $exception"
+                )
+            }
     }
 }
