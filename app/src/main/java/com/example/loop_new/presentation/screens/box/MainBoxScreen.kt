@@ -160,14 +160,6 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
                                     end = 10.dp
                                 )
                         )
-
-                        Text(
-                            text = "1/50",
-                            style = TextStyle(color = Black, fontSize = 12.sp),
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(bottom = 8.dp, end = 12.dp)
-                        )
                     }
                 }
             }

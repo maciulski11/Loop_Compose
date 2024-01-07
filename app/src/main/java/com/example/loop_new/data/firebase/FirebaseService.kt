@@ -185,10 +185,19 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
      */
     override fun createBoxInPrivateSection(box: Box) {
         val uid = UUID.randomUUID().toString()
-        val data = Box(box.name, box.describe, uid, box.color1, box.color2, box.color3)
+        val data = Box(
+            name = box.name,
+            describe = box.describe,
+            uid = uid,
+            color1 = box.color1,
+            color2 = box.color2,
+            color3 = box.color3,
+            permissionToEdit = true
+        )
 
         try {
-            firestore.collection(USERS).document(currentUser ?: "")
+            firestore
+                .collection(USERS).document(currentUser ?: "")
                 .collection(BOX).document(uid)
                 .set(data)
 

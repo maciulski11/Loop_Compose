@@ -178,7 +178,7 @@ fun NavigationScreens(
                 "${NavigationSupport.FlashcardScreen}/{boxUid}/{boxName}",
                 arguments = listOf(
                     navArgument("boxUid") { type = NavType.StringType },
-                    navArgument("boxName") { type = NavType.StringType }
+                    navArgument("boxName") { type = NavType.StringType },
                 )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""

@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
+import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Orange
 import com.example.loop_new.ui.theme.Typography
 
@@ -33,21 +34,28 @@ fun AddFlashcardScreenPreview() {
     val navController = rememberNavController()
     val viewModel: AddFlashcardViewModel = hiltViewModel()
 
-    Screen(viewModel = viewModel, navController = navController, { _, _, _, _, _ -> }, { _ -> })
+//    Screen(viewModel = viewModel, navController = navController, { _, _, _, _, _ -> }, { _ -> })
 }
 
 @Composable
 fun AddFlashcardScreen(
     navController: NavController,
     boxUid: String,
-    viewModel: AddFlashcardViewModel
+    viewModel: AddFlashcardViewModel,
 ) {
 
     Screen(
         viewModel,
         navController,
         { word, translate, pronunciation, mean, example ->
-            viewModel.addFlashcard(word, translate, mean, example, pronunciation,boxUid)
+            viewModel.addFlashcard(
+                word,
+                translate,
+                mean,
+                example,
+                pronunciation,
+                boxUid
+            )
         },
         { word ->
             viewModel.fetchInfoOfWord(word)
@@ -144,7 +152,7 @@ fun Screen(
                         .size(62.dp)
                         .align(Alignment.CenterVertically)
                         .padding(end = 2.dp)
-                        .clickable (
+                        .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {

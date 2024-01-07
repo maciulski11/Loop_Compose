@@ -56,7 +56,7 @@ class PrivateBoxViewModel(private val firebaseService: FirebaseService): ViewMod
         val color3 = colorToHex(colorGroup[2])
 
         val box =
-            Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3)
+            Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3, permissionToEdit = true)
         viewModelScope.launch {
             try {
                 firebaseService.createBoxInPrivateSection(box)
