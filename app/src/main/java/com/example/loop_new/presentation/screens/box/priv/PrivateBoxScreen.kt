@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -104,7 +105,7 @@ fun privateCreateSampleData(): List<Box> {
     val sampleData = mutableListOf<Box>()
 
     for (i in 1..22) {
-        sampleData.add(Box("Box $i", "Description $i"))
+//        sampleData.add(Box("Box $i", "Description $i"))
     }
     return sampleData
 }
@@ -142,6 +143,14 @@ fun PrivateScreen(
         val boxList = createRefFor("boxList")
         val addBoxButton = createRefFor("addBoxButton")
         val repeatButton = createRefFor("repeatButton")
+        val background = createRefFor("background")
+
+        constrain(background) {
+            top.linkTo(parent.top)
+            bottom.linkTo(parent.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
 
         constrain(boxList) {
             top.linkTo(parent.top)
@@ -169,6 +178,13 @@ fun PrivateScreen(
             .fillMaxSize()
             .padding(bottom = 42.dp)
     ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.light_blue_background),
+            contentDescription = "background", // zastąp opisem, jeśli to konieczne
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop // lub inny ContentScale według potrzeb
+        )
 
         if (list.isEmpty()) {
             Box(
@@ -209,7 +225,8 @@ fun PrivateScreen(
 
             itemsIndexed(list) { index, box ->
                 BoxItem(box, {
-                    navController.navigate("${NavigationSupport.PrivateFlashcardScreen}/${box.uid}/${box.name}")
+                    navController
+                        .navigate("${NavigationSupport.PrivateFlashcardScreen}/${box.uid}/${box.name}")
                 }) {
                     selectedBox.value = box
                     showDialogDeleteBox.value = true
