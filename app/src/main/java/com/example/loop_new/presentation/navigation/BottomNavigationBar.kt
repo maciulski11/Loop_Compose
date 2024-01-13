@@ -8,41 +8,65 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.loop_new.R
 import com.example.loop_new.ui.theme.White
 
-data class BottomNavItem(val route: String, val icon: Int)
+data class BottomNavItem(val route: String, val icon: Int, val size: DpSize)
 
-val bottomNavItems = listOf(
+val mainBottomNavItems = listOf(
     BottomNavItem(
         NavigationSupport.BoxScreen,
-        icon = R.drawable.ic_public
+        icon = R.drawable.reading_button,
+        size = DpSize(44.dp, 44.dp)
     ),
     BottomNavItem(
         NavigationSupport.PrivateBoxScreen,
-        icon = R.drawable.ic_private
+        icon = R.drawable.learn_button,
+        size = DpSize(44.dp, 44.dp)
+    )
+)
+
+val size = DpSize(28.dp, 28.dp)
+
+val flashcardBottomNavItems = listOf(
+    BottomNavItem(
+        NavigationSupport.BoxScreen,
+        icon = R.drawable.return_arrow,
+        size = size
+    ),
+    BottomNavItem(
+        "NavigationSupport.PrivateBoxScreen",
+        icon = R.drawable.find,
+        size = size
+    ),
+    BottomNavItem(
+        "NavigationSupport.PrivateBoxScreen",
+        icon = R.drawable.stats1,
+        size = size
     )
 )
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController, items: List<BottomNavItem>, height: Dp) {
 
     BottomNavigation(
         modifier = Modifier
-            .height(42.dp),
+            .height(height),
         backgroundColor = White,
     ) {
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-        bottomNavItems.forEach { item ->
+        items.forEach { item ->
             BottomNavigationItem(
                 icon = {
                     Icon(
                         painterResource(id = item.icon),
                         contentDescription = "",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(item.size)
                     )
                 },
                 selected = currentRoute == item.route,

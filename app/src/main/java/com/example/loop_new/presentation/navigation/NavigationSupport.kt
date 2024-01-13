@@ -16,10 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.loop_new.domain.services.DictionaryService
@@ -84,7 +86,22 @@ fun NavigationScreens(
         },
         bottomBar = {
             if (showBottomNavigationBar(navController = navController)) {
-                BottomNavigationBar(navController)
+
+                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+                val bottomNavItems = when {
+                    currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> mainBottomNavItems
+                    currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> flashcardBottomNavItems
+                    else -> mainBottomNavItems
+                }
+
+                val bottomBarHeight = when {
+                    currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> 54.dp
+                    currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> 44.dp
+                    else -> 54.dp
+                }
+
+                BottomNavigationBar(navController, bottomNavItems, bottomBarHeight)
             }
         },
         drawerContent = {
