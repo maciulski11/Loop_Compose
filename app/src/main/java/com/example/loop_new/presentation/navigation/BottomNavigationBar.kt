@@ -14,13 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.loop_new.R
+import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.White
 
 data class BottomNavItem(val route: String, val icon: Int, val size: DpSize)
 
 val mainBottomNavItems = listOf(
     BottomNavItem(
-        NavigationSupport.BoxScreen,
+        NavigationSupport.ReadScreen,
         icon = R.drawable.reading_button,
         size = DpSize(44.dp, 44.dp)
     ),
@@ -35,12 +36,12 @@ val size = DpSize(28.dp, 28.dp)
 
 val flashcardBottomNavItems = listOf(
     BottomNavItem(
-        NavigationSupport.BoxScreen,
+        NavigationSupport.ReadScreen,
         icon = R.drawable.return_arrow,
         size = size
     ),
     BottomNavItem(
-        "NavigationSupport.PrivateBoxScreen",
+        NavigationSupport.BoxScreen,
         icon = R.drawable.find,
         size = size
     ),
@@ -86,7 +87,7 @@ fun BottomNavigationBar(navController: NavController, items: List<BottomNavItem>
 fun showBottomNavigationBar(navController: NavController): Boolean {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     return when { // ButtonNavBar is visible
-        currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.ReadScreen) == true -> true
         currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> true
         else -> false
     }

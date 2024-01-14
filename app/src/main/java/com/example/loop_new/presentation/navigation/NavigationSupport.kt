@@ -41,6 +41,7 @@ import com.example.loop_new.presentation.screens.box.priv.PrivateBoxScreen
 import com.example.loop_new.presentation.screens.box.priv.PrivateBoxViewModel
 import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardViewModel
+import com.example.loop_new.presentation.screens.read.ReadScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
@@ -57,6 +58,7 @@ object NavigationSupport {
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
+    const val ReadScreen = "read_screen"
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -90,17 +92,18 @@ fun NavigationScreens(
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
                 val bottomNavItems = when {
-                    currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> mainBottomNavItems
+                    currentRoute?.startsWith(NavigationSupport.ReadScreen) == true -> mainBottomNavItems
                     currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> flashcardBottomNavItems
-                    else -> mainBottomNavItems
+                    else -> null
                 }
 
                 val bottomBarHeight = when {
-                    currentRoute?.startsWith(NavigationSupport.BoxScreen) == true -> 54.dp
-                    currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> 44.dp
-                    else -> 54.dp
+                    currentRoute?.startsWith(NavigationSupport.ReadScreen) == true -> 54.dp
+                    currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> 42.dp
+                    else -> 0.dp
                 }
 
+                if (bottomNavItems != null)
                 BottomNavigationBar(navController, bottomNavItems, bottomBarHeight)
             }
         },
@@ -120,7 +123,7 @@ fun NavigationScreens(
 
                 LaunchedEffect(key1 = Unit) {
                     if (firebaseService.getSignedInUser() != null) {
-                        navController.navigate(NavigationSupport.BoxScreen)
+                        navController.navigate(NavigationSupport.ReadScreen)
                     }
                 }
 
@@ -147,7 +150,7 @@ fun NavigationScreens(
                         ).show()
 
                         firebaseService.createNewGoogleUser()
-                        navController.navigate(NavigationSupport.BoxScreen)
+                        navController.navigate(NavigationSupport.ReadScreen)
                         viewModel.resetState()
                     }
                 }
@@ -283,6 +286,11 @@ fun NavigationScreens(
                 }
 
                 RepeatScreen(navController, viewModel)
+            }
+
+            composable(NavigationSupport.ReadScreen) {
+
+                ReadScreen()
             }
         }
     }

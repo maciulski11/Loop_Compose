@@ -4,27 +4,40 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
@@ -73,6 +86,7 @@ fun PublicScreen(
 ) {
 
     val showDialogDeleteBox = remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
 
     BackHandler { /* gesture return is off */ }
 
@@ -107,7 +121,6 @@ fun PublicScreen(
         constraints,
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 42.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.light_blue_background),
@@ -116,12 +129,50 @@ fun PublicScreen(
             contentScale = ContentScale.Crop // lub inny ContentScale według potrzeb
         )
 
-        LazyVerticalGrid(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("boxList"),
-            columns = GridCells.Fixed(itemsInRow)
+//            columns = GridCells.Fixed(itemsInRow)
         ) {
+            // Dodaj nagłówek z obrazem
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.find),
+                        contentDescription = null,
+                        modifier = Modifier.size(42.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Dodaj EditText do wyszukiwania
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontSize = 12.sp,
+                        ),
+                        placeholder = {
+                            Text(
+                                text = "search...",
+                                fontSize = 12.sp
+                            )
+                        },
+                        singleLine = true,
+                    )
+                }
+            }
+
             itemsIndexed(list) { index, box ->
                 BoxItem(box, {
                     navController
