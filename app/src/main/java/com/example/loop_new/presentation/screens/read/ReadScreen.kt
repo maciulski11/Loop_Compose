@@ -1,11 +1,15 @@
 package com.example.loop_new.presentation.screens.read
 
 import android.annotation.SuppressLint
+import android.graphics.Paint.Style
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,86 +42,182 @@ fun StoryScreenPreview() {
 @Composable
 fun ReadScreen() {
     val text = """
-Chapter 1: The Mysterious Beginning
 
-    In the small town of Ravenwood, where the misty woods met the rolling hills,
-    a mysterious event was about to unfold. It all started on a moonlit night,
-    with the wind whispering secrets through the ancient trees.
+    #Entry:
 
-    Sarah, a curious young girl with an insatiable thirst for adventure, found
-    an old, dusty book in the attic of her grandmother's house. Little did she
-    know that this book held the key to unlocking a hidden realm filled with
-            magic and enigma.
+    In the tranquil town of Crestwood, where the whispers of secrets lingered in the narrow alleys, 
+    Detective Alex Turner found himself caught in a web of deception. It all commenced on a foggy evening 
+    when the moon barely pierced through the thick mist, casting long shadows over the cobblestone streets.
 
-    As Sarah began to read the words written in the book, a soft glow surrounded
-    her, transporting her to a place where reality blended with fantasy.
-    The journey had just begun.
+    A well-known local businessman, Richard Hawthorne, was discovered lifeless in his lavish mansion. 
+    The initial assumption was a heart attack, but as Detective Turner delved deeper, ominous clues began to emerge. 
+    The deceased's financial records revealed a complex network of shady transactions, raising suspicions of foul play.
 
-Chapter 2: The Enchanted Realm
+    As Turner navigates the labyrinth of Hawthorne's dark dealings, he uncovers long-concealed secrets that link 
+    the victim to a notorious underworld figure. The detective must now unravel the threads of deceit, facing 
+    challenges that jeopardize not only his investigation but also the safety of those closest to him.
 
-    Sarah found herself in an enchanted realm, where talking animals and mystical
-    creatures roamed freely. The sky was painted in hues of lavender and indigo,
-    and the air was filled with the sweet scent of blooming flowers.
+    Little does Turner know that the shadows concealing the truth are deeper than he could have imagined. 
+    In this intricate dance of deception, the line between ally and adversary blurs, and every step taken 
+    leads him closer to a truth that could shatter the fragile tranquility of Crestwood forever.
 
-    Guided by a wise old owl named Merlin, Sarah learned about the ancient prophecy
-    that foretold her arrival. She was chosen to embark on a quest to restore the
-            balance between light and darkness.
+    Will Detective Alex Turner unravel the enigma in time, or will the shadows of deceit cast 
+    their ominous veil over Crestwood, burying its secrets in eternal darkness?
 
-Chapter 3: The Forbidden Forest
+    #Chapter 1: Unveiling Shadows
 
-    The quest led Sarah to the Forbidden Forest, a place where the shadows danced
-    among the trees, and whispers of the past echoed in the wind. Deep within the
-    forest, she discovered an ancient temple guarded by mystical guardians.
+    Detective Alex Turner paced anxiously in his cluttered office, the dim glow of a single desk lamp 
+    casting elongated shadows on the worn-out floor. The rhythmic tap of rain against the windowpane 
+    echoed the unease that enveloped Crestwood.
 
-    To unlock the temple's secrets, Sarah had to solve riddles and face her deepest
-    fears. Each step brought her closer to unveiling the truth behind the mysterious
-            events in Ravenwood.
-            
-Chapter 4: The Temple's Trials
+    The day had begun like any other until the call came – Richard Hawthorne, a man of influence and wealth, 
+    found dead in his sprawling mansion. Turner's instincts kicked in, recognizing the underlying 
+    currents of something more sinister than a mere natural demise.
 
-As Sarah delved deeper into the Forbidden Forest, the trials within the ancient temple tested her resolve. She faced illusions that mirrored her innermost desires and fears, challenging her to confront the shadows of her past.
+    As he approached the Hawthorne estate, the rain intensified, adding a somber note to the scene. 
+    The imposing mansion loomed through the mist, its windows reflecting the ghostly pallor of the investigator's face.
+    Turner's mind buzzed with questions, each step towards the entrance echoing the weight of the impending revelation.
 
-Guided by the wisdom of Merlin and the strength within her heart, Sarah overcame each trial with newfound courage. The temple unveiled its secrets, revealing an ancient artifact that held the power to restore balance.
+    Inside, the air was thick with an unsettling stillness. The deceased lay in repose, 
+    his lifeless eyes seemingly holding secrets even in death. Turner scrutinized the room, 
+    the opulence of Hawthorne's life contrasting sharply with the hidden shadows that lurked beneath the surface.
 
-Chapter 5: The Dark Prophecy
+    The initial examination suggested a heart attack, but Turner's intuition urged him to dig deeper. 
+    The businessman's financial records hinted at transactions that danced on the fringes of legality. 
+    As Turner navigated the labyrinth of numbers and accounts, a clandestine world emerged – one woven with 
+    betrayal and clandestine alliances.
 
-With the artifact in hand, Sarah learned of a dark prophecy that threatened the very fabric of the enchanted realm. An ancient evil, long thought to be vanquished, sought to rise again and plunge the world into eternal darkness.
+    The detective's investigation drew attention to Hawthorne's connections with a mysterious figure 
+    known only as "The Whisperer." Rumored to be the puppet master orchestrating the town's clandestine affairs, 
+    The Whisperer's influence cast a long shadow over Crestwood.
 
-Sarah, now accompanied by a fellowship of magical beings she met along her journey, embarked on a quest to thwart the impending doom. Their path led them through mystical lands, across treacherous mountains, and into the heart of the shadowy abyss.
+    As Turner delved further into the shadows, he encountered the enigmatic Selena Drake, 
+    a woman with a cryptic past entwined with the deceased. Her piercing gaze held secrets yet to be unveiled, 
+    adding another layer of complexity to the investigation.
 
-Chapter 6: The Battle of Shadows
+    The town's underbelly began to stir, reacting to the detective's relentless pursuit of truth. 
+    Turner found himself entangled in a dangerous game of cat and mouse, where allegiances shifted like shadows in the dark.
 
-The fellowship faced formidable challenges as they approached the epicenter of the dark forces. Malevolent creatures and sinister sorcery tested their unity and strength. Sarah's leadership and the bonds forged during their journey proved to be the key to overcoming these adversities.
+    With each revelation, Crestwood's façade crumbled, exposing a world of deceit that threatened to consume 
+    all who dared to uncover its secrets. As Detective Alex Turner navigates the treacherous path ahead, 
+    he realizes that in the shadows lie not only answers but also the lurking danger that could swallow him whole.
 
-The Battle of Shadows erupted in a spectacle of magic and might. As Sarah and her companions fought valiantly, the enchanted realm trembled under the weight of the impending confrontation between light and darkness.
+    In this intricately woven tale of suspense, Detective Turner takes his first steps into a labyrinth of deception, 
+    where every discovery unravels a new layer of mystery, plunging him deeper into the Shadows of Deceit.
 
-Chapter 7: Triumph of Light
+    #Chapter 2: Echoes of Betrayal
 
-In the climactic showdown, Sarah confronted the source of the dark prophecy—an ancient entity fueled by hatred and despair. Drawing upon the power of the artifact and the unity of the fellowship, she unleashed a surge of pure light that shattered the darkness.
+    Detective Alex Turner's restless nights blended into days consumed by the relentless pursuit of truth. 
+    Crestwood, once a tranquil haven, transformed into a labyrinth of secrets that threatened to ensnare him. 
+    As he sifted through the remnants of Richard Hawthorne's life, the town's shadows whispered tales of betrayal.
 
-The realm basked in the radiance of restored balance. The once-threatened lands flourished with renewed life, and the fellowship celebrated their victory. Sarah, now a heroine of legend, returned to Ravenwood, forever changed by her extraordinary journey.
+    Turner's investigation led him to Hawthorne's estranged business partner, Douglas Blackwood, 
+    a man with a facade as impenetrable as the mansion's stone walls. Blackwood's alibis crumbled under scrutiny, 
+    revealing a web of deception carefully woven around the deceased businessman.
 
-Epilogue: A New Beginning
+    Amidst the labyrinth of lies, Turner found solace in the company of Selena Drake. 
+    Her enigmatic presence mirrored the shadows he sought to unveil. Together, 
+    they navigated the intricate dance of secrets and half-truths, each step bringing them closer to the elusive Whisperer.
 
-Ravenwood embraced a new era of harmony, and Sarah became a guardian of the enchanted realm. The fellowship, bound by shared memories and a sense of profound purpose, continued to explore the magical lands beyond.
+    The detective's pursuit intensified as he unearthed a clandestine meeting ground – a hidden club known 
+    only to those versed in the clandestine affairs of Crestwood. The air within the dimly lit establishment 
+    crackled with tension, and the clandestine murmurs hinted at a conspiracy that transcended the boundaries of the town.
 
-As for the dusty old book in Sarah's grandmother's attic, it found its place on a sacred shelf among other mystical tomes. Its pages whispered the tale of a brave girl who bridged worlds, and its magic lived on in the hearts of those who believed in the extraordinary.
+    As Turner delved into the club's underbelly, he encountered a network of individuals bound by a pact of silence. 
+    The walls echoed with the whispers of those who dared not speak aloud. Every clandestine meeting, 
+    every exchanged glance, painted a portrait of a town entangled in a web of power and betrayal.
 
-And so, the story concluded, leaving the enchanted realm forever grateful for the courage of a girl named Sarah who dared to dream beyond the ordinary.
+    Blackwood's connections led Turner to the threshold of the Whisperer's domain. The detective felt 
+    the weight of the town's secrets pressing down on him as he approached the elusive figure's lair. 
+    The Whisperer's identity remained a mirage, slipping through Turner's grasp like elusive shadows.
 
-THE END
+    In the dim glow of his office, Turner pieced together the fragments of the investigation. 
+    The threads of deceit intertwined with the town's history, creating a tapestry of lies that threatened to 
+    unravel the very fabric of Crestwood.
 
-            """"
+    As Turner prepared to confront the Whisperer, he sensed the shadows closing in. The lines between 
+    ally and adversary blurred, and the detective found himself entangled in a conspiracy that reached 
+    far beyond the confines of Crestwood.
+
+    In this unfolding saga of Shadows of Deceit, Detective Alex Turner faced a choice – to retreat into 
+    the safety of the known or to confront the shadows that danced on the edge of revelation. 
+    Little did he know that the path ahead held more twists and turns, and the echoes of betrayal 
+    would resonate through the darkened corridors of Crestwood.
+
+    #Chapter 3: Veil of Shadows
+
+    In the heart of Crestwood, Detective Alex Turner stood at the crossroads of truth and treachery. 
+    The town's murky history cast a veil over his pursuit, leaving him entangled in a labyrinth of deceit. 
+    The revelations of the past echoed through the present, each step forward unraveling a tapestry woven with 
+    the threads of betrayal.
+
+    As Turner delved deeper into the town's archives, he uncovered a clandestine operation that connected 
+    Hawthorne and Blackwood to a series of unsolved crimes. The shadows of the past reached out, 
+    ensnaring the detective in a sinister dance where every revelation hinted at a darker truth.
+
+    Selena Drake, once a confidante, now held secrets that could shatter the fragile trust between them. 
+    The detective's journey took an unexpected turn as he discovered Selena's connection to the clandestine club, 
+    where whispers of conspiracy mingled with the smoke-filled air.
+
+    The Whisperer's lair, hidden in the recesses of Crestwood, became the focal point of Turner's investigation. 
+    The detective navigated the treacherous terrain, where allies wore masks, and enemies lurked in the shadows. 
+    The veil of secrecy lifted, revealing a nexus of power and corruption that extended beyond Crestwood's borders.
+
+    Turner's pursuit of the elusive figure reached its zenith as he confronted the Whisperer. 
+    The dimly lit room bore witness to a tense exchange, where words held the weight of unspoken truths. 
+    The Whisperer's identity remained shrouded, a phantom orchestrating the town's descent into darkness.
+
+    In this penultimate chapter of Shadows of Deceit, Detective Alex Turner stood on the precipice, 
+    torn between the desire for justice and the realization that some shadows refused to dissipate. 
+    As the veil tightened, Turner prepared for the final act, where the boundaries between right and wrong blurred, 
+    and Crestwood's destiny hung in the balance.
+
+    #Chapter 4: Echoes of Redemption
+
+    As the first light of dawn painted the horizon, Crestwood stood on the precipice of redemption. 
+    Detective Alex Turner's pursuit of justice had become an odyssey, and the town's fate now hinged 
+    on the decisions made in the crucible of shadows.
+
+    The revelation of the Whisperer's identity sent shockwaves through Crestwood, exposing a figure 
+    entwined in the town's history like a malevolent specter. In a clandestine meeting at the heart of 
+    the Whisperer's lair, the detective unmasked Selena Drake as the orchestrator of the shadows. Her motives, 
+    a mosaic of vengeance and retribution, came to light as the detective delved into her tormented past.
+
+    The final confrontation unfolded against the backdrop of Crestwood's decaying beauty. The town square, 
+    once witness to celebrations, now bore the scars of a clandestine war. Turner and Selena faced off, 
+    their destinies intertwined in a delicate dance between truth and absolution.
+
+    As the detective confronted Selena, the echoes of redemption reverberated through Crestwood's cobblestone streets. 
+    The choices made in those fleeting moments held the power to reshape the town's narrative. Turner grappled with 
+    the complexities of justice, weighing the thin line between punishment and forgiveness.
+
+    In the climax of Shadows of Deceit, Crestwood became a crucible where secrets met reckoning, and the shadows 
+    released their grip on the town's soul. The detective's journey reached its zenith as he navigated the moral labyrinth, 
+    confronting the consequences of his actions and the ghosts that haunted Selena.
+
+    The denouement unfolded against the canvas of a town yearning for renewal. As Turner made his final decisions, 
+    Crestwood emerged from the shadows, bathed in the soft glow of a sunrise that promised a new beginning. 
+    The resolute steps toward redemption echoed through the town, leaving behind the remnants of a clandestine past.
+
+    In the final pages of Shadows of Deceit, Detective Alex Turner stood as a sentinel of justice, and Crestwood 
+    embraced the dawn of its redemption. The tale concluded, leaving the town forever changed by the echoes of a journey 
+    that transcended shadows and illuminated the path to renewal.
+
+    THE END
+
+    """.trimIndent()
 
 
-    val charLimit = 2500
+    val charLimit = 1500
     val chapters = paginateText(text, charLimit)
 
     var currentPage by remember { mutableStateOf(0) }
     val scrollState = rememberLazyListState()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().padding(bottom = 54.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 54.dp),
         scaffoldState = rememberScaffoldState(),
     ) {
 
@@ -124,15 +225,14 @@ THE END
             state = scrollState,
             modifier = Modifier.fillMaxSize()
         ) {
+
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    Text(
-                        text = chapters[currentPage]
-                    )
+                    FormattedText(chapters[currentPage])
                 }
             }
 
@@ -171,10 +271,42 @@ THE END
                         Text("Next Page")
                     }
                 }
+            }
+        }
+            LaunchedEffect(scrollState, currentPage) {
+                scrollState.animateScrollToItem(0)
+            }
 
-                LaunchedEffect(scrollState, currentPage) {
-                    scrollState.animateScrollToItem(0)
-                }
+    }
+}
+
+@Composable
+fun FormattedText(paragraph: String) {
+    val lines = paragraph.lines()
+    lines.forEach { line ->
+        when {
+            line.startsWith("#") -> {
+                // Tytuł rozdziału
+                Text(
+                    text = line.replace("#", "").trim(),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+            line.isNotBlank() -> {
+                // Treść
+                Text(
+                    text = line.trim(),
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+            else -> {
+                // Pusty wiersz
+                Spacer(modifier = Modifier.height(2.dp))
             }
         }
     }
@@ -187,7 +319,7 @@ fun paginateText(text: String, charLimit: Int): List<String> {
     var currentChapterCharCount = 0
 
     for (line in text.lines()) {
-        if (line.startsWith("Chapter")) {
+        if (line.startsWith("#")) {
             // Nowy rozdział - dodaj poprzedni i zacznij nowy
             if (currentChapter.isNotBlank()) {
                 chapters.add(currentChapter.toString().trim())
