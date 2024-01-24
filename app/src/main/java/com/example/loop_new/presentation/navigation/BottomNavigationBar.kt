@@ -21,7 +21,7 @@ data class BottomNavItem(val route: String, val icon: Int, val size: DpSize)
 
 val mainBottomNavItems = listOf(
     BottomNavItem(
-        NavigationSupport.ReadScreen,
+        NavigationSupport.StoryScreen,
         icon = R.drawable.reading_button,
         size = DpSize(44.dp, 44.dp)
     ),
@@ -36,7 +36,7 @@ val size = DpSize(28.dp, 28.dp)
 
 val flashcardBottomNavItems = listOf(
     BottomNavItem(
-        NavigationSupport.ReadScreen,
+        NavigationSupport.StoryScreen,
         icon = R.drawable.return_arrow,
         size = size
     ),
@@ -87,7 +87,7 @@ fun BottomNavigationBar(navController: NavController, items: List<BottomNavItem>
 fun showBottomNavigationBar(navController: NavController): Boolean {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     return when { // ButtonNavBar is visible
-        currentRoute?.startsWith(NavigationSupport.ReadScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.StoryScreen) == true -> true
         currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> true
         else -> false
     }
