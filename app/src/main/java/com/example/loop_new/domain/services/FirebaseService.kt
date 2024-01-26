@@ -2,6 +2,7 @@ package com.example.loop_new.domain.services
 
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.User
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface FirebaseService {
 
     //TODO: do zmiany na ogolnie usera, chyba
+    //Flashcards
     fun createNewGoogleUser()
 
     fun getSignedInUser(): User?
@@ -49,4 +51,8 @@ interface FirebaseService {
 
     suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean
 
+    //Story
+    fun fetchListOfStory(): Flow<List<Story>>
+
+    suspend fun fetchStory(storyUid: String): Story?
 }

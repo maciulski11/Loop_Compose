@@ -1,6 +1,7 @@
 package com.example.loop_new.presentation.screens.read
 
 import android.annotation.SuppressLint
+import android.text.Html
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -53,14 +54,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.loop_new.R
+import com.example.loop_new.presentation.screens.story.StoryViewModel
 import com.example.loop_new.ui.theme.White
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 data class WordWithIndices(val word: String, val start: Int, val end: Int)
 
 @Preview(showBackground = true)
 @Composable
 fun StoryScreenPreview() {
-    ReadScreen()
+//    ReadScreen()
 }
 
 val text = """
@@ -159,43 +163,76 @@ val text = """
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ReadScreen() {
+fun ReadScreen(viewModel: ReadViewModel) {
     var selectedText by remember { mutableStateOf<String?>(null) }
     var selectedOffset by remember { mutableStateOf<Int?>(null) }
     var clickPosition by remember { mutableStateOf(Offset(0f, 0f)) }
 
     val charLimit = 2000
-    val chapters = paginateText(text, charLimit)
+
+    val chapters = paginateText(viewModel.story?.text.toString(), charLimit)
 
     var currentPage by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
 
-    // Tworzy osobne AnnotatedString dla każdej linii tekstu z odpowiednimi stylami
     fun createAnnotatedStringForLine(line: String): AnnotatedString {
         return buildAnnotatedString {
-            when {
-                line.startsWith("#") -> {
-                    // Tytuł rozdziału
-                    withStyle(
-                        style = SpanStyle(
-                            color = Black,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append(line.replace("#", "").trim())
-                        append("\n")
+            val parts = line.split("@") // Rozdziel tekst na części w miejscach wystąpienia @
+            parts.forEachIndexed { index, part ->
+                when {
+                    part.startsWith("#") -> {
+                        // Tytuł rozdziału
+                        withStyle(
+                            style = SpanStyle(
+                                color = Black,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(part.replace("#", "").trim())
+                            append("\n")
+                        }
+                    }
+
+                    part.contains("#") -> {
+                        // Jeśli fragment zawiera #, ale nie zaczyna się od niego
+                        val splitPart = part.split("#")
+                        splitPart.forEachIndexed { i, subPart ->
+                            if (i % 2 == 0) {
+                                // Nieparzyste indeksy oznaczają tekst bezpośrednio przed lub po #
+                                withStyle(style = SpanStyle(color = Black, fontSize = 18.sp)) {
+                                    append(subPart.trim())
+//                                    append("\n")
+                                }
+                            } else {
+                                // Parzyste indeksy oznaczają tekst między #
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = Black,
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(subPart.trim())
+//                                    append("\n")
+                                }
+                            }
+                        }
+                    }
+
+                    part.isNotBlank() -> {
+                        // Treść
+                        withStyle(style = SpanStyle(color = Black, fontSize = 18.sp)) {
+                            append(part.trim())
+                        }
                     }
                 }
 
-                line.isNotBlank() -> {
-                    // Treść
-                    withStyle(style = SpanStyle(color = Black, fontSize = 18.sp)) {
-                        append(line.trim())
-                    }
-                }
+//                if (index < parts.size - 1) {
+//                    // Dodaj pusty wiersz między kolejnymi częściami
+//                    append("\n")
+//                }
             }
-            append("\n")
         }
     }
 
@@ -247,7 +284,7 @@ fun ReadScreen() {
                 ),
                 onClick = { offset ->
                     val wordWithIndices = findWordAtIndex(chapters[currentPage], offset)
-                    selectedText = wordWithIndices?.word
+                    selectedText = wordWithIndices.word
                     selectedOffset = offset
                 }
             )
@@ -318,6 +355,7 @@ fun paginateText(text: String, charLimit: Int): List<String> {
     var currentChapterCharCount = 0
 
     for (line in text.lines()) {
+
         if (line.startsWith("#")) {
             // Nowy rozdział - dodaj poprzedni i zacznij nowy
             if (currentChapter.isNotBlank()) {

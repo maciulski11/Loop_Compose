@@ -1,13 +1,18 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
+import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.User
 import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.presentation.screens.read.text
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -31,6 +36,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         const val FLASHCARD = "flashcard"
         const val REPEAT = "repeat"
         const val USERS = "users"
+        const val STORY = "story"
     }
 
     private val auth = Firebase.auth
@@ -861,5 +867,53 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     "deleteFlashcardFromRepeatSection: Error deleting flashcard with UID: $flashcardUid: $exception"
                 )
             }
+    }
+
+    override fun fetchListOfStory(): Flow<List<Story>> {
+        return callbackFlow {
+            val listenerRegistration = firestore.collection(STORY)
+                .addSnapshotListener { querySnapshot, error ->
+
+                    // Handle any errors that might occur during snapshot listening
+                    if (error != null) {
+                        close(error)
+                        Log.e(
+                            LogTags.FIREBASE_SERVICES,
+                            "fetchStory: Error: $error"
+                        )
+                        return@addSnapshotListener
+                    }
+
+                    // Map each document in the snapshot to a Box object and send the list through the Flow
+                    val tempList = querySnapshot?.documents?.mapNotNull {
+                        it.toObject(Story::class.java)
+                    } ?: mutableListOf()
+
+                    trySend(tempList).isSuccess
+                    Log.d(LogTags.FIREBASE_SERVICES, "fetchStory: Success!")
+                }
+
+            // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
+            awaitClose {
+                listenerRegistration.remove()
+            }
+        }
+    }
+
+    override suspend fun fetchStory(storyUid: String): Story? {
+        return try {
+            val document = firestore.collection(STORY)
+                .document(storyUid)
+                .get()
+                .await()
+
+            val storyData = document.data
+            Log.d("Firestore", "Story Data: $storyData")
+
+            document.toObject(Story::class.java)
+        } catch (e: Exception) {
+            // Obsłuż błąd
+            null
+        }
     }
 }

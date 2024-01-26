@@ -42,10 +42,13 @@ import com.example.loop_new.presentation.screens.box.priv.PrivateBoxViewModel
 import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardViewModel
 import com.example.loop_new.presentation.screens.read.ReadScreen
+import com.example.loop_new.presentation.screens.read.ReadViewModel
 import com.example.loop_new.presentation.screens.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
 import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
+import com.example.loop_new.presentation.screens.story.StoryScreen
+import com.example.loop_new.presentation.screens.story.StoryViewModel
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -58,10 +61,11 @@ object NavigationSupport {
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
+    const val StoryScreen = "story_screen"
     const val ReadScreen = "read_screen"
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
 @Composable
 fun NavigationScreens(
     googleAuthService: GoogleAuthService,
@@ -92,13 +96,13 @@ fun NavigationScreens(
                 val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
                 val bottomNavItems = when {
-                    currentRoute?.startsWith(NavigationSupport.ReadScreen) == true -> mainBottomNavItems
+                    currentRoute?.startsWith(NavigationSupport.StoryScreen) == true -> mainBottomNavItems
                     currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> flashcardBottomNavItems
                     else -> null
                 }
 
                 val bottomBarHeight = when {
-                    currentRoute?.startsWith(NavigationSupport.ReadScreen) == true -> 54.dp
+                    currentRoute?.startsWith(NavigationSupport.StoryScreen) == true -> 54.dp
                     currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> 42.dp
                     else -> 0.dp
                 }
@@ -123,7 +127,7 @@ fun NavigationScreens(
 
                 LaunchedEffect(key1 = Unit) {
                     if (firebaseService.getSignedInUser() != null) {
-                        navController.navigate(NavigationSupport.ReadScreen)
+                        navController.navigate(NavigationSupport.StoryScreen)
                     }
                 }
 
@@ -150,7 +154,7 @@ fun NavigationScreens(
                         ).show()
 
                         firebaseService.createNewGoogleUser()
-                        navController.navigate(NavigationSupport.ReadScreen)
+                        navController.navigate(NavigationSupport.StoryScreen)
                         viewModel.resetState()
                     }
                 }
@@ -288,9 +292,26 @@ fun NavigationScreens(
                 RepeatScreen(navController, viewModel)
             }
 
-            composable(NavigationSupport.ReadScreen) {
+            composable(NavigationSupport.StoryScreen) {
+                val viewModel = remember {
+                    StoryViewModel(
+                        firebaseService
+                    )
+                }
 
-                ReadScreen()
+                StoryScreen(navController, viewModel)
+            }
+
+            composable("${NavigationSupport.ReadScreen}/{storyUid}",
+                arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
+
+                val viewModel = remember {
+                    ReadViewModel(firebaseService, storyUid)
+                }
+
+                ReadScreen(viewModel)
             }
         }
     }
