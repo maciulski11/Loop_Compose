@@ -6,10 +6,10 @@ import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.services.FirebaseService
 import kotlinx.coroutines.launch
 
-class ReadViewModel(private val firebaseService: FirebaseService, storyUid: String): ViewModel() {
+class ReadViewModel(private val firebaseService: FirebaseService, storyUid: String) : ViewModel() {
 
-    private var _story: Story? = null
-    val story: Story? get() = _story
+    private var _storyDetails: Story? = null
+    val storyDetails: Story? get() = _storyDetails
 
     init {
         fetchStory(storyUid)
@@ -17,7 +17,7 @@ class ReadViewModel(private val firebaseService: FirebaseService, storyUid: Stri
 
     private fun fetchStory(storyUid: String) {
         viewModelScope.launch {
-            _story = firebaseService.fetchStory(storyUid)
+            _storyDetails = firebaseService.fetchStory(storyUid)
         }
     }
 }

@@ -1,18 +1,15 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.model.firebase.Story
+import com.example.loop_new.domain.model.firebase.TextContent
 import com.example.loop_new.domain.model.firebase.User
 import com.example.loop_new.domain.services.FirebaseService
-import com.example.loop_new.presentation.screens.read.text
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -877,10 +874,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     // Handle any errors that might occur during snapshot listening
                     if (error != null) {
                         close(error)
-                        Log.e(
-                            LogTags.FIREBASE_SERVICES,
-                            "fetchStory: Error: $error"
-                        )
+                        Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
                         return@addSnapshotListener
                     }
 
@@ -890,7 +884,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     } ?: mutableListOf()
 
                     trySend(tempList).isSuccess
-                    Log.d(LogTags.FIREBASE_SERVICES, "fetchStory: Success!")
+                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Success!")
                 }
 
             // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
@@ -908,11 +902,29 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .await()
 
             val storyData = document.data
-            Log.d("Firestore", "Story Data: $storyData")
+            Log.d("Firestore", "fetchStory: Success! $storyData")
 
-            document.toObject(Story::class.java)
+            // Sprawdź, czy dane są niepuste
+            if (storyData != null) {
+                val title = storyData["title"].toString() as String?
+                val chaptersList = storyData["text"] as List<Map<String, Any>>?
+
+                // Sprawdź, czy masz listę rozdziałów
+                val chapters = chaptersList?.map { chapterMap ->
+                    TextContent(
+                        chapter = chapterMap["chapter"].toString() as String?,
+                        content = chapterMap["content"].toString() as String?
+                    )
+                }
+                    ?: emptyList()  // Pusta lista, jeśli nie ma rozdziałów
+
+                Story(title, chapters, storyUid)
+            } else {
+                Log.e(LogTags.FIREBASE_SERVICES, "fetchStory: data is empty!")
+                null  // Jeśli dane są puste, zwróć null
+            }
         } catch (e: Exception) {
-            // Obsłuż błąd
+            Log.e(LogTags.FIREBASE_SERVICES, "fetchStory: $e")
             null
         }
     }
