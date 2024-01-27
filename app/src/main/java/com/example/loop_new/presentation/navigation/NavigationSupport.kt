@@ -311,7 +311,7 @@ fun NavigationScreens(
                     ReadViewModel(firebaseService, storyUid)
                 }
 
-                ReadScreen(viewModel)
+                ReadScreen(navController, viewModel)
             }
         }
     }

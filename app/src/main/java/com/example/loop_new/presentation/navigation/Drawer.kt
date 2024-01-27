@@ -90,7 +90,7 @@ fun Drawer(
         DrawerItem(text = "Home", icon = R.drawable.home, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
 
-            navController.navigate(NavigationSupport.BoxScreen)
+            navController.navigate(NavigationSupport.PrivateBoxScreen)
         })
 
         DrawerItem(text = "Stats", icon = R.drawable.stats, onClick = {

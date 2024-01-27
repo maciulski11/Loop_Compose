@@ -85,10 +85,10 @@ fun PublicScreen(
     viewModel: PublicBoxViewModel,
 ) {
 
+    BackHandler { navController.navigate(NavigationSupport.PrivateBoxScreen) }
+
     val showDialogDeleteBox = remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
-
-    BackHandler { /* gesture return is off */ }
 
     val constraints = ConstraintSet {
         val boxList = createRefFor("boxList")

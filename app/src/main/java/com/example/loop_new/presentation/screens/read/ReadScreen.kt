@@ -3,14 +3,17 @@ package com.example.loop_new.presentation.screens.read
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -22,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -52,8 +57,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Story
+import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.ui.theme.BlueOfBackgroundApp
 
 data class WordWithIndices(val word: String, val start: Int, val end: Int)
 
@@ -66,7 +74,14 @@ fun StoryScreenPreview() {
 @OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ReadScreen(viewModel: ReadViewModel) {
+fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
+
+    // Support for custom return behavior
+    BackHandler {
+        // Where return
+        navController.navigate(NavigationSupport.StoryScreen)
+    }
+
     var selectedText by remember { mutableStateOf<String?>(null) }
     var selectedOffset by remember { mutableStateOf<Int?>(null) }
     var clickPosition by remember { mutableStateOf(Offset(0f, 0f)) }
@@ -76,107 +91,135 @@ fun ReadScreen(viewModel: ReadViewModel) {
     var currentPage by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(state = scrollState)
-    ) {
-        // Główna treść (Text z Chapter)
-        Text(
-            text = viewModel.storyDetails?.text?.getOrNull(currentPage)?.chapter ?: "",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
-        )
+    if (viewModel.storyDetails != null) {
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(state = scrollState)
         ) {
 
-            ClickableText(
-                text = createAnnotatedStringForPage(currentPage, viewModel.storyDetails),
+            Text(
+                text = viewModel.storyDetails?.text?.getOrNull(currentPage)?.chapter ?: "",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = 14.dp, start = 12.dp, end = 12.dp)
-                    .pointerInteropFilter { event ->
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
+            )
 
-                        if (event.action == MotionEvent.ACTION_DOWN) {
-                            clickPosition = if (event.x >= 930) {
-                                Offset(event.x - 100, event.y)
-                            } else if (event.x <= 150) {
-                                Offset(event.x, event.y)
-                            } else {
-                                Offset(event.x - 50, event.y)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+
+                ClickableText(
+                    text = createAnnotatedStringForPage(currentPage, viewModel.storyDetails),
+                    modifier = Modifier
+                        .padding(bottom = 14.dp, start = 12.dp, end = 12.dp)
+                        .pointerInteropFilter { event ->
+                            if (event.action == MotionEvent.ACTION_DOWN) {
+                                clickPosition = if (event.x >= 930) {
+                                    Offset(event.x - 100, event.y)
+                                } else if (event.x <= 150) {
+                                    Offset(event.x, event.y)
+                                } else {
+                                    Offset(event.x - 50, event.y)
+                                }
+
+                                selectedText = null
+                                selectedOffset = null
                             }
+                            false
+                        },
+                    style = TextStyle(
+                        color = Black,
+                        textDecoration = TextDecoration.None
+                    ),
+                    onClick = { offset ->
+                        val wordWithIndices = findWordAtIndex(
+                            viewModel.storyDetails?.text?.getOrNull(currentPage)?.content ?: "",
+                            offset
+                        )
+                        selectedText = wordWithIndices.word
+                        selectedOffset = offset
+                    }
+                )
 
+                // Display the custom info box if selectedText is not null
+                if (!selectedText.isNullOrBlank() && selectedOffset != null) {
+                    CustomInfoBox(
+                        selectedText = selectedText?.lowercase() ?: "",
+                        clickPosition = clickPosition,
+                        onDismiss = {
                             selectedText = null
                             selectedOffset = null
                         }
-                        false
-                    },
-                style = TextStyle(
-                    color = Black,
-                    textDecoration = TextDecoration.None
-                ),
-                onClick = { offset ->
-                    val wordWithIndices = findWordAtIndex(
-                        viewModel.storyDetails?.text?.getOrNull(currentPage)?.content ?: "",
-                        offset
                     )
-                    selectedText = wordWithIndices.word
-                    selectedOffset = offset
                 }
-            )
+            }
 
-            // Display the custom info box if selectedText is not null
-            if (!selectedText.isNullOrBlank() && selectedOffset != null) {
-                CustomInfoBox(
-                    selectedText = selectedText?.lowercase() ?: "",
-                    clickPosition = clickPosition,
-                    onDismiss = {
-                        selectedText = null
-                        selectedOffset = null
-                    }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 22.dp, bottom = 22.dp, start = 56.dp, end = 56.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_left_44),
+                    contentDescription = "left",
+                    modifier = Modifier
+                        .alpha(if (currentPage > 0) 1f else 0.5f)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            if (currentPage > 0) {
+                                currentPage--
+                            }
+                        }
                 )
+
+                Text(
+                    fontSize = 22.sp,
+                    text = "${currentPage + 1}/${viewModel.storyDetails?.text?.size ?: 0}"
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_right_44),
+                    contentDescription = "right",
+                    modifier = Modifier
+                        .alpha(
+                            if (currentPage < (viewModel.storyDetails?.text?.size
+                                    ?: 0) - 1
+                            ) 1f else 0.5f
+                        )
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            if (currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1) {
+                                currentPage++
+                            }
+                        }
+                )
+
             }
         }
-
-        // Przyciski
-        Row(
+    } else {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp, bottom = 14.dp, start = 20.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Button(
-                onClick = {
-                    if (currentPage > 0) {
-                        currentPage--
-                    }
-                },
-                enabled = currentPage > 0
-            ) {
-                Text("Previous Page")
-            }
-
-            Text(
-                fontSize = 22.sp,
-                text = "${currentPage + 1}/${viewModel.storyDetails?.text?.size ?: 0}"
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(66.dp),
+                strokeWidth = 7.dp,
             )
-
-            Button(
-                onClick = {
-                    if (currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1) {
-                        currentPage++
-                    }
-                },
-                enabled = currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1
-            ) {
-                Text("Next Page")
-            }
         }
     }
 

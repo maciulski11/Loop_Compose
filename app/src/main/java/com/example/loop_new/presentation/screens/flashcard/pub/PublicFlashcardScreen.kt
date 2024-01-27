@@ -68,7 +68,6 @@ fun PublicFlashcardScreen(
 
     // Support for custom return behavior
     BackHandler {
-        // Where return
         navController.navigate(NavigationSupport.BoxScreen)
     }
 
