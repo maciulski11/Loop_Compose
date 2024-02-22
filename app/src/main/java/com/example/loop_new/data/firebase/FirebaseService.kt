@@ -5,6 +5,7 @@ import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.Category
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.TextContent
@@ -14,8 +15,10 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -24,6 +27,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 
 class FirebaseService(private val firestore: FirebaseFirestore) :
     FirebaseService {
@@ -866,38 +870,97 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
-    override fun fetchListOfStory(): Flow<List<Story>> {
-        return callbackFlow {
-            val listenerRegistration = firestore.collection(STORY)
+    override fun fetchListOfStory(): Flow<Category> {
+
+            return callbackFlow {
+                val categories = listOf("criminal", "drama", "comedy") // Dodaj swoje kategorie
+                val currentIndex = AtomicInteger(0)
+
+                val listenerRegistration = fetchNextCategory(categories, currentIndex, this)
+
+                awaitClose {
+                    listenerRegistration.remove()
+                }
+            }
+        }
+
+        private fun fetchNextCategory(
+            categories: List<String>,
+            currentIndex: AtomicInteger,
+            flow: SendChannel<Category>
+        ): ListenerRegistration {
+            val currentCategory = categories[currentIndex.get()]
+
+            return firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+                .collection(currentCategory)
                 .addSnapshotListener { querySnapshot, error ->
 
-                    // Handle any errors that might occur during snapshot listening
+                    // Handle errors
                     if (error != null) {
-                        close(error)
+                        flow.close(error)
                         Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
                         return@addSnapshotListener
                     }
 
-                    // Map each document in the snapshot to a Box object and send the list through the Flow
-                    val tempList = querySnapshot?.documents?.mapNotNull {
+                    // Map documents to Story objects
+                    val stories = querySnapshot?.documents?.mapNotNull {
                         it.toObject(Story::class.java)
                     } ?: mutableListOf()
 
-                    trySend(tempList).isSuccess
-                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Success!")
-                }
+                    // Create Category object and send it through the Flow
+                    val category = Category(currentCategory, stories)
+                    flow.trySend(category).isSuccess
+                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory for $currentCategory: Success!")
 
-            // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
-            awaitClose {
-                listenerRegistration.remove()
-            }
+                    // Increase index to fetch the next category
+                    val nextIndex = currentIndex.incrementAndGet()
+
+                    // If there are more categories, fetch the next one
+                    if (nextIndex < categories.size) {
+                        fetchNextCategory(categories, currentIndex, flow)
+                    }
+                }
         }
-    }
+
+
+
+
+
+
+
+
+//        return callbackFlow {
+//            val listenerRegistration = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+//                .collection("criminal")
+//                .addSnapshotListener { querySnapshot, error ->
+//
+//                    // Handle any errors that might occur during snapshot listening
+//                    if (error != null) {
+//                        close(error)
+//                        Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
+//                        return@addSnapshotListener
+//                    }
+//
+//                    // Map each document in the snapshot to a Box object and send the list through the Flow
+//                    val tempList = querySnapshot?.documents?.mapNotNull {
+//                        it.toObject(Story::class.java)
+//                    } ?: mutableListOf()
+//
+//                    trySend(tempList).isSuccess
+//                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Success!")
+//                }
+//
+//            // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
+//            awaitClose {
+//                listenerRegistration.remove()
+//            }
+//        }
+//    }
 
     override suspend fun fetchStory(storyUid: String): Story? {
         return try {
-            val document = firestore.collection(STORY)
-                .document(storyUid)
+            val document = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+                .collection("criminal").document(storyUid)
                 .get()
                 .await()
 

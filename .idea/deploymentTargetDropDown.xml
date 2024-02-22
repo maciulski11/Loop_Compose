@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AddFlashcardScreenPreview">
+      <entry key="LazyColumnWithLazyRowsPreview">
+        <State />
+      </entry>
+      <entry key="ScreenPreview">
         <State />
       </entry>
       <entry key="SignIn_Preview">
