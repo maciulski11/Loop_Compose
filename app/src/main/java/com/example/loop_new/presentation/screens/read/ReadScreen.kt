@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -24,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -61,7 +59,7 @@ import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
-import com.example.loop_new.ui.theme.BlueOfBackgroundApp
+import com.example.loop_new.ui.theme.Gray2
 
 data class WordWithIndices(val word: String, val start: Int, val end: Int)
 
@@ -127,6 +125,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                                     Offset(event.x - 50, event.y)
                                 }
 
+                                viewModel.translate = ""
                                 selectedText = null
                                 selectedOffset = null
                             }
@@ -141,6 +140,10 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                             viewModel.storyDetails?.text?.getOrNull(currentPage)?.content ?: "",
                             offset
                         )
+                        { clickedWord ->
+                            viewModel.translateWord(clickedWord)
+                        }
+
                         selectedText = wordWithIndices.word
                         selectedOffset = offset
                     }
@@ -150,6 +153,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                 if (!selectedText.isNullOrBlank() && selectedOffset != null) {
                     CustomInfoBox(
                         selectedText = selectedText?.lowercase() ?: "",
+                        translatedWord = viewModel.translate.lowercase(),
                         clickPosition = clickPosition,
                         onDismiss = {
                             selectedText = null
@@ -253,7 +257,12 @@ fun createAnnotatedStringForPage(page: Int, story: Story?): AnnotatedString {
 }
 
 @Composable
-fun CustomInfoBox(selectedText: String, clickPosition: Offset, onDismiss: () -> Unit) {
+fun CustomInfoBox(
+    selectedText: String,
+    translatedWord: String,
+    clickPosition: Offset,
+    onDismiss: () -> Unit,
+) {
     val context = LocalContext.current
 
     val position = with(LocalDensity.current) {
@@ -266,7 +275,7 @@ fun CustomInfoBox(selectedText: String, clickPosition: Offset, onDismiss: () -> 
     Box(
         modifier = Modifier
             .offset(position.x.dp, position.y.dp)
-            .background(Color.Gray, RoundedCornerShape(10.dp))
+            .background(Gray2, RoundedCornerShape(10.dp))
             .padding(vertical = 6.dp, horizontal = 8.dp)
             .clip(MaterialTheme.shapes.medium)
             .clickable {
@@ -274,16 +283,12 @@ fun CustomInfoBox(selectedText: String, clickPosition: Offset, onDismiss: () -> 
                 onDismiss.invoke()
             }
     ) {
-
         Row {
-            // Your content inside the info box goes here
-            Text(text = selectedText, color = Color.White)
-
-            Spacer(modifier = Modifier.width(4.dp))
 
             Image(
                 modifier = Modifier
-                    .size(22.dp)
+                    .size(30.dp)
+                    .align(Alignment.CenterVertically)
                     .clickable {
                         onDismiss.invoke()
                         Toast
@@ -293,11 +298,20 @@ fun CustomInfoBox(selectedText: String, clickPosition: Offset, onDismiss: () -> 
                 painter = painterResource(id = R.drawable.baseline_add_circle_box),
                 contentDescription = "add"
             )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            Column {
+                // Your content inside the info box goes here
+                Text(text = selectedText, color = Color.White)
+
+                Text(text = translatedWord, color = Color.White)
+            }
         }
     }
 }
 
-fun findWordAtIndex(text: String, offset: Int): WordWithIndices {
+fun findWordAtIndex(text: String, offset: Int, translateWord: (String) -> Unit): WordWithIndices {
     var startIndex = offset
     var endIndex = offset
 
@@ -316,6 +330,8 @@ fun findWordAtIndex(text: String, offset: Int): WordWithIndices {
 
     // Filtruj znaki interpunkcyjne z końca słowa
     val filteredWord = word.trimEnd { it.isWhitespace() || it.isPunctuation() }
+
+    translateWord(filteredWord)
 
     return WordWithIndices(filteredWord, startIndex, endIndex)
 }

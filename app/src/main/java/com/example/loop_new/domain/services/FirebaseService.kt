@@ -2,6 +2,7 @@ package com.example.loop_new.domain.services
 
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.Category
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.User
 import com.google.firebase.firestore.DocumentSnapshot
@@ -52,7 +53,7 @@ interface FirebaseService {
     suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean
 
     //Story
-    fun fetchListOfStory(): Flow<List<Story>>
+    fun fetchListOfStory(): Flow<Category>
 
     suspend fun fetchStory(storyUid: String): Story?
 }
