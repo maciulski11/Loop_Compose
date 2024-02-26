@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +34,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.ui.theme.Black2
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.White
 
@@ -58,23 +61,28 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
             item {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = category.name,
+                        text = "${category.name}:",
+                        fontSize = 20.sp,
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 6.dp)
                             .fillMaxWidth()
                             .weight(1f)
                     )
 
-                    Text(
+                    Box(
                         modifier = Modifier
-                            .padding(4.dp)
+                            .width(82.dp)
+                            .padding(8.dp)
                             .border(0.25.dp, Gray, RoundedCornerShape(6.dp))
-                            .padding(4.dp),
-                        text = "Check All >",
-                        fontSize = 12.sp,
-                        color = Gray
-                    )
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 2.dp),
+                            text = "Check All >",
+                            fontSize = 12.sp,
+                            color = Gray
+                        )
+                    }
                 }
                 LazyRow(
                     modifier = Modifier
@@ -85,7 +93,7 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
                     category.stories.forEach { story ->
                         item {
                             StoryItem(story = story) {
-                                navController.navigate("${NavigationSupport.ReadScreen}/${story.uid}")
+                                navController.navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
                             }
                         }
                     }
@@ -101,30 +109,33 @@ fun StoryItem(story: Story, onClick: () -> Unit) {
 
     Column(
         modifier = Modifier
-            .height(194.dp)
-            .width(120.dp)
+            .height(196.dp)
+            .width(122.dp)
             .padding(6.dp)
             .background(White, shape = RoundedCornerShape(4.dp))
             .clickable {
                 onClick()
             }
-
     ) {
 
        GlideImage(
            model = story.image ?: "",
            contentDescription = "loadImage",
            modifier = Modifier
-               .fillMaxSize()
-               .weight(1f)
-               .padding(bottom = 4.dp)
+               .height(150.dp)
+               .width(122.dp)
+               .shadow(1.25.dp, RoundedCornerShape(4.dp))
+               .padding(0.5.dp)
                .clip(shape = RoundedCornerShape(4.dp)),
            contentScale = ContentScale.Crop
        )
 
         Text(
             text = story.title.toString(),
+            color = Black2,
             fontWeight = FontWeight.Bold,
+            minLines = 2,
+            maxLines = 2,
             modifier = Modifier.padding(bottom = 2.dp)
         )
     }

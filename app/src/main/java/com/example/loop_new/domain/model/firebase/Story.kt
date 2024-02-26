@@ -4,7 +4,9 @@ data class Story(
     val title: String? = null,
     val text: List<TextContent>? = null,
     val uid: String? = null,
-    val image: String? = null
+    val level: String? = null,
+    val category: String? = null,
+    val image: String? = null,
 )
 
 data class TextContent(

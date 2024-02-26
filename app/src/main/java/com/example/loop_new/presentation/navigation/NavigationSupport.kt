@@ -49,6 +49,8 @@ import com.example.loop_new.presentation.screens.sign_in.SignInScreen
 import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
 import com.example.loop_new.presentation.screens.story.StoryScreen
 import com.example.loop_new.presentation.screens.story.StoryViewModel
+import com.example.loop_new.presentation.screens.story_info.StoryInfoViewModel
+import com.example.loop_new.presentation.screens.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -62,6 +64,7 @@ object NavigationSupport {
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
     const val StoryScreen = "story_screen"
+    const val StoryInfoScreen = "story_info_screen"
     const val ReadScreen = "read_screen"
 }
 
@@ -300,6 +303,18 @@ fun NavigationScreens(
                 }
 
                 StoryScreen(navController, viewModel)
+            }
+
+            composable("${NavigationSupport.StoryInfoScreen}/{storyUid}",
+                arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
+
+                val viewModel = remember {
+                    StoryInfoViewModel(firebaseService, storyUid)
+                }
+
+                StoryInfoScreen(navController ,viewModel)
             }
 
             composable("${NavigationSupport.ReadScreen}/{storyUid}",

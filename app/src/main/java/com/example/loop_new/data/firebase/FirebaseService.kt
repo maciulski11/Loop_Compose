@@ -873,7 +873,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     override fun fetchListOfStory(): Flow<Category> {
 
             return callbackFlow {
-                val categories = listOf("criminal", "drama", "comedy") // Dodaj swoje kategorie
+                val categories = listOf("criminal", "b1", "drama", "comedy") // Dodaj swoje kategorie
                 val currentIndex = AtomicInteger(0)
 
                 val listenerRegistration = fetchNextCategory(categories, currentIndex, this)
@@ -970,6 +970,9 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             // Sprawdź, czy dane są niepuste
             if (storyData != null) {
                 val title = storyData["title"].toString() as String?
+                val level = storyData["level"].toString() as String?
+                val category = storyData["category"].toString() as String?
+                val image = storyData["image"].toString() as String?
                 val chaptersList = storyData["text"] as List<Map<String, Any>>?
 
                 // Sprawdź, czy masz listę rozdziałów
@@ -981,7 +984,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 }
                     ?: emptyList()  // Pusta lista, jeśli nie ma rozdziałów
 
-                Story(title, chapters, storyUid)
+                Story(title, chapters, storyUid, level, category, image)
             } else {
                 Log.e(LogTags.FIREBASE_SERVICES, "fetchStory: data is empty!")
                 null  // Jeśli dane są puste, zwróć null
