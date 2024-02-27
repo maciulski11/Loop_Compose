@@ -56,4 +56,8 @@ interface FirebaseService {
     fun fetchListOfStory(): Flow<Category>
 
     suspend fun fetchStory(storyUid: String): Story?
+
+    suspend fun addStoryToFavoriteSection(storyId: String, title: String)
+
+    suspend fun removeStoryFromFavoriteSection(storyId: String)
 }

@@ -168,11 +168,8 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    val image = if (isStarSelected) {
-                        painterResource(id = R.drawable.star) // image when star is selected
-                    } else {
-                        painterResource(id = R.drawable.star_gold) // default image of star
-                    }
+                    val image =
+                        painterResource(id = if (isStarSelected) R.drawable.star else R.drawable.star_gold)
 
                     Image(
                         painter = image,
@@ -186,6 +183,13 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                             ) {
                                 // Toggle the selection state on click
                                 isStarSelected = !isStarSelected
+                                viewModel.apply {
+                                    if (!isStarSelected) {
+                                        addStoryToFavoriteSection()
+                                    } else {
+                                        removeStoryFromFavoriteSection()
+                                    }
+                                }
                             }
                     )
                 }
@@ -200,7 +204,6 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                     text = "Według osób dotkniętych emailowstrętem, z pomocą spamu można otrzymać też spyware, który otwiera nasz komputer na cały świat i dopisuje do nieformalnej listy wolnych zasobów internetowych (tzw. botnet) albo przestawia układ klawiatury QWERTY na dowolny inny; posiada też możliwość dynamicznej zmiany układu klawiatury, kiedy już – pogodzeni z tym nieszczęściem – za pomocą markera opiszemy klawiaturę od nowa."
                 )
             }
-
         }
     } else {
         Box(

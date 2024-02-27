@@ -7,6 +7,12 @@ data class Story(
     val level: String? = null,
     val category: String? = null,
     val image: String? = null,
+    val favoriteStories: List<FavoriteStory>? = null
+)
+
+data class FavoriteStory(
+    val uid: String? = null,
+    val name: String? = null
 )
 
 data class TextContent(

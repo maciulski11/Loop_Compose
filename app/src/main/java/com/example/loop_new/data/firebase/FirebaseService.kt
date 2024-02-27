@@ -14,6 +14,7 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.ktx.Firebase
@@ -38,6 +39,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         const val REPEAT = "repeat"
         const val USERS = "users"
         const val STORY = "story"
+        const val FAVORITE_STORIES = "favoriteStories"
     }
 
     private val auth = Firebase.auth
@@ -870,92 +872,104 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
+    override suspend fun addStoryToFavoriteSection(storyId: String, title: String) {
+        // Utwórz referencję do dokumentu użytkownika
+        val userDocRef = firestore.collection("users").document(currentUser ?: "")
+
+        // Dodaj ulubioną historię do tablicy favoriteStories
+        userDocRef.update(
+            FAVORITE_STORIES,
+            FieldValue.arrayUnion(mapOf("uid" to storyId, "title" to title))
+        )
+            .addOnSuccessListener {
+                Log.d(
+                    LogTags.FIREBASE_SERVICES,
+                    "Historia została dodana do ulubionych użytkownika."
+                )
+            }
+            .addOnFailureListener { e ->
+                Log.e(
+                    LogTags.FIREBASE_SERVICES,
+                    "Błąd podczas dodawania historii do ulubionych użytkownika: $e"
+                )
+            }
+    }
+
+    override suspend fun removeStoryFromFavoriteSection(storyId: String) {
+        val userDocRef = firestore.collection(USERS).document(currentUser ?: "")
+        val updatedFavoriteStories =
+            userDocRef.get().await().get("favoriteStories") as? MutableList<Map<String, String>>
+
+        val indexToRemove = updatedFavoriteStories?.indexOfFirst { it["uid"] == storyId }
+
+        indexToRemove?.takeIf { it >= 0 }?.let {
+            updatedFavoriteStories.removeAt(it)
+        } ?: Log.e(
+            LogTags.FIREBASE_SERVICES,
+            "Historia o UID $storyId nie istnieje na liście ulubionych."
+        )
+
+        userDocRef.update("favoriteStories", updatedFavoriteStories)
+            .addOnSuccessListener {
+                Log.d(LogTags.FIREBASE_SERVICES, "Historia została usunięta z ulubionych.")
+            }
+            .addOnFailureListener { e ->
+                Log.e(LogTags.FIREBASE_SERVICES, "Błąd podczas usuwania historii z ulubionych: $e")
+            }
+    }
+
+
     override fun fetchListOfStory(): Flow<Category> {
 
-            return callbackFlow {
-                val categories = listOf("criminal", "b1", "drama", "comedy") // Dodaj swoje kategorie
-                val currentIndex = AtomicInteger(0)
+        return callbackFlow {
+            val categories = listOf("criminal", "b1", "drama", "comedy") // Dodaj swoje kategorie
+            val currentIndex = AtomicInteger(0)
 
-                val listenerRegistration = fetchNextCategory(categories, currentIndex, this)
+            val listenerRegistration = fetchNextCategory(categories, currentIndex, this)
 
-                awaitClose {
-                    listenerRegistration.remove()
-                }
+            awaitClose {
+                listenerRegistration.remove()
             }
         }
+    }
 
-        private fun fetchNextCategory(
-            categories: List<String>,
-            currentIndex: AtomicInteger,
-            flow: SendChannel<Category>
-        ): ListenerRegistration {
-            val currentCategory = categories[currentIndex.get()]
+    private fun fetchNextCategory(
+        categories: List<String>,
+        currentIndex: AtomicInteger,
+        flow: SendChannel<Category>,
+    ): ListenerRegistration {
+        val currentCategory = categories[currentIndex.get()]
 
-            return firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
-                .collection(currentCategory)
-                .addSnapshotListener { querySnapshot, error ->
+        return firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+            .collection(currentCategory)
+            .addSnapshotListener { querySnapshot, error ->
 
-                    // Handle errors
-                    if (error != null) {
-                        flow.close(error)
-                        Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
-                        return@addSnapshotListener
-                    }
-
-                    // Map documents to Story objects
-                    val stories = querySnapshot?.documents?.mapNotNull {
-                        it.toObject(Story::class.java)
-                    } ?: mutableListOf()
-
-                    // Create Category object and send it through the Flow
-                    val category = Category(currentCategory, stories)
-                    flow.trySend(category).isSuccess
-                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory for $currentCategory: Success!")
-
-                    // Increase index to fetch the next category
-                    val nextIndex = currentIndex.incrementAndGet()
-
-                    // If there are more categories, fetch the next one
-                    if (nextIndex < categories.size) {
-                        fetchNextCategory(categories, currentIndex, flow)
-                    }
+                // Handle errors
+                if (error != null) {
+                    flow.close(error)
+                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
+                    return@addSnapshotListener
                 }
-        }
 
+                // Map documents to Story objects
+                val stories = querySnapshot?.documents?.mapNotNull {
+                    it.toObject(Story::class.java)
+                } ?: mutableListOf()
 
+                // Create Category object and send it through the Flow
+                val category = Category(currentCategory, stories)
+                flow.trySend(category).isSuccess
+                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory for $currentCategory: Success!")
 
+                // Increase index to fetch the next category
+                val nextIndex = currentIndex.incrementAndGet()
 
-
-
-
-
-//        return callbackFlow {
-//            val listenerRegistration = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
-//                .collection("criminal")
-//                .addSnapshotListener { querySnapshot, error ->
-//
-//                    // Handle any errors that might occur during snapshot listening
-//                    if (error != null) {
-//                        close(error)
-//                        Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
-//                        return@addSnapshotListener
-//                    }
-//
-//                    // Map each document in the snapshot to a Box object and send the list through the Flow
-//                    val tempList = querySnapshot?.documents?.mapNotNull {
-//                        it.toObject(Story::class.java)
-//                    } ?: mutableListOf()
-//
-//                    trySend(tempList).isSuccess
-//                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Success!")
-//                }
-//
-//            // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
-//            awaitClose {
-//                listenerRegistration.remove()
-//            }
-//        }
-//    }
+                // If there are more categories, fetch the next one
+                if (nextIndex < categories.size) {
+                    fetchNextCategory(categories, currentIndex, flow)
+                }
+            }
+    }
 
     override suspend fun fetchStory(storyUid: String): Story? {
         return try {

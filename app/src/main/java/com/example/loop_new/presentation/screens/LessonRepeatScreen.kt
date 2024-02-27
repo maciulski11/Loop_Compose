@@ -90,7 +90,7 @@ fun LessonRepeatScreenPreview() {
         onPlayAudio = { },
         onKnowFlashcard = { },
         onSomewhatKnowFlashcard = { },
-        onDoNotKnowFlashcard = { },
+        onDoNotKnowFlashcard = { }
     )
 }
 
