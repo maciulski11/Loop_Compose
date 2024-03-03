@@ -4,5 +4,6 @@ data class User(
     val email: String? = null,
     val uid: String? = null,
     val username: String? = null,
-    val profilePictureUrl: String? = null
+    val profilePictureUrl: String? = null,
+    val favoriteStories: List<FavoriteStory>? = null
 )

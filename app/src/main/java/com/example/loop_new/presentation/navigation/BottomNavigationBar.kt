@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.loop_new.R
-import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.White
 
 data class BottomNavItem(val route: String, val icon: Int, val size: DpSize)
@@ -24,6 +23,11 @@ val mainBottomNavItems = listOf(
         NavigationSupport.StoryScreen,
         icon = R.drawable.reading_button,
         size = DpSize(44.dp, 44.dp)
+    ),
+    BottomNavItem(
+        NavigationSupport.StoryFavoriteScreen,
+        icon = R.drawable.baseline_star_outline_44,
+        size = DpSize(50.dp, 50.dp)
     ),
     BottomNavItem(
         NavigationSupport.PrivateBoxScreen,

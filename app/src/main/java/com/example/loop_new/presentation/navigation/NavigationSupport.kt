@@ -49,6 +49,8 @@ import com.example.loop_new.presentation.screens.sign_in.SignInScreen
 import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
 import com.example.loop_new.presentation.screens.story.StoryScreen
 import com.example.loop_new.presentation.screens.story.StoryViewModel
+import com.example.loop_new.presentation.screens.story_favorite.StoryFavoriteScreen
+import com.example.loop_new.presentation.screens.story_favorite.StoryFavoriteViewModel
 import com.example.loop_new.presentation.screens.story_info.StoryInfoViewModel
 import com.example.loop_new.presentation.screens.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
@@ -65,6 +67,7 @@ object NavigationSupport {
     const val RepeatScreen = "repeat_screen"
     const val StoryScreen = "story_screen"
     const val StoryInfoScreen = "story_info_screen"
+    const val StoryFavoriteScreen = "story_favorite_screen"
     const val ReadScreen = "read_screen"
 }
 
@@ -315,6 +318,14 @@ fun NavigationScreens(
                 }
 
                 StoryInfoScreen(navController ,viewModel)
+            }
+
+            composable(NavigationSupport.StoryFavoriteScreen) {
+                val viewModel = remember {
+                    StoryFavoriteViewModel(firebaseService)
+                }
+
+                StoryFavoriteScreen(viewModel)
             }
 
             composable("${NavigationSupport.ReadScreen}/{storyUid}",

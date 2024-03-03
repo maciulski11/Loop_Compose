@@ -6,6 +6,7 @@ import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Category
+import com.example.loop_new.domain.model.firebase.FavoriteStory
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.TextContent
@@ -872,14 +873,14 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
-    override suspend fun addStoryToFavoriteSection(storyId: String, title: String) {
+    override suspend fun addStoryToFavoriteSection(storyId: String, category: String) {
         // Utwórz referencję do dokumentu użytkownika
         val userDocRef = firestore.collection("users").document(currentUser ?: "")
 
         // Dodaj ulubioną historię do tablicy favoriteStories
         userDocRef.update(
             FAVORITE_STORIES,
-            FieldValue.arrayUnion(mapOf("uid" to storyId, "title" to title))
+            FieldValue.arrayUnion(mapOf("uid" to storyId, "category" to category))
         )
             .addOnSuccessListener {
                 Log.d(
@@ -918,7 +919,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
-
     override fun fetchListOfStory(): Flow<Category> {
 
         return callbackFlow {
@@ -931,6 +931,26 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 listenerRegistration.remove()
             }
         }
+    }
+
+    override suspend fun fetchFavoriteStories(): List<Story> {
+        val userDocument = firestore.collection(USERS).document(currentUser ?: "").get().await()
+        val favoriteStoriesList = userDocument.toObject(User::class.java)?.favoriteStories ?: emptyList()
+
+        val stories = mutableListOf<Story>()
+        for (favoriteStory in favoriteStoriesList) {
+            val storyDocument = firestore.collection(STORY)
+                .document("yWhYIeotoTamzjd60yf9")
+                .collection(favoriteStory.category ?: "")
+                .document(favoriteStory.uid ?: "")
+                .get()
+                .await()
+
+            val story = storyDocument.toObject(Story::class.java)
+            story?.let { stories.add(it) }
+        }
+
+        return stories
     }
 
     private fun fetchNextCategory(

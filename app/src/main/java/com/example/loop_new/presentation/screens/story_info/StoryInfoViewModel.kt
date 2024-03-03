@@ -28,7 +28,7 @@ class StoryInfoViewModel(
         viewModelScope.launch {
             firebaseService.addStoryToFavoriteSection(
                 storyDetails?.uid.toString(),
-                storyDetails?.title.toString()
+                storyDetails?.category.toString()
             )
         }
     }
