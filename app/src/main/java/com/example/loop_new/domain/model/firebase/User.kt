@@ -7,3 +7,9 @@ data class User(
     val profilePictureUrl: String? = null,
     val favoriteStories: List<FavoriteStory>? = null
 )
+
+data class FavoriteStory(
+    val uid: String? = null,
+    val category: String? = null,
+    val favorite: Boolean? = null
+)
