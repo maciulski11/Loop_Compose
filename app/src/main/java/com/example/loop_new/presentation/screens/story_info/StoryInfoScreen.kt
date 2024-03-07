@@ -21,6 +21,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ fun StoryInfoScreenPreview() {
 fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel) {
 
     var isStarSelected by remember { mutableStateOf(true) }
+    val isStarSelectedState = remember { mutableStateOf(isStarSelected) }
 
 
     if (viewModel.storyDetails != null) {
@@ -168,8 +170,17 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    val image =
-                        painterResource(id = if (isStarSelected) R.drawable.star else R.drawable.star_gold)
+                    // Obrazy z drawable
+                    val starImage = R.drawable.star
+                    val starGoldImage = R.drawable.star_gold
+
+                    val isFavorite = remember { mutableStateOf(viewModel.storyDetails?.favoriteStories?.any { it.favorite == true } ?: false) }
+
+                    val image = if (isFavorite.value) {
+                        painterResource(id = R.drawable.star_gold)
+                    } else {
+                        painterResource(id = R.drawable.star)
+                    }
 
                     Image(
                         painter = image,
@@ -181,17 +192,21 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
                             ) {
-                                // Toggle the selection state on click
-                                isStarSelected = !isStarSelected
                                 viewModel.apply {
-                                    if (!isStarSelected) {
-                                        addStoryToFavoriteSection()
-                                    } else {
+                                    if (isFavorite.value) {
+                                        // Jeśli jest ulubiony, usuń go z ulubionych
                                         removeStoryFromFavoriteSection()
+                                    } else {
+                                        // Jeśli nie jest ulubiony, dodaj go do ulubionych
+                                        addStoryToFavoriteSection()
                                     }
                                 }
+                                // Zaktualizuj stan isFavorite po kliknięciu
+                                isFavorite.value = !isFavorite.value
                             }
                     )
+
+
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))

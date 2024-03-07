@@ -10,6 +10,7 @@ data class User(
 
 data class FavoriteStory(
     val uid: String? = null,
+    val userUid: String? = null,
     val category: String? = null,
     val favorite: Boolean? = null
 )

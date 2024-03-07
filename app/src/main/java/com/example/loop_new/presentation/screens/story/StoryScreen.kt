@@ -1,6 +1,7 @@
 package com.example.loop_new.presentation.screens.story
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -21,10 +23,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Black2
@@ -92,8 +97,10 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
                 ) {
                     category.stories.forEach { story ->
                         item {
-                            StoryItem(story = story) {
-                                navController.navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
+                            story.favorite?.let {
+                                StoryItem(story = story, favorite = story.favoriteStories?.any { it.favorite == true } ?: false) {
+                                    navController.navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
+                                }
                             }
                         }
                     }
@@ -105,7 +112,7 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun StoryItem(story: Story, onClick: () -> Unit) {
+fun StoryItem(story: Story, favorite: Boolean, onClick: () -> Unit) {
 
     Column(
         modifier = Modifier
@@ -118,17 +125,36 @@ fun StoryItem(story: Story, onClick: () -> Unit) {
             }
     ) {
 
-       GlideImage(
-           model = story.image ?: "",
-           contentDescription = "loadImage",
-           modifier = Modifier
-               .height(150.dp)
-               .width(122.dp)
-               .shadow(1.25.dp, RoundedCornerShape(4.dp))
-               .padding(0.5.dp)
-               .clip(shape = RoundedCornerShape(4.dp)),
-           contentScale = ContentScale.Crop
-       )
+        Box {
+            GlideImage(
+                model = story.image ?: "",
+                contentDescription = "loadImage",
+                modifier = Modifier
+                    .height(150.dp)
+                    .width(122.dp)
+                    .shadow(1.25.dp, RoundedCornerShape(4.dp))
+                    .padding(0.5.dp)
+                    .clip(shape = RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            val image = if (favorite) {
+                painterResource(id = R.drawable.star_gold)
+            } else {
+                null
+            }
+
+            if (image != null) {
+                Image(
+                    painter = image,
+                    contentDescription = "favorite",
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.BottomEnd)
+                        .size(20.dp)
+                )
+            }
+        }
 
         Text(
             text = story.title.toString(),
