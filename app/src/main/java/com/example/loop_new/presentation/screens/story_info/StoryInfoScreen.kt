@@ -21,11 +21,8 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,17 +50,12 @@ fun StoryInfoScreenPreview() {
 @Composable
 fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel) {
 
-    var isStarSelected by remember { mutableStateOf(true) }
-    val isStarSelectedState = remember { mutableStateOf(isStarSelected) }
-
-
     if (viewModel.storyDetails != null) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             GlideImage(
                 model = viewModel.storyDetails?.image ?: "",
                 contentDescription = "loadImage",
@@ -170,11 +162,10 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    // Obrazy z drawable
-                    val starImage = R.drawable.star
-                    val starGoldImage = R.drawable.star_gold
-
-                    val isFavorite = remember { mutableStateOf(viewModel.storyDetails?.favoriteStories?.any { it.favorite == true } ?: false) }
+                    val isFavorite = remember {
+                        mutableStateOf(viewModel.storyDetails?.favoriteStories?.any { it.favorite == true }
+                            ?: false)
+                    }
 
                     val image = if (isFavorite.value) {
                         painterResource(id = R.drawable.star_gold)
@@ -194,19 +185,17 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                             ) {
                                 viewModel.apply {
                                     if (isFavorite.value) {
-                                        // Jeśli jest ulubiony, usuń go z ulubionych
+                                        // Add to favorite
                                         removeStoryFromFavoriteSection()
                                     } else {
-                                        // Jeśli nie jest ulubiony, dodaj go do ulubionych
+                                        // Delete from favorite
                                         addStoryToFavoriteSection()
                                     }
                                 }
-                                // Zaktualizuj stan isFavorite po kliknięciu
+                                // Update status isFavorite after click
                                 isFavorite.value = !isFavorite.value
                             }
                     )
-
-
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -221,6 +210,7 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
             }
         }
     } else {
+
         Box(
             modifier = Modifier
                 .fillMaxSize()

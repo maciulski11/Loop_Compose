@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirebaseService {
 
-    //TODO: do zmiany na ogolnie usera, chyba
     //Flashcards
     fun createNewGoogleUser()
 
@@ -57,9 +56,9 @@ interface FirebaseService {
 
     suspend fun fetchStory(storyUid: String): Story?
 
-    suspend fun addStoryToFavoriteSection(storyId: String, category: String)
-
     suspend fun fetchFavoriteStories(): List<Story>
 
-    suspend fun removeStoryFromFavoriteSection(storyId: String)
+    suspend fun addStoryToFavoriteSection(storyId: String, category: String)
+
+    suspend fun removeStoryFromFavoriteSection(storyId: String, category: String)
 }

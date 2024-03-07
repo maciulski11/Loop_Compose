@@ -35,7 +35,7 @@ class StoryInfoViewModel(
 
     fun removeStoryFromFavoriteSection() {
         viewModelScope.launch {
-            firebaseService.removeStoryFromFavoriteSection(storyDetails?.uid.toString())
+            firebaseService.removeStoryFromFavoriteSection(storyDetails?.uid.toString(), storyDetails?.category.toString())
         }
     }
 }

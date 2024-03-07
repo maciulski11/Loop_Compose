@@ -873,105 +873,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
-    override suspend fun addStoryToFavoriteSection(storyId: String, category: String) {
-
-        val favoriteList = FieldValue.arrayUnion(
-            mapOf(
-                "uid" to storyId,
-                "userUid" to currentUser,
-                "category" to category,
-                "favorite" to true
-            )
-        )
-
-        // Utwórz referencję do dokumentu użytkownika
-        val storyDocRef = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
-            .collection("criminal").document(storyId)
-
-        // Dodaj ulubioną historię do tablicy favoriteStories
-        storyDocRef
-            .update(
-                FAVORITE_STORIES,
-                favoriteList
-            )
-            .addOnSuccessListener {
-                Log.d(
-                    LogTags.FIREBASE_SERVICES,
-                    "Historia została dodana do ulubionych użytkownika."
-                )
-            }
-            .addOnFailureListener { e ->
-                Log.e(
-                    LogTags.FIREBASE_SERVICES,
-                    "Błąd podczas dodawania historii do ulubionych użytkownika: $e"
-                )
-            }
-
-        val userDocRef = firestore.collection(USERS).document(currentUser ?: "")
-
-        userDocRef
-            .update(
-                FAVORITE_STORIES,
-                favoriteList
-            )
-            .addOnSuccessListener {
-                Log.d(
-                    LogTags.FIREBASE_SERVICES,
-                    "Historia została dodana do ulubionych użytkownika."
-                )
-            }
-            .addOnFailureListener { e ->
-                Log.e(
-                    LogTags.FIREBASE_SERVICES,
-                    "Błąd podczas dodawania historii do ulubionych użytkownika: $e"
-                )
-            }
-    }
-
-    override suspend fun removeStoryFromFavoriteSection(storyId: String) {
-        val userDocRef = firestore.collection(USERS).document(currentUser ?: "")
-        val updatedFavoriteStories =
-            userDocRef.get().await().get("favoriteStories") as? MutableList<Map<String, String>>
-        val indexToRemove = updatedFavoriteStories?.indexOfFirst { it["uid"] == storyId }
-
-        val storyDocRef = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
-            .collection("criminal").document(storyId)
-        val updatedFavoriteStories1 =
-            storyDocRef.get().await().get("favoriteStories") as? MutableList<Map<String, String>>
-        val indexToRemove1 = updatedFavoriteStories1?.indexOfFirst { it["userUid"] == currentUser }
-
-
-        indexToRemove?.takeIf { it >= 0 }?.let {
-            updatedFavoriteStories.removeAt(it)
-        } ?: Log.e(
-            LogTags.FIREBASE_SERVICES,
-            "Historia o UID $storyId nie istnieje na liście ulubionych."
-        )
-
-        indexToRemove1?.takeIf { it >= 0 }?.let {
-            updatedFavoriteStories1.removeAt(it)
-        } ?: Log.e(
-            LogTags.FIREBASE_SERVICES,
-            "Historia o UID $storyId nie istnieje na liście ulubionych."
-        )
-
-        userDocRef.update("favoriteStories", updatedFavoriteStories)
-            .addOnSuccessListener {
-                Log.d(LogTags.FIREBASE_SERVICES, "Historia została usunięta z ulubionych.")
-            }
-            .addOnFailureListener { e ->
-                Log.e(LogTags.FIREBASE_SERVICES, "Błąd podczas usuwania historii z ulubionych: $e")
-            }
-
-        storyDocRef.update("favoriteStories", updatedFavoriteStories1)
-            .addOnSuccessListener {
-                Log.d(LogTags.FIREBASE_SERVICES, "Historia została usunięta z ulubionych w historii.")
-            }
-            .addOnFailureListener { e ->
-                Log.e(LogTags.FIREBASE_SERVICES, "Błąd podczas usuwania historii z ulubionych w historii: $e")
-            }
-    }
-
     override fun fetchListOfStory(): Flow<Category> {
 
         return callbackFlow {
@@ -984,27 +885,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 listenerRegistration.remove()
             }
         }
-    }
-
-    override suspend fun fetchFavoriteStories(): List<Story> {
-        val userDocument = firestore.collection(USERS).document(currentUser ?: "").get().await()
-        val favoriteStoriesList =
-            userDocument.toObject(User::class.java)?.favoriteStories ?: emptyList()
-
-        val stories = mutableListOf<Story>()
-        for (favoriteStory in favoriteStoriesList) {
-            val storyDocument = firestore.collection(STORY)
-                .document("yWhYIeotoTamzjd60yf9")
-                .collection(favoriteStory.category ?: "")
-                .document(favoriteStory.uid ?: "")
-                .get()
-                .await()
-
-            val story = storyDocument.toObject(Story::class.java)
-            story?.let { stories.add(it) }
-        }
-
-        return stories
     }
 
     private fun fetchNextCategory(
@@ -1054,6 +934,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
+    //TODO: add checking whether the logged in user has a given story in his favorites
     private fun isUserFavoriteStory(story: Story): Boolean {
         // Sprawdź, czy UID zalogowanego użytkownika znajduje się w liście ulubionych dla danej historii
         return story.favoriteStories?.any { it.uid == currentUser } ?: false
@@ -1095,6 +976,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 } ?: emptyList()
 
                 return Story(title, chapters, storyUid, level, category, image, favoriteStories)
+
             } else {
                 Log.e(LogTags.FIREBASE_SERVICES, "fetchStory: data is empty!")
                 null  // Jeśli dane są puste, zwróć null
@@ -1105,4 +987,110 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    override suspend fun fetchFavoriteStories(): List<Story> {
+        val userDocument = firestore.collection(USERS).document(currentUser ?: "").get().await()
+        val favoriteStoriesList =
+            userDocument.toObject(User::class.java)?.favoriteStories ?: emptyList()
+
+        val stories = mutableListOf<Story>()
+        for (favoriteStory in favoriteStoriesList) {
+            val storyDocument = firestore.collection(STORY)
+                .document("yWhYIeotoTamzjd60yf9")
+                .collection(favoriteStory.category ?: "")
+                .document(favoriteStory.uid ?: "")
+                .get()
+                .await()
+
+            val story = storyDocument.toObject(Story::class.java)
+            story?.let { stories.add(it) }
+        }
+
+        return stories
+    }
+
+    override suspend fun addStoryToFavoriteSection(storyId: String, category: String) {
+        val favoriteData = mapOf(
+            "uid" to storyId,
+            "userUid" to currentUser,
+            "category" to category,
+            "favorite" to true
+        )
+        val favoriteList = FieldValue.arrayUnion(favoriteData)
+
+        val storyDocRef = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+            .collection(category).document(storyId)
+        val userDocRef = firestore.collection(USERS).document(currentUser ?: "")
+
+        try {
+            // Dodaj historię do ulubionych w historii
+            storyDocRef.update(FAVORITE_STORIES, favoriteList).await()
+            Log.d(
+                LogTags.FIREBASE_SERVICES,
+                "addStoryToFavoriteSection: The story has been added to your favorites in the story."
+            )
+
+            // Dodaj historię do ulubionych użytkownika
+            userDocRef.update(FAVORITE_STORIES, favoriteList).await()
+
+            Log.d(
+                LogTags.FIREBASE_SERVICES,
+                "addStoryToFavoriteSection: The story has been added to your favorites in the user."
+            )
+
+        } catch (e: Exception) {
+            Log.e(
+                LogTags.FIREBASE_SERVICES,
+                "addStoryToFavoriteSection: Error adding stories to favorites: $e"
+            )
+        }
+    }
+
+
+    override suspend fun removeStoryFromFavoriteSection(storyId: String, category: String) {
+        val userDocRef = firestore.collection(USERS).document(currentUser ?: "")
+        val storyDocRef = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+            .collection(category).document(storyId)
+
+        try {
+            val userSnapshot = userDocRef.get().await()
+            val userFavorites = userSnapshot["favoriteStories"] as? MutableList<Map<String, String>>
+
+            val storySnapshot = storyDocRef.get().await()
+            val storyFavorites =
+                storySnapshot["favoriteStories"] as? MutableList<Map<String, String>>
+
+            val indexToRemoveUser = userFavorites?.indexOfFirst { it["uid"] == storyId }
+            val indexToRemoveStory = storyFavorites?.indexOfFirst { it["userUid"] == currentUser }
+
+            indexToRemoveUser?.let { index ->
+                userFavorites.removeAt(index)
+                userDocRef.update("favoriteStories", userFavorites).await()
+                Log.d(
+                    LogTags.FIREBASE_SERVICES,
+                    "removeStoryFromFavoriteSection: The story has been removed from favorites."
+                )
+            } ?: Log.e(
+                LogTags.FIREBASE_SERVICES,
+                "removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the user's favorites list."
+            )
+
+            indexToRemoveStory?.let { index ->
+                storyFavorites.removeAt(index)
+                storyDocRef.update("favoriteStories", storyFavorites).await()
+                Log.d(
+                    LogTags.FIREBASE_SERVICES,
+                    "removeStoryFromFavoriteSection: The story has been removed from your history favorites."
+                )
+            } ?: Log.e(
+                LogTags.FIREBASE_SERVICES,
+                "removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the history favorites list."
+            )
+
+        } catch (e: Exception) {
+            Log.e(
+                LogTags.FIREBASE_SERVICES,
+                "removeStoryFromFavoriteSection: Error when deleting history from favorites: $e"
+            )
+        }
+    }
 }
