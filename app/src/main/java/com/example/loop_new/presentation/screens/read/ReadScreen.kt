@@ -2,7 +2,6 @@ package com.example.loop_new.presentation.screens.read
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,15 +23,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomDrawer
+import androidx.compose.material.BottomDrawerState
+import androidx.compose.material.BottomDrawerValue
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.rememberBottomDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -42,7 +50,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -60,6 +67,8 @@ import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Gray2
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 data class WordWithIndices(val word: String, val start: Int, val end: Int)
 
@@ -69,10 +78,13 @@ fun StoryScreenPreview() {
 //    ReadScreen()
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
+
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
 
     // Support for custom return behavior
     BackHandler {
@@ -155,6 +167,8 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                         selectedText = selectedText?.lowercase() ?: "",
                         translatedWord = viewModel.translate.lowercase(),
                         clickPosition = clickPosition,
+                        drawerState = drawerState,
+                        scope = scope,
                         onDismiss = {
                             selectedText = null
                             selectedOffset = null
@@ -209,7 +223,6 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                             }
                         }
                 )
-
             }
         }
     } else {
@@ -226,6 +239,8 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
             )
         }
     }
+
+    BottomDrawerContent(drawerState = drawerState, scope = scope, word = "viewModel.translate")
 
     LaunchedEffect(scrollState, currentPage) {
         scrollState.animateScrollTo(0)
@@ -256,14 +271,16 @@ fun createAnnotatedStringForPage(page: Int, story: Story?): AnnotatedString {
     return AnnotatedString("")
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CustomInfoBox(
     selectedText: String,
     translatedWord: String,
     clickPosition: Offset,
+    drawerState: BottomDrawerState,
+    scope: CoroutineScope,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
 
     val position = with(LocalDensity.current) {
         Offset(
@@ -284,16 +301,13 @@ fun CustomInfoBox(
             }
     ) {
         Row {
-
             Image(
                 modifier = Modifier
                     .size(30.dp)
                     .align(Alignment.CenterVertically)
                     .clickable {
                         onDismiss.invoke()
-                        Toast
-                            .makeText(context, "Successfully added!", Toast.LENGTH_SHORT)
-                            .show()
+                        scope.launch { drawerState.open() }
                     },
                 painter = painterResource(id = R.drawable.baseline_add_circle_box),
                 contentDescription = "add"
@@ -340,3 +354,68 @@ fun findWordAtIndex(text: String, offset: Int, translateWord: (String) -> Unit):
 fun Char.isPunctuation(): Boolean {
     return this in setOf(',', '.', ';', ':', '!', '?', '#', '*')
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun DrawerOpenerButton(drawerState: BottomDrawerState, scope: CoroutineScope) {
+    Button(onClick = { scope.launch { drawerState.open() } }) {
+        Text("open")
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun BottomDrawerContent(
+    drawerState: BottomDrawerState,
+    scope: CoroutineScope,
+    word: String,
+) {
+    var drawerVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(drawerState.currentValue) {
+        drawerVisible = drawerState.currentValue != BottomDrawerValue.Closed
+    }
+
+    if (drawerVisible) {
+        BottomDrawer(
+            drawerContent = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                drawerState.close()
+                                // Po zamknięciu szuflady wyczyść widoczność
+                                drawerVisible = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Red
+                        )
+                    ) {
+                        Text("up")
+                    }
+                    Button(
+                        onClick = { scope.launch { drawerState.expand() } },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Green
+                        )
+                    ) {
+                        Text(word)
+                    }
+                }
+            },
+            drawerState = drawerState,
+        ) {
+            // Opcjonalnie: cokolwiek, co chcesz wyświetlić poniżej szuflady, gdy jest otwarta
+        }
+    }
+}
+
+
