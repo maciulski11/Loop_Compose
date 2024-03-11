@@ -33,10 +33,16 @@ private fun CustomScreen() {
         verticalArrangement = Arrangement.Center,
     ) {
 
-        Button(onClick = { scope.launch { drawerState.open() } }) {
+        Box {
+            Text(text = "vgvhbh")
+
+            Button(onClick = { scope.launch { drawerState.open() } }) {
+                Text("Open Drawer")
+            }
         }
-        BottomDrawerContent(drawerState, scope)
     }
+    BottomDrawerContent(drawerState, scope)
+
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -50,35 +56,45 @@ private fun DrawerOpenerButton(drawerState: BottomDrawerState, scope: CoroutineS
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BottomDrawerContent(drawerState: BottomDrawerState, scope: CoroutineScope) {
-    BottomDrawer(
-        drawerContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Button(
-                    onClick = { scope.launch { drawerState.close() } },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Red
-                    )
+    var drawerVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(drawerState.currentValue) {
+        drawerVisible = drawerState.currentValue != BottomDrawerValue.Closed
+    }
+
+    if (drawerVisible) {
+        BottomDrawer(
+            drawerContent = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Text("up")
+                    Button(
+                        onClick = { scope.launch { drawerState.close() } },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Red
+                        )
+                    ) {
+                        Text("up")
+                    }
+                    Button(
+                        onClick = { scope.launch { drawerState.expand() } },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Green
+                        )
+                    ) {
+                        Text("down")
+                    }
                 }
-                Button(
-                    onClick = { scope.launch { drawerState.expand() } },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Green
-                    )
-                ) {
-                    Text("down")
-                }
-            }
-        },
-        drawerState = drawerState,
-    ) {}
+            },
+            drawerState = drawerState,
+        ) {
+            // Optional: Anything to display below the drawer when it's open
+        }
+    }
 }
 
 

@@ -60,10 +60,10 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                 model = viewModel.storyDetails?.image ?: "",
                 contentDescription = "loadImage",
                 modifier = Modifier
-                    .height(250.dp)
+                    .height(276.dp)
                     .width(194.dp)
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 22.dp, bottom = 16.dp)
+                    .padding(top = 18.dp, bottom = 16.dp)
                     .clip(shape = RoundedCornerShape(4.dp))
                     .shadow(1.25.dp, RoundedCornerShape(4.dp)),
                 contentScale = ContentScale.Crop
