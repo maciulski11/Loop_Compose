@@ -99,7 +99,8 @@ fun NavigationScreens(
         bottomBar = {
             if (showBottomNavigationBar(navController = navController)) {
 
-                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                val currentRoute =
+                    navController.currentBackStackEntryAsState().value?.destination?.route
 
                 val bottomNavItems = when {
                     currentRoute?.startsWith(NavigationSupport.StoryScreen) == true -> mainBottomNavItems
@@ -114,7 +115,7 @@ fun NavigationScreens(
                 }
 
                 if (bottomNavItems != null)
-                BottomNavigationBar(navController, bottomNavItems, bottomBarHeight)
+                    BottomNavigationBar(navController, bottomNavItems, bottomBarHeight)
             }
         },
         drawerContent = {
@@ -308,7 +309,8 @@ fun NavigationScreens(
                 StoryScreen(navController, viewModel)
             }
 
-            composable("${NavigationSupport.StoryInfoScreen}/{storyUid}",
+            composable(
+                "${NavigationSupport.StoryInfoScreen}/{storyUid}",
                 arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
             ) { backStackEntry ->
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
@@ -317,7 +319,7 @@ fun NavigationScreens(
                     StoryInfoViewModel(firebaseService, storyUid)
                 }
 
-                StoryInfoScreen(navController ,viewModel)
+                StoryInfoScreen(navController, viewModel)
             }
 
             composable(NavigationSupport.StoryFavoriteScreen) {
@@ -328,7 +330,8 @@ fun NavigationScreens(
                 StoryFavoriteScreen(viewModel)
             }
 
-            composable("${NavigationSupport.ReadScreen}/{storyUid}",
+            composable(
+                "${NavigationSupport.ReadScreen}/{storyUid}",
                 arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
             ) { backStackEntry ->
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""

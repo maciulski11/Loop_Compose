@@ -15,7 +15,7 @@ data class Flashcard(
     val knowledgeLevel: String? = KnowledgeLevel.NEW_WORD.value,
     var lastStudiedDate: Timestamp? = null,
     var nextStudyDate: Timestamp? = null,
-    var isReadyToStudy: Boolean? = null
+    var isReadyToStudy: Boolean? = null,
 )
 
 enum class KnowledgeLevel(val value: String) {

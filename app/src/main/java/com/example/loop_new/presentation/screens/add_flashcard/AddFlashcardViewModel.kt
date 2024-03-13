@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class AddFlashcardViewModel(
     private val firebaseService: FirebaseService,
     private val translateService: TranslateService,
-    private val dictionaryService: DictionaryService
+    private val dictionaryService: DictionaryService,
 ) : ViewModel() {
 
     var translate: String by mutableStateOf("")
@@ -31,7 +31,7 @@ class AddFlashcardViewModel(
         meaning: String,
         example: String,
         pronunciation: String,
-        boxUid: String
+        boxUid: String,
     ) {
         val flashcardData = Flashcard(
             word = word,

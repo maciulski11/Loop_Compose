@@ -17,7 +17,9 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
     // Dodajmy sprawdzenie, czy currentFlashcard nie jest nullem
     val indexOfFlashcard = if (currentFlashcard != null) {
         flashcardList.indexOf(currentFlashcard)
-    } else { -1 }
+    } else {
+        -1
+    }
 
     if (indexOfFlashcard != -1) {
         val boxUid = flashcardList[indexOfFlashcard].boxUid.toString()

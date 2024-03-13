@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StoryFavoriteViewModel(private val firebaseService: FirebaseService): ViewModel() {
+class StoryFavoriteViewModel(private val firebaseService: FirebaseService) : ViewModel() {
 
     private val _stories = MutableStateFlow<List<Story>>(emptyList())
     val stories: StateFlow<List<Story>> = _stories

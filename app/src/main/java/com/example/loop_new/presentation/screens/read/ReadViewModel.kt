@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class ReadViewModel(
     private val firebaseService: FirebaseService,
     private val translateService: TranslateService,
-    storyUid: String
+    storyUid: String,
 ) : ViewModel() {
 
     private var _storyDetails: Story? = null

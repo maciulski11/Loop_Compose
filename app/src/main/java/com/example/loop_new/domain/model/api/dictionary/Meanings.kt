@@ -4,5 +4,5 @@ data class Meanings(
     var partOfSpeech: String? = null,
     var definitions: List<Definitions>? = null,
     var synonyms: List<String>? = null,
-    var antonyms: List<String>? = null
+    var antonyms: List<String>? = null,
 )

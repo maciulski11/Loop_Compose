@@ -30,7 +30,7 @@ class DictionaryService :
             .enqueue(object : Callback<List<DictionaryResponse>> {
                 override fun onResponse(
                     call: Call<List<DictionaryResponse>>,
-                    response: Response<List<DictionaryResponse>>
+                    response: Response<List<DictionaryResponse>>,
                 ) {
 
                     if (response.isSuccessful) {
@@ -64,12 +64,19 @@ class DictionaryService :
                             }
                         }
                     } else {
-                        Log.e(LogTags.DICTIONARY_SERVICE, "onFetchWordInfo: Request failed with code ${response.code()}")
+                        Log.e(
+                            LogTags.DICTIONARY_SERVICE,
+                            "onFetchWordInfo: Request failed with code ${response.code()}"
+                        )
                     }
                 }
 
                 override fun onFailure(call: Call<List<DictionaryResponse>>, t: Throwable) {
-                    Log.e(LogTags.DICTIONARY_SERVICE, "onFetchWordInfo: Request failed with exception", t)
+                    Log.e(
+                        LogTags.DICTIONARY_SERVICE,
+                        "onFetchWordInfo: Request failed with exception",
+                        t
+                    )
                 }
             })
     }

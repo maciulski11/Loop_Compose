@@ -98,7 +98,10 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
                     category.stories.forEach { story ->
                         item {
                             story.favorite?.let {
-                                StoryItem(story = story, favorite = story.favoriteStories?.any { it.favorite == true } ?: false) {
+                                StoryItem(
+                                    story = story,
+                                    favorite = story.favoriteStories?.any { it.favorite == true }
+                                        ?: false) {
                                     navController.navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
                                 }
                             }

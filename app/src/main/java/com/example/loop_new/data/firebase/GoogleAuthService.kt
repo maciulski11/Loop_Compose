@@ -28,7 +28,7 @@ import kotlin.coroutines.cancellation.CancellationException
  */
 class GoogleAuthService(
     private val context: Context,
-    private val oneTapClient: SignInClient
+    private val oneTapClient: SignInClient,
 ) : GoogleAuthService {
     private val auth = Firebase.auth
 

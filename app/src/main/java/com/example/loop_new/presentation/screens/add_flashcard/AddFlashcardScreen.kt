@@ -68,7 +68,7 @@ fun Screen(
     viewModel: AddFlashcardViewModel,
     navController: NavController,
     onAddFlashcard: (word: String, translate: String, pronunciation: String, mean: String, example: String) -> Unit,
-    onFetchWord: (word: String) -> Unit
+    onFetchWord: (word: String) -> Unit,
 ) {
 
     Column(

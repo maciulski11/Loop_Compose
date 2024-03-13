@@ -7,5 +7,5 @@ data class Box(
     val color1: String? = null,
     val color2: String? = null,
     val color3: String? = null,
-    val permissionToEdit: Boolean? = null
+    val permissionToEdit: Boolean? = null,
 )

@@ -39,7 +39,7 @@ import com.example.loop_new.ui.theme.Red
 fun FlashcardItem(
     flashcard: Flashcard,
     onPlayAudioFromUrl: (String) -> Unit,
-    onLongPress: (Boolean) -> Unit
+    onLongPress: (Boolean) -> Unit,
 ) {
     val color = remember { mutableStateOf(Black) } // Domyślny kolor
 
@@ -60,7 +60,7 @@ fun FlashcardItem(
             .pointerInput(Unit) {
                 detectTapGestures(
                     // LongClick
-                    onLongPress = { onLongPress(true)}
+                    onLongPress = { onLongPress(true) }
                 )
             },
         contentAlignment = Alignment.Center,

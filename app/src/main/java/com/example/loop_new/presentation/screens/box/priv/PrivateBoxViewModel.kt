@@ -11,7 +11,7 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
 import kotlinx.coroutines.launch
 
-class PrivateBoxViewModel(private val firebaseService: FirebaseService): ViewModel() {
+class PrivateBoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
 
     val privateBoxList = mutableStateListOf<Box>()
 
@@ -56,7 +56,14 @@ class PrivateBoxViewModel(private val firebaseService: FirebaseService): ViewMod
         val color3 = colorToHex(colorGroup[2])
 
         val box =
-            Box(name = name, describe = describe, color1 = color1, color2 = color2, color3 = color3, permissionToEdit = true)
+            Box(
+                name = name,
+                describe = describe,
+                color1 = color1,
+                color2 = color2,
+                color3 = color3,
+                permissionToEdit = true
+            )
         viewModelScope.launch {
             try {
                 firebaseService.createBoxInPrivateSection(box)

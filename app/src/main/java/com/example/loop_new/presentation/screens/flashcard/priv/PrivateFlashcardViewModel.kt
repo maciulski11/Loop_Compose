@@ -15,7 +15,7 @@ class PrivateFlashcardViewModel(
     private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
     boxUid: String,
-): ViewModel() {
+) : ViewModel() {
 
     val flashcardList: MutableState<List<Flashcard>?> = mutableStateOf(null)
 

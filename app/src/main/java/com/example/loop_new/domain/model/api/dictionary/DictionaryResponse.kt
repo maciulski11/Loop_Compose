@@ -4,5 +4,5 @@ data class DictionaryResponse(
     var word: String,
     var phonetics: List<Phonetics>,
     var meanings: List<Meanings>,
-    var sourceUrls: List<String>
+    var sourceUrls: List<String>,
 )

@@ -35,10 +35,16 @@ class TranslateService : TranslateService {
 
                     onTranslateWord(translatedText ?: "")
 
-                    Log.d(LogTags.TRANSLATE_SERVICES, "onTranslationResult: Success response: $translatedText")
+                    Log.d(
+                        LogTags.TRANSLATE_SERVICES,
+                        "onTranslationResult: Success response: $translatedText"
+                    )
 
                 } else {
-                    Log.e(LogTags.TRANSLATE_SERVICES, "onTranslationResult: Error response: $responseCode")
+                    Log.e(
+                        LogTags.TRANSLATE_SERVICES,
+                        "onTranslationResult: Error response: $responseCode"
+                    )
                 }
 
             } catch (e: Exception) {
