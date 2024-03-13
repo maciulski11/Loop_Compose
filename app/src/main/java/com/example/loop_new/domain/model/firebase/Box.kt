@@ -8,4 +8,5 @@ data class Box(
     val color2: String? = null,
     val color3: String? = null,
     val permissionToEdit: Boolean? = null,
+    val addFlashcardFromStory: Boolean? = null
 )

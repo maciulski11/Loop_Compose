@@ -3,6 +3,7 @@ package com.example.loop_new.presentation.screens.read
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -56,6 +59,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -64,9 +68,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loop_new.R
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Gray2
+import com.example.loop_new.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -240,7 +246,11 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
         }
     }
 
-    BottomDrawerContent(drawerState = drawerState, scope = scope, word = "viewModel.translate")
+    BottomDrawerContent(
+        drawerState = drawerState,
+        scope = scope,
+        list = viewModel.privateBoxList
+    )
 
     LaunchedEffect(scrollState, currentPage) {
         scrollState.animateScrollTo(0)
@@ -368,7 +378,7 @@ private fun DrawerOpenerButton(drawerState: BottomDrawerState, scope: CoroutineS
 private fun BottomDrawerContent(
     drawerState: BottomDrawerState,
     scope: CoroutineScope,
-    word: String,
+    list: List<Box>
 ) {
     var drawerVisible by remember { mutableStateOf(false) }
 
@@ -382,32 +392,45 @@ private fun BottomDrawerContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(32.dp),
+                        .height(260.dp)
+                        .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                drawerState.close()
-                                // Po zamknięciu szuflady wyczyść widoczność
-                                drawerVisible = false
+
+                    Text(
+                        text = "Select box:",
+                        fontSize = 22.sp,
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    LazyColumn(
+                        modifier = Modifier.padding(vertical = 0.dp)
+                    ) {
+                        items(list) { item ->
+                            Button(
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                },
+                                shape = RoundedCornerShape(8.dp),
+                                border = BorderStroke(2.dp, Black),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = White, // Białe tło
+                                    contentColor = Black // Czarny kolor tekstu
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp, horizontal = 16.dp)
+                            ) {
+                                Text(
+                                    text = item.name.toString(),
+                                    fontSize = 18.sp,
+                                    modifier = Modifier
+                                        .padding(2.dp)
+                                )
                             }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Red
-                        )
-                    ) {
-                        Text("up")
-                    }
-                    Button(
-                        onClick = { scope.launch { drawerState.expand() } },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Green
-                        )
-                    ) {
-                        Text(word)
+                        }
                     }
                 }
             },
@@ -417,5 +440,3 @@ private fun BottomDrawerContent(
         }
     }
 }
-
-

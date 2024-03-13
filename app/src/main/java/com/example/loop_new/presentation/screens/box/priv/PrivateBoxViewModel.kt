@@ -62,7 +62,8 @@ class PrivateBoxViewModel(private val firebaseService: FirebaseService) : ViewMo
                 color1 = color1,
                 color2 = color2,
                 color3 = color3,
-                permissionToEdit = true
+                permissionToEdit = true,
+                addFlashcardFromStory = true
             )
         viewModelScope.launch {
             try {
