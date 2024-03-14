@@ -337,7 +337,7 @@ fun NavigationScreens(
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
 
                 val viewModel = remember {
-                    ReadViewModel(firebaseService, translateService, storyUid)
+                    ReadViewModel(firebaseService, translateService, dictionaryService, storyUid)
                 }
 
                 ReadScreen(navController, viewModel)

@@ -101,6 +101,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
     var selectedText by remember { mutableStateOf<String?>(null) }
     var selectedOffset by remember { mutableStateOf<Int?>(null) }
     var clickPosition by remember { mutableStateOf(Offset(0f, 0f)) }
+    var wordToFlashcard by remember { mutableStateOf<String?>(null) }
 
     val charLimit = 2000
 
@@ -159,10 +160,11 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                             offset
                         )
                         { clickedWord ->
-                            viewModel.translateWord(clickedWord)
+                            viewModel.fetchInfoOfWord(clickedWord)
                         }
 
                         selectedText = wordWithIndices.word
+                        wordToFlashcard = wordWithIndices.word
                         selectedOffset = offset
                     }
                 )
@@ -247,9 +249,11 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
     }
 
     BottomDrawerContent(
+        word = wordToFlashcard?.lowercase() ?: "",
         drawerState = drawerState,
         scope = scope,
-        list = viewModel.privateBoxList
+        boxList = viewModel.privateBoxList,
+        viewModel = viewModel
     )
 
     LaunchedEffect(scrollState, currentPage) {
@@ -367,18 +371,12 @@ fun Char.isPunctuation(): Boolean {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun DrawerOpenerButton(drawerState: BottomDrawerState, scope: CoroutineScope) {
-    Button(onClick = { scope.launch { drawerState.open() } }) {
-        Text("open")
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
 private fun BottomDrawerContent(
+    word: String,
     drawerState: BottomDrawerState,
     scope: CoroutineScope,
-    list: List<Box>
+    boxList: List<Box>,
+    viewModel: ReadViewModel
 ) {
     var drawerVisible by remember { mutableStateOf(false) }
 
@@ -408,10 +406,11 @@ private fun BottomDrawerContent(
                     LazyColumn(
                         modifier = Modifier.padding(vertical = 0.dp)
                     ) {
-                        items(list) { item ->
+                        items(boxList) { item ->
                             Button(
                                 onClick = {
                                     scope.launch { drawerState.close() }
+                                    viewModel.addFlashcard(word = word, item.uid.toString())
                                 },
                                 shape = RoundedCornerShape(8.dp),
                                 border = BorderStroke(2.dp, Black),
