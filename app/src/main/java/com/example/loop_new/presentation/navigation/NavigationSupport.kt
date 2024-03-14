@@ -29,30 +29,30 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.GoogleAuthService
 import com.example.loop_new.domain.services.Service
 import com.example.loop_new.domain.services.TranslateService
-import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardScreen
-import com.example.loop_new.presentation.screens.add_flashcard.AddFlashcardViewModel
-import com.example.loop_new.presentation.screens.flashcard.pub.PublicFlashcardScreen
-import com.example.loop_new.presentation.screens.flashcard.pub.PublicFlashcardViewModel
-import com.example.loop_new.presentation.screens.lesson.LessonScreen
-import com.example.loop_new.presentation.screens.lesson.LessonViewModel
-import com.example.loop_new.presentation.screens.box.pub.PublicBoxScreen
-import com.example.loop_new.presentation.screens.box.pub.PublicBoxViewModel
-import com.example.loop_new.presentation.screens.box.priv.PrivateBoxScreen
-import com.example.loop_new.presentation.screens.box.priv.PrivateBoxViewModel
-import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardScreen
-import com.example.loop_new.presentation.screens.flashcard.priv.PrivateFlashcardViewModel
-import com.example.loop_new.presentation.screens.read.ReadScreen
-import com.example.loop_new.presentation.screens.read.ReadViewModel
-import com.example.loop_new.presentation.screens.repeat.RepeatScreen
-import com.example.loop_new.presentation.screens.repeat.RepeatViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub.PublicFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub.PublicFlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.lesson.LessonScreen
+import com.example.loop_new.presentation.screens.flashcard_section.lesson.LessonViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.box.pub.PublicBoxScreen
+import com.example.loop_new.presentation.screens.flashcard_section.box.pub.PublicBoxViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.box.priv.PrivateBoxScreen
+import com.example.loop_new.presentation.screens.flashcard_section.box.priv.PrivateBoxViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard.priv.PrivateFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard.priv.PrivateFlashcardViewModel
+import com.example.loop_new.presentation.screens.story_section.read.ReadScreen
+import com.example.loop_new.presentation.screens.story_section.read.ReadViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatScreen
+import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatViewModel
 import com.example.loop_new.presentation.screens.sign_in.SignInScreen
 import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
-import com.example.loop_new.presentation.screens.story.StoryScreen
-import com.example.loop_new.presentation.screens.story.StoryViewModel
-import com.example.loop_new.presentation.screens.story_favorite.StoryFavoriteScreen
-import com.example.loop_new.presentation.screens.story_favorite.StoryFavoriteViewModel
-import com.example.loop_new.presentation.screens.story_info.StoryInfoViewModel
-import com.example.loop_new.presentation.screens.story_info.StoryInfoScreen
+import com.example.loop_new.presentation.screens.story_section.story.StoryScreen
+import com.example.loop_new.presentation.screens.story_section.story.StoryViewModel
+import com.example.loop_new.presentation.screens.story_section.story_favorite.StoryFavoriteScreen
+import com.example.loop_new.presentation.screens.story_section.story_favorite.StoryFavoriteViewModel
+import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoViewModel
+import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -300,6 +300,10 @@ fun NavigationScreens(
             }
 
             composable(NavigationSupport.StoryScreen) {
+                LaunchedEffect(Unit) {
+                    currentSection.value = "Loop - Story"
+                }
+
                 val viewModel = remember {
                     StoryViewModel(
                         firebaseService
@@ -310,10 +314,15 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.StoryInfoScreen}/{storyUid}",
+                "${NavigationSupport.StoryInfoScreen}/{storyUid}/{storyName}",
                 arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
             ) { backStackEntry ->
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
+                val storyName = backStackEntry.arguments?.getString("storyName") ?: ""
+
+                LaunchedEffect(storyUid) {
+                    currentSection.value = "Loop - $storyName"
+                }
 
                 val viewModel = remember {
                     StoryInfoViewModel(firebaseService, storyUid)
@@ -323,11 +332,15 @@ fun NavigationScreens(
             }
 
             composable(NavigationSupport.StoryFavoriteScreen) {
+                LaunchedEffect(Unit) {
+                    currentSection.value = "Loop - Favorites"
+                }
+
                 val viewModel = remember {
                     StoryFavoriteViewModel(firebaseService)
                 }
 
-                StoryFavoriteScreen(viewModel)
+                StoryFavoriteScreen(navController, viewModel)
             }
 
             composable(

@@ -93,7 +93,7 @@ fun Drawer(
             navController.navigate(NavigationSupport.PrivateBoxScreen)
         })
 
-        DrawerItem(text = "Stats", icon = R.drawable.stats, onClick = {
+        DrawerItem(text = "Stats", icon = R.drawable.stats1, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
             // Obsługa kliknięcia na "Item 1"
         })
@@ -140,6 +140,9 @@ fun showDrawerTopBar(navController: NavController): Boolean {
         currentRoute?.startsWith(NavigationSupport.PrivateBoxScreen) == true -> true
         currentRoute?.startsWith(NavigationSupport.FlashcardScreen) == true -> true
         currentRoute?.startsWith(NavigationSupport.PrivateFlashcardScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.StoryScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.StoryInfoScreen) == true -> true
+        currentRoute?.startsWith(NavigationSupport.StoryFavoriteScreen) == true -> true
         else -> false
     }
 }
