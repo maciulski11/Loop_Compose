@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
@@ -27,7 +28,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -50,6 +53,14 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     // Create a calendar with date
     private val calendar = Calendar.getInstance()
+
+    private fun logSuccess(message: String) {
+        Log.d(LogTags.FIREBASE_SERVICES, message)
+    }
+
+    private fun logError(message: String) {
+        Log.e(LogTags.FIREBASE_SERVICES, message)
+    }
 
     /**
      * Creates a new user record in the Firestore database using Google user data.
@@ -1045,7 +1056,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
-
     override suspend fun removeStoryFromFavoriteSection(storyId: String, category: String) {
         val userDocRef = firestore.collection(USERS).document(currentUser ?: "")
         val storyDocRef = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
@@ -1091,6 +1101,59 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 LogTags.FIREBASE_SERVICES,
                 "removeStoryFromFavoriteSection: Error when deleting history from favorites: $e"
             )
+        }
+    }
+
+    override suspend fun addLessonStatsToFirestore(flashcardUid: String, status: String) {
+        val currentDate = getCurrentDate()
+        val data = mapOf("status" to status, "uid" to flashcardUid)
+        val storyDocRef = firestore.collection("stats").document(currentUser ?: "")
+
+        try {
+            storyDocRef.get().await().let { documentSnapshot ->
+                val lessonsData = (documentSnapshot.get("lessonsData") as? Map<String, List<Map<String, Any>>>
+                    ?: emptyMap()).toMutableMap()
+
+                val allFlashcards = (documentSnapshot.get("allFlashcards") as? List<Map<String, String>>
+                    ?: emptyList()).toMutableList()
+
+                updateLessonsData(lessonsData, currentDate, data)
+                updateAllFlashcards(allFlashcards, flashcardUid, status, data)
+
+                val userData = mapOf("lessonsData" to lessonsData, "allFlashcards" to allFlashcards)
+                val action = if (documentSnapshot.exists()) storyDocRef.set(userData, SetOptions.merge())
+                else storyDocRef.set(userData)
+
+                action.addOnSuccessListener { logSuccess("Data added successfully.") }
+                    .addOnFailureListener { e -> logError("Error adding data: $e") }
+            }
+        } catch (e: Exception) {
+            logError("Error retrieving user data: $e")
+        }
+    }
+
+    private fun getCurrentDate(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        return dateFormat.format(calendar.time)
+    }
+
+    private fun updateLessonsData(lessonsData: MutableMap<String, List<Map<String, Any>>>, currentDate: String, data: Map<String, Any>) {
+        val currentLessonData = (lessonsData[currentDate] ?: mutableListOf()).toMutableList()
+        currentLessonData.add(data)
+        lessonsData[currentDate] = currentLessonData
+    }
+
+    private fun updateAllFlashcards(allFlashcards: MutableList<Map<String, String>>, flashcardUid: String, status: String, data: Map<String, String>) {
+        val existingIndex = allFlashcards.indexOfFirst { it["uid"] == flashcardUid }
+
+        if (existingIndex != -1) {
+            val existingData = allFlashcards[existingIndex]
+            if (existingData["status"] != status) {
+                allFlashcards[existingIndex] = data
+            }
+        } else {
+            allFlashcards.add(data)
         }
     }
 }

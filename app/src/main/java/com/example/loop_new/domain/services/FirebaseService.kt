@@ -63,5 +63,5 @@ interface FirebaseService {
     suspend fun removeStoryFromFavoriteSection(storyId: String, category: String)
 
     //Stats
-    suspend fun addLessonDataToFirestore(flashcardUid: String, status: String)
+    suspend fun addLessonStatsToFirestore(flashcardUid: String, status: String)
 }

@@ -34,6 +34,12 @@ class LessonViewModel(
         fetchListOfFlashcard(boxUid)
     }
 
+    fun addLessonStatsToFirestore(flashcardUid: String, status: String) {
+        viewModelScope.launch {
+            firebaseService.addLessonStatsToFirestore(flashcardUid, status)
+        }
+    }
+
     private fun fetchListOfFlashcard(boxUid: String) {
         viewModelScope.launch {
             try {
