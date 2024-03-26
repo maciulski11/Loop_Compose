@@ -839,21 +839,15 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         .document(flashcard.uid!!)
                         .set(flashcard)
                         .addOnSuccessListener { documentReference ->
-                            Log.d(
-                                LogTags.FIREBASE_SERVICES,
-                                "addFlashcardToRepeatSection: Successfully added flashcard: $documentReference"
-                            )
+                            logSuccess("addFlashcardToRepeatSection: Successfully added flashcard: $documentReference")
                         }
                         .addOnFailureListener { exception ->
-                            Log.e(
-                                LogTags.FIREBASE_SERVICES,
-                                "addFlashcardToRepeatSection: $exception"
-                            )
+                            logError("addFlashcardToRepeatSection: $exception")
                         }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e(LogTags.FIREBASE_SERVICES, "addFlashcardToRepeatSection: $exception")
+                logError("addFlashcardToRepeatSection: $exception")
             }
     }
 
@@ -872,16 +866,10 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             .collection(REPEAT).document(flashcardUid)
             .delete() // Perform the deletion of the flashcard document
             .addOnSuccessListener {
-                Log.d(
-                    LogTags.FIREBASE_SERVICES,
-                    "deleteFlashcardFromRepeatSection: Successfully deleted flashcard with UID: $flashcardUid"
-                )
+                logSuccess("deleteFlashcardFromRepeatSection: Successfully deleted flashcard with UID: $flashcardUid")
             }
             .addOnFailureListener { exception ->
-                Log.e(
-                    LogTags.FIREBASE_SERVICES,
-                    "deleteFlashcardFromRepeatSection: Error deleting flashcard with UID: $flashcardUid: $exception"
-                )
+                logError("deleteFlashcardFromRepeatSection: Error deleting flashcard with UID: $flashcardUid: $exception")
             }
     }
 
@@ -990,11 +978,11 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 return Story(title, chapters, storyUid, level, category, image, favoriteStories)
 
             } else {
-                Log.e(LogTags.FIREBASE_SERVICES, "fetchStory: data is empty!")
+                logError("fetchStory: data is empty!")
                 null  // Jeśli dane są puste, zwróć null
             }
         } catch (e: Exception) {
-            Log.e(LogTags.FIREBASE_SERVICES, "fetchStory: $e")
+            logError("fetchStory: $e")
             null
         }
     }
@@ -1036,24 +1024,14 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         try {
             // Dodaj historię do ulubionych w historii
             storyDocRef.update(FAVORITE_STORIES, favoriteList).await()
-            Log.d(
-                LogTags.FIREBASE_SERVICES,
-                "addStoryToFavoriteSection: The story has been added to your favorites in the story."
-            )
+            logSuccess("addStoryToFavoriteSection: The story has been added to your favorites in the story.")
 
             // Dodaj historię do ulubionych użytkownika
             userDocRef.update(FAVORITE_STORIES, favoriteList).await()
-
-            Log.d(
-                LogTags.FIREBASE_SERVICES,
-                "addStoryToFavoriteSection: The story has been added to your favorites in the user."
-            )
+            logSuccess("addStoryToFavoriteSection: The story has been added to your favorites in the user.")
 
         } catch (e: Exception) {
-            Log.e(
-                LogTags.FIREBASE_SERVICES,
-                "addStoryToFavoriteSection: Error adding stories to favorites: $e"
-            )
+            logError("addStoryToFavoriteSection: Error adding stories to favorites: $e")
         }
     }
 
@@ -1076,36 +1054,22 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             indexToRemoveUser?.let { index ->
                 userFavorites.removeAt(index)
                 userDocRef.update("favoriteStories", userFavorites).await()
-                Log.d(
-                    LogTags.FIREBASE_SERVICES,
-                    "removeStoryFromFavoriteSection: The story has been removed from favorites."
-                )
-            } ?: Log.e(
-                LogTags.FIREBASE_SERVICES,
-                "removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the user's favorites list."
-            )
+                logSuccess("removeStoryFromFavoriteSection: The story has been removed from favorites.")
+            } ?:
+            logError("removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the user's favorites list.")
 
             indexToRemoveStory?.let { index ->
                 storyFavorites.removeAt(index)
                 storyDocRef.update("favoriteStories", storyFavorites).await()
-                Log.d(
-                    LogTags.FIREBASE_SERVICES,
-                    "removeStoryFromFavoriteSection: The story has been removed from your history favorites."
-                )
-            } ?: Log.e(
-                LogTags.FIREBASE_SERVICES,
-                "removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the history favorites list."
-            )
+                logSuccess("removeStoryFromFavoriteSection: The story has been removed from your history favorites.")
+            } ?:
+            logError("removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the history favorites list.")
 
         } catch (e: Exception) {
-            Log.e(
-                LogTags.FIREBASE_SERVICES,
-                "removeStoryFromFavoriteSection: Error when deleting history from favorites: $e"
-            )
+            logError("removeStoryFromFavoriteSection: Error when deleting history from favorites: $e")
         }
     }
 
-    // TODO: ustawic zeby data sie aktualizowala tylko last study, a nie caly dokument w map!
     override suspend fun addLessonStatsToFirestore(flashcardUid: String, status: String) {
         val currentDate = getCurrentDate()
         val data = mutableMapOf("status" to status, "uid" to flashcardUid)
@@ -1138,11 +1102,11 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     if (documentSnapshot.exists()) storyDocRef.set(userData, SetOptions.merge())
                     else storyDocRef.set(userData)
 
-                action.addOnSuccessListener { logSuccess("Data added successfully.") }
-                    .addOnFailureListener { e -> logError("Error adding data: $e") }
+                action.addOnSuccessListener { logSuccess("addLessonStatsToFirestore: Data added successfully.") }
+                    .addOnFailureListener { e -> logError("addLessonStatsToFirestore: Error adding data: $e") }
             }
         } catch (e: Exception) {
-            logError("Error retrieving user data: $e")
+            logError("addLessonStatsToFirestore: Error retrieving user data: $e")
         }
     }
 
@@ -1175,7 +1139,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         if (existingIndex != -1) {
             val existingData = allFlashcards[existingIndex]
             if (existingData["status"] != status) {
-                val updatedFlashcardData = existingData.toMutableMap() // Tworzymy kopię istniejących danych
+                val updatedFlashcardData =
+                    existingData.toMutableMap() // Tworzymy kopię istniejących danych
 
                 when (status) {
                     KnowledgeLevel.KNOW.value -> {
@@ -1218,17 +1183,4 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         // Sformatuj bieżącą datę i godzinę
         return dateFormat.format(currentDate)
     }
-
-//    private fun updateAllFlashcards(allFlashcards: MutableList<Map<String, String>>, flashcardUid: String, status: String, data: Map<String, String>) {
-//        val existingIndex = allFlashcards.indexOfFirst { it["uid"] == flashcardUid }
-//
-//        if (existingIndex != -1) {
-//            val existingData = allFlashcards[existingIndex]
-//            if (existingData["status"] != status) {
-//                allFlashcards[existingIndex] = data
-//            }
-//        } else {
-//            allFlashcards.add(data)
-//        }
-//    }
 }
