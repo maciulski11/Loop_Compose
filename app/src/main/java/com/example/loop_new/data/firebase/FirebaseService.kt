@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
@@ -1104,25 +1105,38 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         }
     }
 
+    // TODO: ustawic zeby data sie aktualizowala tylko last study, a nie caly dokument w map!
     override suspend fun addLessonStatsToFirestore(flashcardUid: String, status: String) {
         val currentDate = getCurrentDate()
-        val data = mapOf("status" to status, "uid" to flashcardUid)
+        val data = mutableMapOf("status" to status, "uid" to flashcardUid)
         val storyDocRef = firestore.collection("stats").document(currentUser ?: "")
+
+        val currentDateTime = getCurrentDateTime()
 
         try {
             storyDocRef.get().await().let { documentSnapshot ->
-                val lessonsData = (documentSnapshot.get("lessonsData") as? Map<String, List<Map<String, Any>>>
-                    ?: emptyMap()).toMutableMap()
+                val lessonsData =
+                    (documentSnapshot.get("lessonsData") as? Map<String, List<Map<String, Any>>>
+                        ?: emptyMap()).toMutableMap()
 
-                val allFlashcards = (documentSnapshot.get("allFlashcards") as? List<Map<String, String>>
-                    ?: emptyList()).toMutableList()
+                val allFlashcards =
+                    (documentSnapshot.get("allFlashcards") as? List<Map<String, String>>
+                        ?: emptyList()).toMutableList()
 
                 updateLessonsData(lessonsData, currentDate, data)
-                updateAllFlashcards(allFlashcards, flashcardUid, status, data)
+                updateAllFlashcards(
+                    allFlashcards,
+                    flashcardUid,
+                    status,
+                    data,
+                    currentDateTime,
+                    currentDateTime
+                )
 
                 val userData = mapOf("lessonsData" to lessonsData, "allFlashcards" to allFlashcards)
-                val action = if (documentSnapshot.exists()) storyDocRef.set(userData, SetOptions.merge())
-                else storyDocRef.set(userData)
+                val action =
+                    if (documentSnapshot.exists()) storyDocRef.set(userData, SetOptions.merge())
+                    else storyDocRef.set(userData)
 
                 action.addOnSuccessListener { logSuccess("Data added successfully.") }
                     .addOnFailureListener { e -> logError("Error adding data: $e") }
@@ -1138,22 +1152,83 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         return dateFormat.format(calendar.time)
     }
 
-    private fun updateLessonsData(lessonsData: MutableMap<String, List<Map<String, Any>>>, currentDate: String, data: Map<String, Any>) {
+    private fun updateLessonsData(
+        lessonsData: MutableMap<String, List<Map<String, Any>>>,
+        currentDate: String,
+        data: Map<String, Any>,
+    ) {
         val currentLessonData = (lessonsData[currentDate] ?: mutableListOf()).toMutableList()
         currentLessonData.add(data)
         lessonsData[currentDate] = currentLessonData
     }
 
-    private fun updateAllFlashcards(allFlashcards: MutableList<Map<String, String>>, flashcardUid: String, status: String, data: Map<String, String>) {
+    private fun updateAllFlashcards(
+        allFlashcards: MutableList<Map<String, String>>,
+        flashcardUid: String,
+        status: String,
+        data: MutableMap<String, String>,
+        firstStudy: String?,
+        lastStudy: String?,
+    ) {
         val existingIndex = allFlashcards.indexOfFirst { it["uid"] == flashcardUid }
 
         if (existingIndex != -1) {
             val existingData = allFlashcards[existingIndex]
             if (existingData["status"] != status) {
-                allFlashcards[existingIndex] = data
+                val updatedFlashcardData = existingData.toMutableMap() // Tworzymy kopię istniejących danych
+
+                when (status) {
+                    KnowledgeLevel.KNOW.value -> {
+                        updatedFlashcardData["lastStudy"] = lastStudy ?: getCurrentDateTime()
+                        updatedFlashcardData["status"] = "know"
+                    }
+                }
+                allFlashcards[existingIndex] = updatedFlashcardData
             }
         } else {
+
+            when (status) {
+                KnowledgeLevel.KNOW.value -> {
+                    data["firstStudy"] = firstStudy ?: getCurrentDateTime()
+                    data["lastStudy"] = lastStudy ?: getCurrentDateTime()
+                }
+
+                KnowledgeLevel.SOMEWHAT_KNOW.value -> {
+                    data["firstStudy"] = firstStudy ?: getCurrentDateTime()
+                    data["lastStudy"] = ""
+                }
+
+                KnowledgeLevel.DO_NOT_KNOW.value -> {
+                    data["firstStudy"] = firstStudy ?: getCurrentDateTime()
+                    data["lastStudy"] = ""
+                }
+            }
+
             allFlashcards.add(data)
         }
     }
+
+    private fun getCurrentDateTime(): String {
+        // Utwórz obiekt reprezentujący bieżącą datę i godzinę
+        val currentDate = Date()
+
+        // Ustaw format daty i godziny
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+        // Sformatuj bieżącą datę i godzinę
+        return dateFormat.format(currentDate)
+    }
+
+//    private fun updateAllFlashcards(allFlashcards: MutableList<Map<String, String>>, flashcardUid: String, status: String, data: Map<String, String>) {
+//        val existingIndex = allFlashcards.indexOfFirst { it["uid"] == flashcardUid }
+//
+//        if (existingIndex != -1) {
+//            val existingData = allFlashcards[existingIndex]
+//            if (existingData["status"] != status) {
+//                allFlashcards[existingIndex] = data
+//            }
+//        } else {
+//            allFlashcards.add(data)
+//        }
+//    }
 }
