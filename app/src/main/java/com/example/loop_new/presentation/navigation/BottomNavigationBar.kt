@@ -50,7 +50,7 @@ val flashcardBottomNavItems = listOf(
         size = size
     ),
     BottomNavItem(
-        "NavigationSupport.PrivateBoxScreen",
+        NavigationSupport.StatsScreen,
         icon = R.drawable.stats1,
         size = size
     )

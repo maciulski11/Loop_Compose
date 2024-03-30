@@ -45,8 +45,10 @@ import com.example.loop_new.presentation.screens.story_section.read.ReadScreen
 import com.example.loop_new.presentation.screens.story_section.read.ReadViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatViewModel
-import com.example.loop_new.presentation.screens.sign_in.SignInScreen
-import com.example.loop_new.presentation.screens.sign_in.SignInViewModel
+import com.example.loop_new.presentation.screens.sign_in_section.SignInScreen
+import com.example.loop_new.presentation.screens.sign_in_section.SignInViewModel
+import com.example.loop_new.presentation.screens.stats_section.StatsScreen
+import com.example.loop_new.presentation.screens.stats_section.StatsViewModel
 import com.example.loop_new.presentation.screens.story_section.story.StoryScreen
 import com.example.loop_new.presentation.screens.story_section.story.StoryViewModel
 import com.example.loop_new.presentation.screens.story_section.story_favorite.StoryFavoriteScreen
@@ -65,10 +67,11 @@ object NavigationSupport {
     const val AddFlashcardScreen = "add_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
+    const val ReadScreen = "read_screen"
     const val StoryScreen = "story_screen"
     const val StoryInfoScreen = "story_info_screen"
     const val StoryFavoriteScreen = "story_favorite_screen"
-    const val ReadScreen = "read_screen"
+    const val StatsScreen = "stats_screen"
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
@@ -297,6 +300,16 @@ fun NavigationScreens(
                 }
 
                 RepeatScreen(navController, viewModel)
+            }
+
+            composable(NavigationSupport.StatsScreen) {
+                val viewModel = remember {
+                    StatsViewModel(
+                        firebaseService
+                    )
+                }
+
+                StatsScreen(viewModel)
             }
 
             composable(NavigationSupport.StoryScreen) {

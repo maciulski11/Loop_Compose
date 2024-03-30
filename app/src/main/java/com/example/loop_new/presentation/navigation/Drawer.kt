@@ -95,7 +95,8 @@ fun Drawer(
 
         DrawerItem(text = "Stats", icon = R.drawable.stats1, onClick = {
             scope.launch { scaffoldState.drawerState.close() }
-            // Obsługa kliknięcia na "Item 1"
+
+            navController.navigate((NavigationSupport.StatsScreen))
         })
 
         DrawerItem(text = "Settings", icon = R.drawable.settings2, onClick = {
