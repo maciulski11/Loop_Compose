@@ -3,6 +3,8 @@ package com.example.loop_new.domain.services
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Category
+import com.example.loop_new.domain.model.firebase.Statistics
+import com.example.loop_new.domain.model.firebase.StatsSummary
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.User
 import com.google.firebase.firestore.DocumentSnapshot
@@ -64,4 +66,6 @@ interface FirebaseService {
 
     //Stats
     suspend fun addLessonStatsToFirestore(flashcardUid: String, status: String)
+
+    suspend fun fetchDataOfStats(): Pair<Statistics, StatsSummary>
 }

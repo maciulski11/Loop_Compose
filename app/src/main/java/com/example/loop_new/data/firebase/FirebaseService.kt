@@ -3,11 +3,14 @@ package com.example.loop_new.data.firebase
 import android.util.Log
 import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
+import com.example.loop_new.domain.model.firebase.AllFlashcards
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Category
 import com.example.loop_new.domain.model.firebase.FavoriteStory
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
+import com.example.loop_new.domain.model.firebase.Statistics
+import com.example.loop_new.domain.model.firebase.StatsSummary
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.TextContent
 import com.example.loop_new.domain.model.firebase.User
@@ -1183,4 +1186,59 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         // Sformatuj bieżącą datę i godzinę
         return dateFormat.format(currentDate)
     }
+
+    override suspend fun fetchDataOfStats(): Pair<Statistics, StatsSummary> {
+        try {
+            val documentSnapshot = firestore
+                .collection("stats").document(currentUser ?: "")
+                .get()
+                .await()
+
+            if (documentSnapshot.exists()) {
+                val data = documentSnapshot.toObject(Statistics::class.java)
+                data?.let { stats ->
+                    val allFlashcards = stats.allFlashcards
+
+                    val totalFlashcards = allFlashcards.size
+                    val knowCount = allFlashcards.filter { it.status == "know" }.size
+                    val somewhatKnow = allFlashcards.filter { it.status == "somewhatKnow" }.size
+                    val doNotKnowCount = allFlashcards.filter { it.status == "doNotKnow" }.size
+
+                    val statsSummary = StatsSummary(totalFlashcards, knowCount, somewhatKnow, doNotKnowCount)
+
+                    return Pair(stats, statsSummary)
+                } ?: throw Exception("Error: Firestore document snapshot parsing failed.")
+            } else {
+                throw Exception("Error: Firestore document does not exist.")
+            }
+        } catch (e: Exception) {
+            println("Error fetching data: $e")
+            throw e
+        }
+    }
+
+
+
+
+
+    //    : Statistics {
+//        try {
+//            val documentSnapshot = firestore
+//                .collection("stats").document("JDrViJFRElaMZkEY3kVCMYi6dnF3")
+//                .get()
+//                .await()
+//
+//            val allFlashcards = mutableListOf<AllFlashcards>()
+//
+//            documentSnapshot?.let { document ->
+//                val data = document.toObject(Statistics::class.java)
+//                data?.allFlashcards?.let { allFlashcards.addAll(it) }
+//            }
+//
+//            return Statistics(allFlashcards)
+//        } catch (e: Exception) {
+//            println("Error fetching data: $e")
+//            throw e
+//        }
+//    }
 }
