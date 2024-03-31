@@ -1,11 +1,14 @@
 package com.example.loop_new.presentation.screens.story_section.read
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -34,8 +37,13 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.rememberBottomDrawerState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,6 +61,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -72,8 +82,11 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Gray2
+import com.example.loop_new.ui.theme.Green
 import com.example.loop_new.ui.theme.White
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 data class WordWithIndices(val word: String, val start: Int, val end: Int)
@@ -85,12 +98,12 @@ fun StoryScreenPreview() {
 }
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
 
     val scope = rememberCoroutineScope()
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+    var snackbarVisible by remember { mutableStateOf(false) }
 
     // Support for custom return behavior
     BackHandler {
@@ -253,8 +266,18 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
         drawerState = drawerState,
         scope = scope,
         boxList = viewModel.privateBoxList,
-        viewModel = viewModel
+        viewModel = viewModel,
+        showSnackbar = { snackbarVisible = true }
     )
+
+    // Show Snackbar if needed
+    if (snackbarVisible) {
+        CustomSnackbar(message = "Successfully added!")
+        LaunchedEffect(Unit) {
+            delay(1400) // Adjust the duration as needed
+            snackbarVisible = false
+        }
+    }
 
     LaunchedEffect(scrollState, currentPage) {
         scrollState.animateScrollTo(0)
@@ -376,7 +399,8 @@ private fun BottomDrawerContent(
     drawerState: BottomDrawerState,
     scope: CoroutineScope,
     boxList: List<Box>,
-    viewModel: ReadViewModel
+    viewModel: ReadViewModel,
+    showSnackbar: () -> Unit,
 ) {
     var drawerVisible by remember { mutableStateOf(false) }
 
@@ -411,6 +435,8 @@ private fun BottomDrawerContent(
                                 onClick = {
                                     scope.launch { drawerState.close() }
                                     viewModel.addFlashcard(word = word, item.uid.toString())
+
+                                    showSnackbar()
                                 },
                                 shape = RoundedCornerShape(8.dp),
                                 border = BorderStroke(2.dp, Black),
@@ -435,7 +461,39 @@ private fun BottomDrawerContent(
             },
             drawerState = drawerState,
         ) {
-            // Opcjonalnie: cokolwiek, co chcesz wyświetlić poniżej szuflady, gdy jest otwarta
+
         }
     }
+}
+
+@Composable
+fun CustomSnackbar(message: String) {
+    // Obliczamy wysokość ekranu
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
+    // Ustawiamy odległość Snackbara od dolnej krawędzi ekranu
+    val bottomOffset = 64.dp
+
+    // Tworzenie i zwracanie Snackbar'a
+    return Snackbar(
+        modifier = Modifier
+            .height(40.dp)
+            .padding(start = 60.dp, end = 60.dp)
+            .offset(y = screenHeight - bottomOffset),
+        backgroundColor = Color.Green, // Ustawienie zielonego tła
+        content = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = message,
+                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.body2,
+                    color = Black
+                )
+            }
+        },
+        action = {
+            // Możesz dodać niestandardowe działanie, jeśli jest potrzebne
+        }
+    )
 }
