@@ -309,7 +309,7 @@ fun NavigationScreens(
                     )
                 }
 
-                StatsScreen(viewModel)
+                StatsScreen(navController, viewModel)
             }
 
             composable(NavigationSupport.StoryScreen) {

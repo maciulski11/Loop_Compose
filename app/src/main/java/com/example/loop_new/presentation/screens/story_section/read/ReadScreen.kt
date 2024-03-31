@@ -1,14 +1,10 @@
 package com.example.loop_new.presentation.screens.story_section.read
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -37,13 +33,9 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.rememberBottomDrawerState
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,7 +54,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -82,9 +73,7 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Gray2
-import com.example.loop_new.ui.theme.Green
 import com.example.loop_new.ui.theme.White
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -321,7 +310,7 @@ fun CustomInfoBox(
 
     val position = with(LocalDensity.current) {
         Offset(
-            x = clickPosition.x / density,
+            x = clickPosition.x / density - 15,
             y = (clickPosition.y / density) + 15
         )
     }
@@ -338,6 +327,7 @@ fun CustomInfoBox(
             }
     ) {
         Row {
+
             Image(
                 modifier = Modifier
                     .size(30.dp)

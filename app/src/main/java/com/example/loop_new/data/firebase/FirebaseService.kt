@@ -3,7 +3,6 @@ package com.example.loop_new.data.firebase
 import android.util.Log
 import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
-import com.example.loop_new.domain.model.firebase.AllFlashcards
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Category
@@ -83,13 +82,13 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 firestore.collection(USERS).document(signedInUser.uid ?: "")
                     .set(signedInUser)
                     .addOnSuccessListener {
-                        Log.d("REPO_CREATE_NEW_GOOGLE_USER", "Successful, created new google user!")
+                        logSuccess("createNewGoogleUser: Successful, created new google user!")
                     }
                     .addOnFailureListener { e ->
-                        Log.d("REPO_CREATE_NEW_GOOGLE_USER", "${e.printStackTrace()}")
+                        logError("createNewGoogleUser: ${e.printStackTrace()}")
                     }
             } catch (e: Exception) {
-                Log.d("REPO_CREATE_NEW_GOOGLE_USER", "${e.printStackTrace()}")
+                logError("createNewGoogleUser: ${e.printStackTrace()}")
             }
         }
     }
@@ -141,24 +140,21 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                                 val flashcards = querySnapshot.documents.mapNotNull { document ->
                                     document.toObject(Flashcard::class.java)
                                 }
-                                Log.d(LogTags.FIREBASE_SERVICES, "Downloaded box with: $flashcards")
+                                logSuccess("addPublicBoxToPrivateSection: Downloaded box with: $flashcards")
 
                                 // Finally, transfer the box and its flashcards to the private section
                                 addPrivateBoxWithFlashcards(boxUid, boxData, flashcards)
                             }
                             .addOnFailureListener { e ->
-                                Log.e(
-                                    LogTags.FIREBASE_SERVICES,
-                                    "Error downloading flashcards: ${e.message}"
-                                )
+                                logError("addPublicBoxToPrivateSection: Error downloading flashcards: ${e.message}")
                             }
                     }
                 } else {
-                    Log.d("Firestore", "Box nie istnieje")
+                    logSuccess("addPublicBoxToPrivateSection: Box does not exist")
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("FirestoreError", "Błąd pobierania boxa: ${e.message}")
+                logError("addPublicBoxToPrivateSection: Błąd pobierania boxa: ${e.message}")
             }
     }
 
@@ -193,12 +189,10 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 batch.set(flashcardRef, flashcard)
             }
         }.addOnSuccessListener {
-            Log.d(
-                LogTags.FIREBASE_SERVICES,
-                "Box and flashcards successfully added to private collection"
-            )
+            logSuccess("addPrivateBoxWithFlashcards: Box and flashcards successfully added to private collection")
+
         }.addOnFailureListener { e ->
-            Log.e(LogTags.FIREBASE_SERVICES, "Error adding box and flashcards: ${e.message}")
+            logError("addPrivateBoxWithFlashcards: Error adding box and flashcards: ${e.message}")
         }
     }
 
@@ -226,9 +220,9 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .collection(BOX).document(uid)
                 .set(data)
 
-            Log.d(LogTags.FIREBASE_SERVICES, "addBox: Correct addition of box")
+            logSuccess("addBox: Correct addition of box")
         } catch (e: Exception) {
-            Log.e(LogTags.FIREBASE_SERVICES, "addBox: Error: $e")
+            logError("addBox: Error: $e")
             throw e
         }
     }
@@ -248,10 +242,10 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .collection(BOX).document(boxUid)
                 .delete()
 
-            Log.d(LogTags.FIREBASE_SERVICES, "deleteBox: Success!")
+            logSuccess("deleteBox: Success!")
 
         } catch (e: Exception) {
-            Log.e(LogTags.FIREBASE_SERVICES, "deleteBox: Error: $e")
+            logError("deleteBox: Error: $e")
             throw e
         }
     }
@@ -278,19 +272,13 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .collection(FLASHCARD).document(flashcardUid)
                 .update(updateData)
                 .addOnSuccessListener {
-                    Log.d(
-                        LogTags.FIREBASE_SERVICES,
-                        "setKnowledgeLevelOfFlashcard: Update successful"
-                    )
+                    logSuccess("setKnowledgeLevelOfFlashcard: Update successful")
                 }
                 .addOnFailureListener { e ->
-                    Log.e(
-                        LogTags.FIREBASE_SERVICES,
-                        "setKnowledgeLevelOfFlashcard: Error updating: $e"
-                    )
+                    logError("setKnowledgeLevelOfFlashcard: Error updating: $e")
                 }
         } catch (e: Exception) {
-            Log.e(LogTags.FIREBASE_SERVICES, "setKnowledgeLevelOfFlashcard: Error: $e")
+            logError("setKnowledgeLevelOfFlashcard: Error: $e")
         }
     }
 
@@ -396,7 +384,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .collection(REPEAT)
                 .addSnapshotListener { querySnapshot, error ->
                     if (error != null) {
-                        Log.e(LogTags.FIREBASE_SERVICES, "Repeat section listener error: $error")
+                        logError("Repeat section listener error: $error")
                         return@addSnapshotListener
                     }
 
@@ -430,7 +418,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 // Return true if the collection is empty, false otherwise
                 querySnapshot.isEmpty
             } catch (exception: Exception) {
-                Log.e(LogTags.FIREBASE_SERVICES, "checkFirestoreCollection exception: $exception")
+                logError("checkFirestoreCollection exception: $exception")
                 false // Return false in case of an exception
             }
         }
@@ -458,10 +446,10 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .collection(FLASHCARD).document(uid)
                 .set(data)
 
-            Log.d(LogTags.FIREBASE_SERVICES, "addFlashcard: Correct addition of flashcard")
+            logSuccess("addFlashcard: Correct addition of flashcard")
 
         } catch (e: Exception) {
-            Log.e(LogTags.FIREBASE_SERVICES, "addFlashcard: Error: $e")
+            logError("addFlashcard: Error: $e")
             throw e
         }
     }
@@ -483,10 +471,10 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 .collection(FLASHCARD).document(flashcardUid)
                 .delete()
 
-            Log.d(LogTags.FIREBASE_SERVICES, "deleteFlashcard: Success!")
+            logSuccess("deleteFlashcard: Success!")
 
         } catch (e: Exception) {
-            Log.e(LogTags.FIREBASE_SERVICES, "deleteFlashcard: Error: $e")
+            logError("deleteFlashcard: Error: $e")
             throw e
         }
     }
@@ -505,7 +493,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
      */
     override fun fetchListOfPublicBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>> {
         return callbackFlow {
-            Log.d(LogTags.FIREBASE_SERVICES, "Fetching list of public boxes")
+            logSuccess("fetchListOfPublicBox: Fetching list of public boxes")
 
             // The last document in the list activates the addition of further boxes
             var lastVisibleDocument: DocumentSnapshot? = lastDocSnapshot
@@ -513,13 +501,11 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
             // Construct the query based on whether we are paginating or not
             val query = if (lastVisibleDocument == null) {
-                Log.d(LogTags.FIREBASE_SERVICES, "Querying first batch of public boxes")
+                logSuccess("fetchListOfPublicBox: Querying first batch of public boxes")
                 firestore.collection(BOX).limit(10)
+
             } else {
-                Log.d(
-                    LogTags.FIREBASE_SERVICES,
-                    "Querying next batch of public boxes starting after document: ${lastVisibleDocument.id}"
-                )
+                logError("fetchListOfPublicBox: Querying next batch of public boxes starting after document: ${lastVisibleDocument.id}")
                 firestore.collection(BOX).startAfter(lastVisibleDocument).limit(4)
             }
 
@@ -531,26 +517,26 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 documents.forEach { document ->
                     document.toObject(Box::class.java)?.let {
                         fetchedBoxes.add(it)
-                        Log.d(LogTags.FIREBASE_SERVICES, "Added box: ${it.name} to the list")
+                        logSuccess("Added box: ${it.name} to the list")
                     }
                     lastVisibleDocument = document
                 }
 
                 // Send the list of fetched boxes along with the last document for pagination
-                Log.d(LogTags.FIREBASE_SERVICES, "Sending list of fetched boxes")
+                logSuccess("fetchListOfPublicBox: Sending list of fetched boxes")
                 trySend(Pair(fetchedBoxes, lastVisibleDocument)).isSuccess
 
                 // Check if there are no more boxes to fetch
                 if (documents.isEmpty()) {
-                    Log.d(LogTags.FIREBASE_SERVICES, "No more public boxes to fetch")
+                    logSuccess("fetchListOfPublicBox: No more public boxes to fetch")
                     close()
                 }
             } catch (e: Exception) {
-                Log.e(LogTags.FIREBASE_SERVICES, "Error fetching public boxes: ${e.message}")
+                logError("fetchListOfPublicBox: Error fetching public boxes: ${e.message}")
                 close(e)
             }
             // Handle the closure of the flow
-            awaitClose { Log.d(LogTags.FIREBASE_SERVICES, "Flow of public boxes has been closed") }
+            awaitClose { logSuccess("fetchListOfPublicBox: Flow of public boxes has been closed") }
         }
     }
 
@@ -574,10 +560,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         // Handle any errors that might occur during snapshot listening
                         if (error != null) {
                             close(error)
-                            Log.e(
-                                LogTags.FIREBASE_SERVICES,
-                                "fetchListOfBoxPrivateBox: Error: $error"
-                            )
+                            logError("fetchListOfBoxPrivateBox: Error: $error")
                             return@addSnapshotListener
                         }
 
@@ -587,7 +570,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         } ?: mutableListOf()
 
                         trySend(tempList).isSuccess
-                        Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfBoxPrivateBox: Success!")
+                        logSuccess("fetchListOfBoxPrivateBox: Success!")
                     }
 
                 // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
@@ -619,10 +602,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         // Handle any errors encountered during snapshot listening
                         if (error != null) {
                             close(error)
-                            Log.e(
-                                LogTags.FIREBASE_SERVICES,
-                                "fetchListOfFlashcardInPublicBox: Error: $error"
-                            )
+                            logError("fetchListOfFlashcardInPublicBox: Error: $error")
                             return@addSnapshotListener
                         }
 
@@ -635,10 +615,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
                         // Send the list of flashcards through the Flow
                         trySend(flashcards).isSuccess
-                        Log.d(
-                            LogTags.FIREBASE_SERVICES,
-                            "fetchListOfFlashcardInPublicBox: Success!"
-                        )
+                        logSuccess("fetchListOfFlashcardInPublicBox: Success!")
                     }
 
             awaitClose {
@@ -668,10 +645,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         if (error != null) {
                             // Handling any errors encountered while listening to the snapshot
                             close(error)
-                            Log.e(
-                                LogTags.FIREBASE_SERVICES,
-                                "fetchListOfFlashcardInPrivateBox: Error: $error"
-                            )
+                            logError("fetchListOfFlashcardInPrivateBox: Error: $error")
                             return@addSnapshotListener
                         }
 
@@ -684,10 +658,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
                         // Emitting the list of flashcards through the Flow
                         trySend(flashcards).isSuccess
-                        Log.d(
-                            LogTags.FIREBASE_SERVICES,
-                            "fetchListOfFlashcardInPrivateBox: Success!"
-                        )
+                        logSuccess("fetchListOfFlashcardInPrivateBox: Success!")
                     }
 
             awaitClose {
@@ -720,12 +691,12 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     }
                     // Emit the list of flashcards through the Flow
                     trySend(flashcards).isSuccess
-                    Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInLesson: Success!")
+                    logSuccess("fetchListOfFlashcardInLesson: Success!")
                 }
                 .addOnFailureListener { error ->
                     // Handle any errors encountered during the query
                     close(error)
-                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInLesson: Error: $error")
+                    logError("fetchListOfFlashcardInLesson: Error: $error")
                 }
 
             awaitClose { }
@@ -758,7 +729,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
             // Emit the list of flashcards through the Flow
             emit(flashcards)
-            Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfFlashcardInRepeat: Success!")
+            logSuccess("fetchListOfFlashcardInRepeat: Success!")
         }
             // Specify that the flow should operate on the I/O dispatcher
             .flowOn(Dispatchers.IO)
@@ -798,23 +769,17 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                                         // Add the flashcard to the 'repeat' section
                                         addFlashcardToRepeat(flashcard)
 
-                                        Log.d(
-                                            LogTags.FIREBASE_SERVICES,
-                                            "fetchRepeatFlashcards: ${flashcard.word}"
-                                        )
+                                        logSuccess("fetchRepeatFlashcards: ${flashcard.word}")
                                     }
                                 }
                             }
                             .addOnFailureListener { exception ->
-                                Log.e(
-                                    LogTags.FIREBASE_SERVICES,
-                                    "fetchRepeatFlashcards: $exception"
-                                )
+                                logError("fetchRepeatFlashcards: $exception")
                             }
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.e(LogTags.FIREBASE_SERVICES, "fetchRepeatFlashcards: $exception")
+                    logError("fetchRepeatFlashcards: $exception")
                 }
         }
     }
@@ -1058,15 +1023,15 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 userFavorites.removeAt(index)
                 userDocRef.update("favoriteStories", userFavorites).await()
                 logSuccess("removeStoryFromFavoriteSection: The story has been removed from favorites.")
-            } ?:
-            logError("removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the user's favorites list.")
+            }
+                ?: logError("removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the user's favorites list.")
 
             indexToRemoveStory?.let { index ->
                 storyFavorites.removeAt(index)
                 storyDocRef.update("favoriteStories", storyFavorites).await()
                 logSuccess("removeStoryFromFavoriteSection: The story has been removed from your history favorites.")
-            } ?:
-            logError("removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the history favorites list.")
+            }
+                ?: logError("removeStoryFromFavoriteSection: Story with UID $storyId does not exist in the history favorites list.")
 
         } catch (e: Exception) {
             logError("removeStoryFromFavoriteSection: Error when deleting history from favorites: $e")
@@ -1204,7 +1169,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     val somewhatKnow = allFlashcards.filter { it.status == "somewhatKnow" }.size
                     val doNotKnowCount = allFlashcards.filter { it.status == "doNotKnow" }.size
 
-                    val statsSummary = StatsSummary(totalFlashcards, knowCount, somewhatKnow, doNotKnowCount)
+                    val statsSummary =
+                        StatsSummary(totalFlashcards, knowCount, somewhatKnow, doNotKnowCount)
 
                     return Pair(stats, statsSummary)
                 } ?: throw Exception("Error: Firestore document snapshot parsing failed.")
@@ -1216,29 +1182,4 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             throw e
         }
     }
-
-
-
-
-
-    //    : Statistics {
-//        try {
-//            val documentSnapshot = firestore
-//                .collection("stats").document("JDrViJFRElaMZkEY3kVCMYi6dnF3")
-//                .get()
-//                .await()
-//
-//            val allFlashcards = mutableListOf<AllFlashcards>()
-//
-//            documentSnapshot?.let { document ->
-//                val data = document.toObject(Statistics::class.java)
-//                data?.allFlashcards?.let { allFlashcards.addAll(it) }
-//            }
-//
-//            return Statistics(allFlashcards)
-//        } catch (e: Exception) {
-//            println("Error fetching data: $e")
-//            throw e
-//        }
-//    }
 }

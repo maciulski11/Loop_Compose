@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.stats_section
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Green
@@ -35,7 +38,13 @@ fun StatsScreenPreview() {
 }
 
 @Composable
-fun StatsScreen(viewModel: StatsViewModel) {
+fun StatsScreen(navController:NavController, viewModel: StatsViewModel) {
+
+    // Support for custom return behavior
+    BackHandler {
+        // Where return
+        navController.navigate(NavigationSupport.PrivateBoxScreen)
+    }
 
     Column(
         modifier = Modifier
@@ -213,8 +222,6 @@ fun StatsScreen(viewModel: StatsViewModel) {
                         .padding(top = 4.dp, start = 2.dp)
                 )
             }
-
-
         }
     }
 }
