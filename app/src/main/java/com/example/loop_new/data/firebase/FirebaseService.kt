@@ -902,7 +902,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             }
     }
 
-    //TODO: add checking whether the logged in user has a given story in his favorites
+    //TODO: add checking whether the logged in user has a given story in his favorites!!
     private fun isUserFavoriteStory(story: Story): Boolean {
         // Sprawdź, czy UID zalogowanego użytkownika znajduje się w liście ulubionych dla danej historii
         return story.favoriteStories?.any { it.uid == currentUser } ?: false
@@ -926,6 +926,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                 val image = storyData["image"].toString() as String?
                 val chaptersList = storyData["text"] as List<Map<String, Any>>?
                 val favoriteStoriesList = storyData["favoriteStories"] as List<Map<String, Any>>?
+                val viewList = storyData["viewList"] as List<String>?
 
                 // Sprawdź, czy masz listę rozdziałów
                 val chapters = chaptersList?.map { chapterMap ->
@@ -943,7 +944,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     )
                 } ?: emptyList()
 
-                return Story(title, chapters, storyUid, level, category, image, favoriteStories)
+                return Story(title, chapters, storyUid, level, category, image, favoriteStories, viewList)
 
             } else {
                 logError("fetchStory: data is empty!")
@@ -1180,6 +1181,29 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         } catch (e: Exception) {
             println("Error fetching data: $e")
             throw e
+        }
+    }
+
+    override fun addStoryUidToViewList(uidStory: String) {
+
+        currentUser?.let {
+            val storyRef = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+                .collection("criminal").document(uidStory)
+
+            firestore.runTransaction { transaction ->
+                val storyDoc = transaction.get(storyRef)
+                val viewList = storyDoc.toObject(Story::class.java)?.viewList?.toMutableList()
+
+                if (viewList != null && currentUser !in viewList) {
+                    viewList.add(currentUser)
+                    transaction.update(storyRef, "viewList", viewList)
+                }
+            }.addOnSuccessListener {
+                logSuccess("addStoryUidToViewList: Transaction successfully completed")
+
+            }.addOnFailureListener { e ->
+                logError("addStoryUidToViewList: Transaction failed: ${e.message}")
+            }
         }
     }
 }

@@ -126,7 +126,7 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                             .border(2.dp, BlueOfBackgroundApp, RoundedCornerShape(12.dp))
                     ) {
                         Text(
-                            text = "14554",
+                            text = viewModel.storyDetails?.viewList?.size.toString(),
                             color = White,
                             modifier = Modifier
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -155,6 +155,8 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                         onClick = {
                             navController
                                 .navigate("${NavigationSupport.ReadScreen}/${viewModel.storyDetails?.uid}")
+
+                            viewModel.addStoryUidToViewList(viewModel.storyDetails!!.uid.toString())
                         }
                     ) {
                         Text(text = "Read")

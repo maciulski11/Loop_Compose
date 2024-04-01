@@ -8,8 +8,9 @@ data class Story(
     val category: String? = null,
     val image: String? = null,
     val favoriteStories: List<FavoriteStory>? = null,
-    val favorite: Boolean? = null,
-)
+    val viewList: List<String>? = null,
+    val favorite: Boolean? = null
+    )
 
 data class TextContent(
     val chapter: String? = null,

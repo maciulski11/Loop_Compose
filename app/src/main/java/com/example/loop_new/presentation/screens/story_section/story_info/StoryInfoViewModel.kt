@@ -24,6 +24,10 @@ class StoryInfoViewModel(
         }
     }
 
+    fun addStoryUidToViewList(uid: String) {
+        firebaseService.addStoryUidToViewList(uid)
+    }
+
     fun addStoryToFavoriteSection() {
         viewModelScope.launch {
             firebaseService.addStoryToFavoriteSection(
