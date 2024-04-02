@@ -14,8 +14,11 @@ import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.TextContent
 import com.example.loop_new.domain.model.firebase.User
 import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.ui.theme.categoryOfStory
+import com.google.android.gms.common.util.Strings
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -842,9 +845,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     override fun fetchListOfStory(): Flow<Category> {
-
         return callbackFlow {
-            val categories = listOf("criminal", "b1", "drama", "comedy") // Dodaj swoje kategorie
+            val categories = categoryOfStory
             val currentIndex = AtomicInteger(0)
 
             val listenerRegistration = fetchNextCategory(categories, currentIndex, this)
@@ -866,36 +868,27 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             .collection(currentCategory)
             .addSnapshotListener { querySnapshot, error ->
 
-                // Handle errors
                 if (error != null) {
                     flow.close(error)
-                    Log.e(LogTags.FIREBASE_SERVICES, "fetchListOfStory: Error: $error")
                     return@addSnapshotListener
                 }
 
-                // Map documents to Story objects
                 val stories = querySnapshot?.documents?.mapNotNull { document ->
                     val story = document.toObject(Story::class.java)
-
-                    // Sprawdź, czy zalogowany użytkownik dodał ten tekst do ulubionych
                     if (story != null) {
                         val isFavorite =
                             story.favoriteStories?.any { it.uid == currentUser } ?: false
-                        story.copy(favorite = isFavorite) // dodajemy do obiektu Story flagę favorite
+                        story.copy(favorite = isFavorite)
                     } else {
                         null
                     }
                 } ?: mutableListOf()
 
-                // Create Category object and send it through the Flow
                 val category = Category(currentCategory, stories)
                 flow.trySend(category).isSuccess
-                Log.d(LogTags.FIREBASE_SERVICES, "fetchListOfStory for $currentCategory: Success!")
 
-                // Increase index to fetch the next category
                 val nextIndex = currentIndex.incrementAndGet()
 
-                // If there are more categories, fetch the next one
                 if (nextIndex < categories.size) {
                     fetchNextCategory(categories, currentIndex, flow)
                 }
@@ -921,6 +914,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             // Sprawdź, czy dane są niepuste
             if (storyData != null) {
                 val title = storyData["title"].toString() as String?
+                val author = storyData["author"].toString() as String?
                 val level = storyData["level"].toString() as String?
                 val category = storyData["category"].toString() as String?
                 val image = storyData["image"].toString() as String?
@@ -944,7 +938,17 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     )
                 } ?: emptyList()
 
-                return Story(title, chapters, storyUid, level, category, image, favoriteStories, viewList)
+                return Story(
+                    title,
+                    chapters,
+                    author,
+                    storyUid,
+                    level,
+                    category,
+                    image,
+                    favoriteStories,
+                    viewList
+                )
 
             } else {
                 logError("fetchStory: data is empty!")

@@ -90,7 +90,7 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                 }
 
                 Text(
-                    text = "author of story",
+                    text = "author: ${viewModel.storyDetails?.author.toString()}",
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
