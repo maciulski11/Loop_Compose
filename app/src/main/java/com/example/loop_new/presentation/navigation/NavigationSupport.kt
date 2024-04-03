@@ -51,6 +51,8 @@ import com.example.loop_new.presentation.screens.stats_section.StatsScreen
 import com.example.loop_new.presentation.screens.stats_section.StatsViewModel
 import com.example.loop_new.presentation.screens.story_section.story.StoryScreen
 import com.example.loop_new.presentation.screens.story_section.story.StoryViewModel
+import com.example.loop_new.presentation.screens.story_section.story_check_all.StoryCheckAllScreen
+import com.example.loop_new.presentation.screens.story_section.story_check_all.StoryCheckAllViewModel
 import com.example.loop_new.presentation.screens.story_section.story_favorite.StoryFavoriteScreen
 import com.example.loop_new.presentation.screens.story_section.story_favorite.StoryFavoriteViewModel
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoViewModel
@@ -69,6 +71,7 @@ object NavigationSupport {
     const val RepeatScreen = "repeat_screen"
     const val ReadScreen = "read_screen"
     const val StoryScreen = "story_screen"
+    const val StoryCheckAllScreen = "story_check_all_screen"
     const val StoryInfoScreen = "story_info_screen"
     const val StoryFavoriteScreen = "story_favorite_screen"
     const val StatsScreen = "stats_screen"
@@ -324,6 +327,18 @@ fun NavigationScreens(
                 }
 
                 StoryScreen(navController, viewModel)
+            }
+
+            composable("${NavigationSupport.StoryCheckAllScreen}/{category}",
+                arguments = listOf(navArgument("category") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val category = backStackEntry.arguments?.getString("category") ?: ""
+
+                val viewModel = remember {
+                    StoryCheckAllViewModel(firebaseService, category)
+                }
+
+                StoryCheckAllScreen(navController, viewModel, category)
             }
 
             composable(

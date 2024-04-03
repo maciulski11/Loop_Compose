@@ -57,6 +57,8 @@ interface FirebaseService {
     //Story
     fun fetchListOfStory(): Flow<Category>
 
+    suspend fun fetchAllStoriesFromOneCategory(category: String): List<Story>
+
     suspend fun fetchStory(storyUid: String): Story?
 
     suspend fun fetchFavoriteStories(): List<Story>

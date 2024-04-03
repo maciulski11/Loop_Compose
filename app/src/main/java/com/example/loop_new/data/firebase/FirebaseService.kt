@@ -866,6 +866,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
         return firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
             .collection(currentCategory)
+            .limit(5)
             .addSnapshotListener { querySnapshot, error ->
 
                 if (error != null) {
@@ -893,6 +894,26 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     fetchNextCategory(categories, currentIndex, flow)
                 }
             }
+    }
+
+    override suspend fun fetchAllStoriesFromOneCategory(category: String): List<Story> {
+        val documents = mutableListOf<Story>()
+        try {
+            val querySnapshot = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
+                .collection(category)
+                .get()
+                .await()
+            for (document in querySnapshot.documents) {
+                val story = document.toObject(Story::class.java)
+                if (story != null) {
+                    documents.add(story)
+                }
+            }
+        } catch (e: Exception) {
+            // Obsłuż błędy, np. brak połączenia z internetem itp.
+            e.printStackTrace()
+        }
+        return documents
     }
 
     //TODO: add checking whether the logged in user has a given story in his favorites!!
