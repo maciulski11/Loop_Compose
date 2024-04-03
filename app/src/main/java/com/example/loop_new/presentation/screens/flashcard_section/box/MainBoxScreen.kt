@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -104,21 +106,29 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
             Row {
                 Box(
                     modifier = Modifier
-                        .size(190.dp, 160.dp)
-                        .weight(1f)
-                        .padding(top = 4.dp, bottom = 4.dp),
+                        .height(162.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 4.dp)
+//                        .size(190.dp, 160.dp)
+                        .weight(1f),
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(172.dp, 155.dp)
+                            .height(146.dp)
+                            .fillMaxWidth()
+//                            .size(172.dp, 155.dp)
+                            .padding(horizontal = 6.dp)
                             .background(color3, shape = RoundedCornerShape(10.dp))
                             .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
                     )
 
                     Box(
                         modifier = Modifier
-                            .size(180.dp, 144.dp)
+                            .height(137.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 6.dp)
+//                            .size(180.dp, 144.dp)
                             .align(Alignment.BottomCenter)
                             .background(color2, shape = RoundedCornerShape(10.dp))
                             .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
@@ -126,8 +136,9 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
 
                     Box(
                         modifier = Modifier
-                            .size(190.dp, 130.dp)
-                            .align(Alignment.BottomCenter)
+                            .height(126.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 6.dp)
                             .background(color1, shape = RoundedCornerShape(10.dp))
                             .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
                     ) {
@@ -135,7 +146,7 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
                             text = box.name.toString(),
                             style = TextStyle(
                                 color = Color.Black,
-                                fontSize = 20.sp,
+                                fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold
                             ),
                             minLines = 1,
@@ -143,7 +154,7 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
                             modifier = Modifier
                                 .align(Alignment.TopCenter)
                                 .padding(
-                                    top = 14.dp,
+                                    top = 20.dp,
                                     start = 10.dp,
                                     end = 10.dp
                                 )
@@ -151,13 +162,13 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
 
                         Text(
                             text = box.describe.toString(),
-                            style = TextStyle(color = Color.Black, fontSize = 14.5.sp),
+                            style = TextStyle(color = Color.Black, fontSize = 16.sp),
                             maxLines = 3,
                             modifier = Modifier
                                 .padding(
-                                    top = 70.dp,
-                                    start = 12.dp,
-                                    end = 10.dp
+                                    top = 74.dp,
+                                    start = 16.dp,
+                                    end = 16.dp
                                 )
                         )
                     }
