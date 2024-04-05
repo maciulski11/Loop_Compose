@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -109,7 +108,6 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
                         .height(162.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 14.dp, vertical = 4.dp)
-//                        .size(190.dp, 160.dp)
                         .weight(1f),
                     contentAlignment = Alignment.BottomCenter
                 ) {
@@ -117,7 +115,6 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
                         modifier = Modifier
                             .height(146.dp)
                             .fillMaxWidth()
-//                            .size(172.dp, 155.dp)
                             .padding(horizontal = 6.dp)
                             .background(color3, shape = RoundedCornerShape(10.dp))
                             .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
@@ -128,7 +125,6 @@ fun BoxItem(box: Box, onClick: () -> Unit, onLongClick: () -> Unit) {
                             .height(137.dp)
                             .fillMaxWidth()
                             .padding(horizontal = 6.dp)
-//                            .size(180.dp, 144.dp)
                             .align(Alignment.BottomCenter)
                             .background(color2, shape = RoundedCornerShape(10.dp))
                             .border(2.dp, Black, shape = RoundedCornerShape(10.dp))
