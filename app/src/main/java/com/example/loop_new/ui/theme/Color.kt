@@ -48,4 +48,17 @@ val PastelPurple = Color(0xFFB19CD9)
 val PastelPurple1 = Color(0xFF947BC5)
 val PastelPurple2 = Color(0xFF7D5DBB)
 
+val colorA1 = Color(0xFF4DEF71)
+val colorA2 = Color(0xFF0FB434)
+val colorB1 = Color(0xFF6686FA)
+val colorB2 = Color(0xFF1040E8)
+val colorC1 = Color(0xFFE86B1B)
+val colorC2 = Color(0xFFE81B1B)
+
+val greenApp = Color(0xFFCDFFD8)
+val blueApp = Color(0xFF94B9FF)
+
+
+
+
 

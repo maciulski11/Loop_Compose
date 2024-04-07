@@ -27,8 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +42,9 @@ import com.example.loop_new.R
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.BlueOfBackgroundApp
 import com.example.loop_new.ui.theme.White
+import com.example.loop_new.ui.theme.blueApp
+import com.example.loop_new.ui.theme.greenApp
+import java.util.Locale
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -77,8 +83,18 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 22.dp)
-                        .background(BlueOfBackgroundApp, RoundedCornerShape(12.dp))
-                        .border(2.dp, BlueOfBackgroundApp, RoundedCornerShape(12.dp))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(greenApp, blueApp)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            2.dp, brush = Brush.verticalGradient(
+                                colors = listOf(greenApp, blueApp)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
                 ) {
                     Text(
                         text = viewModel.storyDetails?.title.toString(),
@@ -90,7 +106,7 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                 }
 
                 Text(
-                    text = "author: ${viewModel.storyDetails?.author.toString()}",
+                    text = "author: ${viewModel.storyDetails?.author}",
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -98,7 +114,7 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                 )
 
                 Text(
-                    text = viewModel.storyDetails?.level.toString(),
+                    text = "level: ${viewModel.storyDetails?.level?.toUpperCase(Locale.ROOT)}",
                     fontSize = 16.sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
