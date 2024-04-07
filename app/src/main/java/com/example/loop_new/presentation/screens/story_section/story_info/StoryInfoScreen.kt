@@ -223,7 +223,7 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                         .fillMaxSize()
                         .padding(vertical = 12.dp, horizontal = 16.dp),
                     fontSize = 16.sp,
-                    text = "Według osób dotkniętych emailowstrętem, z pomocą spamu można otrzymać też spyware, który otwiera nasz komputer na cały świat i dopisuje do nieformalnej listy wolnych zasobów internetowych (tzw. botnet) albo przestawia układ klawiatury QWERTY na dowolny inny; posiada też możliwość dynamicznej zmiany układu klawiatury, kiedy już – pogodzeni z tym nieszczęściem – za pomocą markera opiszemy klawiaturę od nowa."
+                    text = viewModel.storyDetails?.entry.toString()
                 )
             }
         }

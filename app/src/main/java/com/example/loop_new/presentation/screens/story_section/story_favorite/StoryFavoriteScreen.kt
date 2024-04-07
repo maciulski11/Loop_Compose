@@ -1,10 +1,14 @@
 package com.example.loop_new.presentation.screens.story_section.story_favorite
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -46,10 +50,10 @@ fun StoryFavoriteScreen(navController: NavController, viewModel: StoryFavoriteVi
         }
     }
 
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+            .fillMaxSize(), contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         items(stories) { story ->
             story.favoriteStories?.any { it.favorite == true }?.let {

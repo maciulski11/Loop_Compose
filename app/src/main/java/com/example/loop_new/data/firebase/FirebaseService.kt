@@ -936,6 +936,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
             if (storyData != null) {
                 val title = storyData["title"].toString() as String?
                 val author = storyData["author"].toString() as String?
+                val entry = storyData["entry"].toString() as String?
                 val level = storyData["level"].toString() as String?
                 val category = storyData["category"].toString() as String?
                 val image = storyData["image"].toString() as String?
@@ -963,6 +964,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                     title,
                     chapters,
                     author,
+                    entry,
                     storyUid,
                     level,
                     category,
