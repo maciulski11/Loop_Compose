@@ -342,14 +342,13 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.StoryInfoScreen}/{storyUid}/{storyName}",
+                "${NavigationSupport.StoryInfoScreen}/{storyUid}",
                 arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
             ) { backStackEntry ->
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
-                val storyName = backStackEntry.arguments?.getString("storyName") ?: ""
 
                 LaunchedEffect(storyUid) {
-                    currentSection.value = "Loop - $storyName"
+                    currentSection.value = "Loop"
                 }
 
                 val viewModel = remember {

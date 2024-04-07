@@ -129,13 +129,29 @@ fun StoryItem(story: Story, favorite: Boolean, onClick: () -> Unit) {
             }
         }
 
-        Text(
-            text = story.title.toString(),
-            color = Black2,
-            fontWeight = FontWeight.Bold,
-            minLines = 2,
-            maxLines = 2,
-            modifier = Modifier.padding(bottom = 2.dp)
-        )
+        val fieldWidth = 32
+
+        (story.title?.let { title ->
+            if (title.length > fieldWidth) {
+                val lastSpaceIndex = title.lastIndexOf(" ", fieldWidth - 3)
+                if (lastSpaceIndex != -1) {
+                    "${title.substring(0, lastSpaceIndex)}..."
+                } else {
+                    "${title.substring(0, fieldWidth - 3)}..."
+                }
+            } else {
+                title
+            }
+        }).let { truncatedTitle ->
+            Text(
+                text = truncatedTitle ?: "",
+                color = Black2,
+                fontWeight = FontWeight.Bold,
+                minLines = 2,
+                maxLines = 2,
+                modifier = Modifier.padding(bottom = 2.dp)
+            )
+        }
+
     }
 }

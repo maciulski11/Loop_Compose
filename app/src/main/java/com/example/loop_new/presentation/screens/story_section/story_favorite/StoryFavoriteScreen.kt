@@ -62,7 +62,7 @@ fun StoryFavoriteScreen(navController: NavController, viewModel: StoryFavoriteVi
                     favorite = it
                 ) {
                     navController
-                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/${story.title}")
+                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
                 }
             }
         }

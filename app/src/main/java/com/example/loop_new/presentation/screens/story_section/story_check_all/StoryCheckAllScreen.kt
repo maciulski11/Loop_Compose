@@ -60,7 +60,7 @@ fun StoryCheckAllScreen(
                     story,
                     favorite = story.favoriteStories?.any { it.favorite == true } ?: false
                 ) {
-                    navController.navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/${story.title}")
+                    navController.navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
                 }
             }
         }
