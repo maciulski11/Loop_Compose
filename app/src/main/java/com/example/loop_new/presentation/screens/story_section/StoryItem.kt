@@ -143,6 +143,7 @@ fun StoryItem(story: Story, favorite: Boolean, onClick: () -> Unit) {
                 title
             }
         }).let { truncatedTitle ->
+
             Text(
                 text = truncatedTitle ?: "",
                 color = Black2,
@@ -152,6 +153,5 @@ fun StoryItem(story: Story, favorite: Boolean, onClick: () -> Unit) {
                 modifier = Modifier.padding(bottom = 2.dp)
             )
         }
-
     }
 }

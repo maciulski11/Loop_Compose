@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,12 +20,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomDrawer
 import androidx.compose.material.BottomDrawerState
 import androidx.compose.material.BottomDrawerValue
@@ -73,6 +76,8 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Gray2
+import com.example.loop_new.ui.theme.Green
+import com.example.loop_new.ui.theme.Red
 import com.example.loop_new.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -92,6 +97,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
 
     val scope = rememberCoroutineScope()
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+    val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
     var snackbarVisible by remember { mutableStateOf(false) }
 
     // Support for custom return behavior
@@ -216,20 +222,24 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                 )
 
                 Image(
-                    painter = painterResource(id = R.drawable.baseline_arrow_right_44),
+                    painter = painterResource(
+                        id = if (currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1) {
+                            R.drawable.baseline_arrow_right_44
+                        } else {
+                            R.drawable.baseline_close_red_54
+                        }
+                    ),
                     contentDescription = "right",
                     modifier = Modifier
-                        .alpha(
-                            if (currentPage < (viewModel.storyDetails?.text?.size
-                                    ?: 0) - 1
-                            ) 1f else 0.5f
-                        )
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {
                             if (currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1) {
                                 currentPage++
+                            } else {
+                                // klikam male sprawdzenie
+                                showDialogDeleteFlashcard.value = true
                             }
                         }
                 )
@@ -266,6 +276,16 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
             delay(1400) // Adjust the duration as needed
             snackbarVisible = false
         }
+    }
+
+    if (showDialogDeleteFlashcard.value) {
+        ShowCustomAlertDialog(
+            onCheck = {
+
+            },
+            onDismiss = {
+                showDialogDeleteFlashcard.value = false
+            })
     }
 
     LaunchedEffect(scrollState, currentPage) {
@@ -484,6 +504,67 @@ fun CustomSnackbar(message: String) {
         },
         action = {
             // Możesz dodać niestandardowe działanie, jeśli jest potrzebne
+        }
+    )
+}
+
+@Composable
+fun ShowCustomAlertDialog(
+    onCheck: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        modifier = Modifier
+            .height(170.dp)
+            .width(310.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .border(3.dp, com.example.loop_new.ui.theme.Black, RoundedCornerShape(20.dp))
+            .background(White),
+        onDismissRequest = { /* Touching the screen turns off it */ },
+        title = {
+            Text(
+                text = "Check it!\nIf you can read with understanding.",
+                fontSize = 22.sp,
+                modifier = Modifier
+                    .padding(start = 12.dp, end = 12.dp, bottom = 20.dp)
+                    .wrapContentWidth(Alignment.CenterHorizontally) // Wyśrodkowanie w poziomie
+            )
+        },
+        buttons = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 14.dp),
+                horizontalArrangement = Arrangement.Absolute.Center
+            ) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Red),
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = "Give up.",
+                        color = Black
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(22.dp))
+
+                Button(
+                    // Button background
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Green),
+                    onClick = {
+                        onCheck()
+                        onDismiss()
+                    }
+                ) {
+                    Text(
+                        text = "Let's check!",
+                        color = Black
+                    )
+                }
+            }
         }
     )
 }
