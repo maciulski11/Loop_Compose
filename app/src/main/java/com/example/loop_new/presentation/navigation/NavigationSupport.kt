@@ -49,6 +49,7 @@ import com.example.loop_new.presentation.screens.sign_in_section.SignInScreen
 import com.example.loop_new.presentation.screens.sign_in_section.SignInViewModel
 import com.example.loop_new.presentation.screens.stats_section.StatsScreen
 import com.example.loop_new.presentation.screens.stats_section.StatsViewModel
+import com.example.loop_new.presentation.screens.story_section.check_understand.CheckUnderstandScreen
 import com.example.loop_new.presentation.screens.story_section.story.StoryScreen
 import com.example.loop_new.presentation.screens.story_section.story.StoryViewModel
 import com.example.loop_new.presentation.screens.story_section.story_check_all.StoryCheckAllScreen
@@ -70,6 +71,7 @@ object NavigationSupport {
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
     const val ReadScreen = "read_screen"
+    const val CheckUnderstandScreen = "check_understand_screen"
     const val StoryScreen = "story_screen"
     const val StoryCheckAllScreen = "story_check_all_screen"
     const val StoryInfoScreen = "story_info_screen"
@@ -381,6 +383,11 @@ fun NavigationScreens(
                 }
 
                 ReadScreen(navController, viewModel)
+            }
+
+            composable(NavigationSupport.CheckUnderstandScreen) {
+
+                CheckUnderstandScreen(navController)
             }
         }
     }
