@@ -1,6 +1,8 @@
 package com.example.loop_new.presentation.screens.story_section.check_understand
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,9 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import kotlinx.coroutines.launch
 import java.util.Locale
 
-data class Question(val text: String, val answers: List<String>, val correctAnswerIndex: Int)
+data class Question(
+    val text: String,
+    val answers: List<String>,
+    val correctAnswerIndex: Int
+)
 
 private val questions = listOf(
     Question(
@@ -57,29 +64,21 @@ private val questions = listOf(
     )
 )
 
-
 @Composable
 fun CheckUnderstandScreen(navController: NavController) {
     var submitClicked by remember { mutableStateOf(false) }
-    var exitClicked by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     val selectedAnswers =
-        remember { mutableStateListOf<Int?>(*Array<Int?>(questions.size) { null }) }
-    val colors = remember { mutableStateListOf<Color?>(*Array<Color?>(questions.size) { null }) }
-    val scrollState = rememberScrollState()
+        remember { mutableStateListOf(*Array<Int?>(questions.size) { null }) }
+    val colors = remember { mutableStateListOf(*Array<Color?>(questions.size) { null }) }
 
-    // Obliczanie liczby poprawnych odpowiedzi
-    val correctCount = remember { mutableStateOf(0) }
+    //Calculating the number of correct answers
+    val correctCount = remember { mutableIntStateOf(0) }
     val totalQuestions = questions.size
-    val correctAnswers = correctCount.value
+    val correctAnswers = correctCount.intValue
     val percentage = ((correctAnswers.toDouble() / totalQuestions.toDouble()) * 100).toInt()
-
-    // Pokaż animację "BRAWO" po osiągnięciu minimum 85% poprawnych odpowiedzi
-    var showCongratulations by remember { mutableStateOf(false) }
-    val minimumPercentage = 85
-    if (percentage >= minimumPercentage) {
-        showCongratulations = true
-    }
 
     Column(
         modifier = Modifier
@@ -103,7 +102,6 @@ fun CheckUnderstandScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Wyświetl komunikat, jeśli nie wszystkie pytania zostały zaznaczone
         AnimatedVisibility(!allAnswersSelected(selectedAnswers) && !submitClicked) {
             Text(
                 text = "Zaznacz wszystkie odpowiedzi przed zatwierdzeniem.",
@@ -112,15 +110,60 @@ fun CheckUnderstandScreen(navController: NavController) {
             )
         }
 
+        if (!submitClicked) {
+            Button(
+                onClick = {
+                    if (allAnswersSelected(selectedAnswers)) {
 
-        // Wyświetlanie wyniku po zakończeniu quizu
-        AnimatedVisibility(visible = submitClicked) {
+                        submitClicked = true
+                        selectedAnswers.forEachIndexed { index, answerIndex ->
+                            val question = questions[index]
+
+                            colors[index] = if (answerIndex == question.correctAnswerIndex) {
+                                Color.Green
+                            } else {
+                                Color.Red
+                            }
+                        }
+
+                        correctCount.value = 0
+                        for (index in questions.indices) {
+                            val question = questions[index]
+                            val answerIndex = selectedAnswers[index]
+                            if (answerIndex != null && answerIndex == question.correctAnswerIndex) {
+                                correctCount.value++
+                            }
+                        }
+                    }
+                }
+            ) {
+                Text(text = "Submit")
+            }
+        }
+
+        //View your score after completing the quiz
+        AnimatedVisibility(
+            visible = submitClicked,
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it })
+        ) {
+
+            //Scroll to the end when the result appears
+            SideEffect {
+                if (submitClicked) {
+                    scope.launch {
+                        scrollState.animateScrollTo(scrollState.maxValue)
+                    }
+                }
+            }
 
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
 
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 2.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 2.dp)
+                ) {
                     Text(
                         text = "Uzyskałeś ${correctCount.value}/${questions.size} poprawnych odpowiedzi.",
                         style = MaterialTheme.typography.body1,
@@ -140,79 +183,36 @@ fun CheckUnderstandScreen(navController: NavController) {
                     )
                 }
 
-                // Pokaż przycisk "exit" po kliknięciu przycisku "Submit"
-                AnimatedVisibility(visible = !exitClicked) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Surface(
-                            color = Color.Black, // Ustawienie koloru tła na czarny
-                            shape = RoundedCornerShape(4.dp), // Opcjonalnie, ustawienie zaokrąglonych rogów
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 10.dp, vertical = 10.dp)
-                                .align(Alignment.Center)
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Surface(
+                        color = Color.Black,
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 10.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        Button(
+                            onClick = {
+                                navController.navigate(NavigationSupport.StoryScreen)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
                         ) {
-                            Button(
-                                onClick = {
-                                    exitClicked = true
-                                    navController.navigate(NavigationSupport.StoryScreen)
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent) // Ustawienie przezroczystego tła przycisku
-                            ) {
-                                Text(
-                                    text = "Exit".toUpperCase(Locale.ROOT),
-                                    fontSize = 16.sp,
-                                    color = Color.White
-                                )
-                            }
+                            Text(
+                                text = "Exit".toUpperCase(Locale.ROOT),
+                                fontSize = 16.sp,
+                                color = Color.White
+                            )
                         }
                     }
                 }
             }
         }
-
-        // Pokaż przycisk "Submit", jeśli quiz nie został jeszcze zatwierdzony
-        if (!submitClicked) {
-
-            Button(
-                onClick = {
-                    if (allAnswersSelected(selectedAnswers)) {
-
-                        submitClicked = true
-                        selectedAnswers.forEachIndexed { index, answerIndex ->
-                            val question = questions[index]
-                            colors[index] = if (answerIndex == question.correctAnswerIndex) {
-                                Color.Green // Zmień na zielony dla poprawnej odpowiedzi
-                            } else {
-                                Color.Red // Zmień na czerwony dla niepoprawnej odpowiedzi
-                            }
-                        }
-
-                        correctCount.value = 0
-                        for (index in questions.indices) {
-                            val question = questions[index]
-                            val answerIndex = selectedAnswers[index]
-                            if (answerIndex != null && answerIndex == question.correctAnswerIndex) {
-                                correctCount.value++
-                            }
-                        }
-                    }
-                }
-            ) {
-                Text(text = "Submit")
-            }
-        }
-
-        // Wyjście z quizu po kliknięciu przycisku "Exit"
-        if (exitClicked) {
-            // Tutaj można umieścić kod odpowiedzialny za wyjście z quizu
-            Text(text = "Exiting quiz...")
-        }
-
     }
 }
 
-// Funkcja sprawdzająca, czy wszystkie odpowiedzi zostały zaznaczone
+//Function to check if all answers have been selected
 private fun allAnswersSelected(selectedAnswers: List<Int?>): Boolean {
     return selectedAnswers.none { it == null }
 }
