@@ -172,9 +172,6 @@ fun PrivateScreen(
         }
     }
 
-    val itemsInRow = 2 // Ilość elementów w jednym wierszu
-
-
     ConstraintLayout(
         constraints, modifier = Modifier
             .fillMaxSize()
@@ -222,7 +219,6 @@ fun PrivateScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("boxList"),
-//            columns = GridCells.Fixed(itemsInRow)
         ) {
 
             itemsIndexed(list) { index, box ->

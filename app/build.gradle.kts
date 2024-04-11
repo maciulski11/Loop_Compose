@@ -73,7 +73,6 @@ dependencies {
     // Mockito
     testImplementation("org.mockito:mockito-core:3.12.4")
     androidTestImplementation("org.mockito:mockito-android:3.12.4")
-
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
