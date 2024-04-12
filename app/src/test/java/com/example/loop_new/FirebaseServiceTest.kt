@@ -44,6 +44,8 @@ class FirebaseServiceTest {
         // Weryfikacja, czy odpowiednie metody Firestore zostały wywołane
         verify(documentReference).set(Mockito.any())
     }
+}
+
 
 
 //    @Test
@@ -83,7 +85,7 @@ class FirebaseServiceTest {
 //        // Sprawdzenie wyniku
 //        assert(result == listOf(sampleData))
 //    }
-}
+//}
 
 
 
