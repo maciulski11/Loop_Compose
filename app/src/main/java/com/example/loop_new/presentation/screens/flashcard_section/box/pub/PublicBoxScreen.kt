@@ -66,7 +66,7 @@ fun PublicBoxScreen(navController: NavController, viewModel: PublicBoxViewModel)
     PublicScreen(
         navController = navController,
         list = viewModel.publicBoxList,
-        viewModel
+        viewModel = viewModel
     )
 }
 
@@ -76,7 +76,6 @@ fun PublicScreen(
     list: List<Box>,
     viewModel: PublicBoxViewModel,
 ) {
-
     BackHandler { navController.navigate(NavigationSupport.PrivateBoxScreen) }
 
     val showDialogDeleteBox = remember { mutableStateOf(false) }
@@ -114,9 +113,9 @@ fun PublicScreen(
     ) {
         Image(
             painter = painterResource(id = R.drawable.light_blue_background),
-            contentDescription = "background", // zastąp opisem, jeśli to konieczne
+            contentDescription = "background",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop // lub inny ContentScale według potrzeb
+            contentScale = ContentScale.Crop
         )
 
         LazyColumn(
@@ -124,7 +123,6 @@ fun PublicScreen(
                 .fillMaxWidth()
                 .layoutId("boxList")
         ) {
-            // Dodaj nagłówek z obrazem
             item {
                 Row(
                     modifier = Modifier
@@ -140,7 +138,6 @@ fun PublicScreen(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // Dodaj EditText do wyszukiwania
                     OutlinedTextField(
                         value = searchText,
                         onValueChange = { searchText = it },
@@ -162,14 +159,21 @@ fun PublicScreen(
                 }
             }
 
-            itemsIndexed(list) { index, box ->
-                BoxItem(box, {
-                    navController
-                        .navigate("${NavigationSupport.FlashcardScreen}/${box.uid}/${box.name}")
-                })
+            // Filters the list based on the values entered into the search field
+            val filteredList = if (searchText.isNotEmpty()) {
+                list.filter { it.name!!.contains(searchText, ignoreCase = true) }
+            } else {
+                list
+            }
+
+            itemsIndexed(filteredList) { index, box ->
+                BoxItem(box,
+                    onClick = {
+                        navController.navigate("${NavigationSupport.FlashcardScreen}/${box.uid}/${box.name}")
+                    })
                 { showDialogDeleteBox.value = false }
 
-                // Sprawdzenie, czy osiągnięto koniec listy i załadowanie więcej boxów
+                // Checking if the end of the list has been reached and loading more boxes
                 if (index == list.size - 1 && viewModel.canLoadMore) {
                     LaunchedEffect(Unit) {
                         viewModel.loadMoreBoxes()
@@ -178,6 +182,7 @@ fun PublicScreen(
             }
         }
 
+        // Repeat button
         if (!viewModel.isListEmpty) {
             AnimatedLearningButton(
                 onClick = {

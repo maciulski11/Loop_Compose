@@ -12,13 +12,13 @@ import kotlinx.coroutines.launch
 class PublicBoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
 
     val publicBoxList = mutableStateListOf<Box>()
-    var hasMoreData = mutableStateOf(false)
+    private var hasMoreData = mutableStateOf(false)
 
     private val _isListEmpty = mutableStateOf(true)
     val isListEmpty: Boolean
         get() = _isListEmpty.value
 
-    // Właściwość określająca, czy można załadować więcej boxów
+    // Property specifying whether more boxes can be loaded
     val canLoadMore: Boolean
         get() = lastVisibleDocument != null
 
@@ -47,7 +47,7 @@ class PublicBoxViewModel(private val firebaseService: FirebaseService) : ViewMod
                         publicBoxList.addAll(loadedBoxes)
                         lastVisibleDocument = lastDoc
                     }
-                    // Aktualizacja stanu 'hasMoreData'
+                    // Update the status of 'hasMoreData'
                     hasMoreData.value = loadedBoxes.isEmpty()
                 }
             }
