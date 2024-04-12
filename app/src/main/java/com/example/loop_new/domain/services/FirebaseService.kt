@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirebaseService {
 
-    //Flashcards
+    // Flashcards
     fun createNewGoogleUser()
 
     fun getSignedInUser(): User?
@@ -54,7 +54,7 @@ interface FirebaseService {
 
     suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean
 
-    //Story
+    // Story
     fun fetchListOfStory(): Flow<Category>
 
     suspend fun fetchAllStoriesFromOneCategory(category: String): List<Story>
@@ -69,7 +69,7 @@ interface FirebaseService {
 
     fun addStoryUidToViewList(uidStory: String)
 
-    //Stats
+    // Stats
     suspend fun addLessonStatsToFirestore(flashcardUid: String, status: String)
 
     suspend fun fetchDataOfStats(): Pair<Statistics, StatsSummary>

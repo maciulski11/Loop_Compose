@@ -21,8 +21,34 @@
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
-                  <entry key="Duration" value="90" />
+                  <entry key="Duration" value="127" />
                   <entry key="Nexus_6P_API_34" value="120" />
+                  <entry key="Tests" value="396" />
+                  <entry key="samsung SM-A715F" value="156" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1074131031">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-A715F" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1436851372">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
                   <entry key="Tests" value="360" />
                   <entry key="samsung SM-A715F" value="120" />
                 </map>

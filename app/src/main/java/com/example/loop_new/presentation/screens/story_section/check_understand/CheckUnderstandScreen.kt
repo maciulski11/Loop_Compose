@@ -3,6 +3,7 @@ package com.example.loop_new.presentation.screens.story_section.check_understand
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -18,9 +20,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.loop_new.R
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -28,7 +32,7 @@ import java.util.Locale
 data class Question(
     val text: String,
     val answers: List<String>,
-    val correctAnswerIndex: Int
+    val correctAnswerIndex: Int,
 )
 
 private val questions = listOf(
@@ -111,10 +115,9 @@ fun CheckUnderstandScreen(navController: NavController) {
         }
 
         if (!submitClicked) {
-            Button(
+            IconButton(
                 onClick = {
                     if (allAnswersSelected(selectedAnswers)) {
-
                         submitClicked = true
                         selectedAnswers.forEachIndexed { index, answerIndex ->
                             val question = questions[index]
@@ -126,18 +129,26 @@ fun CheckUnderstandScreen(navController: NavController) {
                             }
                         }
 
-                        correctCount.value = 0
+                        correctCount.intValue = 0
                         for (index in questions.indices) {
                             val question = questions[index]
                             val answerIndex = selectedAnswers[index]
                             if (answerIndex != null && answerIndex == question.correctAnswerIndex) {
-                                correctCount.value++
+                                correctCount.intValue++
                             }
                         }
                     }
-                }
+                },
             ) {
-                Text(text = "Submit")
+                Image(
+                    painter = painterResource(id = R.drawable.check3d), // Zastąp id zasobu obrazka odpowiednim zasobem
+                    contentDescription = null, // Zastąp opisem, jeśli to konieczne
+                    modifier = Modifier
+                        .size(70.dp)
+                        .padding(
+                            top = 4.dp
+                        )
+                )
             }
         }
 

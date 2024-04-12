@@ -2,26 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="LazyListWithLikes">
-        <State />
-      </entry>
-      <entry key="LoopTest">
-        <State>
-          <targetSelectedWithDropDown>
-            <Target>
-              <type value="QUICK_BOOT_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="$USER_HOME$/.android/avd/Pixel_6_Pro_API_32.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-11T18:25:21.669928Z" />
-        </State>
-      </entry>
-      <entry key="RotatingCheckButton">
+      <entry key="TestScreen">
         <State />
       </entry>
       <entry key="app">
@@ -29,19 +10,25 @@
       </entry>
       <entry key="clik()">
         <State>
-          <targetSelectedWithDropDown>
+          <runningDeviceTargetSelectedWithDropDown>
             <Target>
-              <type value="QUICK_BOOT_TARGET" />
+              <type value="RUNNING_DEVICE_TARGET" />
               <deviceKey>
                 <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="$USER_HOME$/.android/avd/Nexus_6P_API_34.avd" />
+                  <type value="SERIAL_NUMBER" />
+                  <value value="R58N14BDW4F" />
                 </Key>
               </deviceKey>
             </Target>
-          </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-04-11T18:04:48.524777Z" />
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-04-11T18:33:17.515709Z" />
         </State>
+      </entry>
+      <entry key="testButtonClick()">
+        <State />
+      </entry>
+      <entry key="useAppContext()">
+        <State />
       </entry>
     </value>
   </component>
