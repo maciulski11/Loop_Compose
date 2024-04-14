@@ -3,13 +3,10 @@ package com.example.loop_new.presentation.screens.story_section.story_favorite
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.animations.ProgressLoading
 import com.example.loop_new.presentation.screens.story_section.StoryItem
 import com.example.loop_new.ui.theme.Gray
 
@@ -35,34 +33,43 @@ fun StoryFavoriteScreenPreview() {
 fun StoryFavoriteScreen(navController: NavController, viewModel: StoryFavoriteViewModel) {
 
     val stories by remember { viewModel.stories }.collectAsState(emptyList())
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    if (stories.isEmpty()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center)
-        ) {
-            Text(
-                text = "favorites list is empty...",
-                fontSize = 22.sp,
-                color = Gray
-            )
-        }
-    }
+    if (isLoading) {
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = Modifier
-            .fillMaxSize(), contentPadding = PaddingValues(horizontal = 8.dp)
-    ) {
-        items(stories) { story ->
-            story.favoriteStories?.any { it.favorite == true }?.let {
-                StoryItem(
-                    story,
-                    favorite = it
-                ) {
-                    navController
-                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
+        ProgressLoading()
+
+    } else {
+
+        if (stories.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+            ) {
+                Text(
+                    text = "favorites list is empty...",
+                    fontSize = 22.sp,
+                    color = Gray
+                )
+            }
+        } else {
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier
+                    .fillMaxSize(), contentPadding = PaddingValues(horizontal = 8.dp)
+            ) {
+                items(stories) { story ->
+                    story.favoriteStories?.any { it.favorite == true }?.let {
+                        StoryItem(
+                            story,
+                            favorite = it
+                        ) {
+                            navController
+                                .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
+                        }
+                    }
                 }
             }
         }

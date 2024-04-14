@@ -76,6 +76,7 @@ import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.animations.ProgressLoading
 import com.example.loop_new.presentation.screens.story_section.check_understand.CheckUnderstandScreen
 import com.example.loop_new.ui.theme.Gray2
 import com.example.loop_new.ui.theme.Green
@@ -118,7 +119,11 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
     var currentPage by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
 
-    if (viewModel.storyDetails != null) {
+    if (viewModel.storyDetails == null) {
+
+        ProgressLoading()
+
+    } else {
 
         Column(
             modifier = Modifier
@@ -246,19 +251,6 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                         }
                 )
             }
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(66.dp),
-                strokeWidth = 7.dp,
-            )
         }
     }
 

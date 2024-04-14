@@ -70,10 +70,12 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
                             }
                     ) {
                         Text(
-                            modifier = Modifier.padding(horizontal = 2.dp).clickable {
-                                navController
-                                    .navigate("${NavigationSupport.StoryCheckAllScreen}/${category.name}")
-                            },
+                            modifier = Modifier
+                                .padding(horizontal = 2.dp)
+                                .clickable {
+                                    navController
+                                        .navigate("${NavigationSupport.StoryCheckAllScreen}/${category.name}")
+                                },
                             text = "Check All >",
                             fontSize = 12.sp,
                             color = Gray

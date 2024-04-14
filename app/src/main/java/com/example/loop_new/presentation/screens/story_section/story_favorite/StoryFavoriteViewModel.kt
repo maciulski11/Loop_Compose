@@ -13,6 +13,9 @@ class StoryFavoriteViewModel(private val firebaseService: FirebaseService) : Vie
     private val _stories = MutableStateFlow<List<Story>>(emptyList())
     val stories: StateFlow<List<Story>> = _stories
 
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     init {
         viewModelScope.launch {
             fetchFavoriteStories()
@@ -20,7 +23,19 @@ class StoryFavoriteViewModel(private val firebaseService: FirebaseService) : Vie
     }
 
     private suspend fun fetchFavoriteStories() {
-        val favoriteStories = firebaseService.fetchFavoriteStories()
-        _stories.value = favoriteStories
+        // Set the loading state to true before downloading the data
+        _isLoading.value = true
+
+        try {
+            val favoriteStories = firebaseService.fetchFavoriteStories()
+            _stories.value = favoriteStories
+
+        } catch (e: Exception) {
+            // Obsługa błędów, np. wyświetlenie komunikatu użytkownikowi
+
+        } finally {
+            // Data is finished downloading, set the loading status to false
+            _isLoading.value = false
+        }
     }
 }

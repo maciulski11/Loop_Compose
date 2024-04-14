@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,10 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +37,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.loop_new.R
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.animations.ProgressLoading
 import com.example.loop_new.ui.theme.BlueOfBackgroundApp
 import com.example.loop_new.ui.theme.White
 import com.example.loop_new.ui.theme.blueApp
@@ -56,7 +54,11 @@ fun StoryInfoScreenPreview() {
 @Composable
 fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel) {
 
-    if (viewModel.storyDetails != null) {
+    if (viewModel.storyDetails == null) {
+
+        ProgressLoading()
+
+    } else {
 
         Column(
             modifier = Modifier
@@ -226,20 +228,6 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                     text = viewModel.storyDetails?.entry.toString()
                 )
             }
-        }
-    } else {
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(66.dp),
-                strokeWidth = 7.dp,
-            )
         }
     }
 }
