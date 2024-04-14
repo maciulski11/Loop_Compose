@@ -102,4 +102,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
 
+    // Biblioteka Lottie do obsługi animacji JSON
+    implementation("com.airbnb.android:lottie-compose:6.0.0")
+
 }
