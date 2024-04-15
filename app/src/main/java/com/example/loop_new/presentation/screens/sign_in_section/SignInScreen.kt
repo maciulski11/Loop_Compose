@@ -31,24 +31,26 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.google.SignInState
+import com.example.loop_new.presentation.navigation.NavigationSupport
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SignIn_Preview() {
 
-    SignInScreen(state = SignInState(false, null)) { }
+//    SignInScreen(state = SignInState(false, null)) { }
 }
 
 @Composable
 fun SignInScreen(
+    navController: NavController,
     state: SignInState,
     onSignInClick: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
 
     val context = LocalContext.current
     LaunchedEffect(key1 = state.signInError) {
@@ -62,8 +64,6 @@ fun SignInScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-
-
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(id = R.drawable.loop_background_new),
@@ -80,13 +80,14 @@ fun SignInScreen(
         )
     }
 
-   MaterialTheme {
+    MaterialTheme {
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 28.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -139,7 +140,9 @@ fun SignInScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = { /* Obsługa rejestracji */ },
+                onClick = {
+                          navController.navigate(NavigationSupport.SignUpScreen)
+                          },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(Color.Transparent)
             ) {

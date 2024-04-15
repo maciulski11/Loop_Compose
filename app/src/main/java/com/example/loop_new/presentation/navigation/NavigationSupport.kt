@@ -29,6 +29,7 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.GoogleAuthService
 import com.example.loop_new.domain.services.Service
 import com.example.loop_new.domain.services.TranslateService
+import com.example.loop_new.presentation.SignUpScreen
 import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub.PublicFlashcardScreen
@@ -63,6 +64,7 @@ import kotlinx.coroutines.launch
 
 object NavigationSupport {
     const val SignInScreen = "sign_in_screen"
+    const val SignUpScreen = "sign_up_screen"
     const val BoxScreen = "box_screen"
     const val PrivateBoxScreen = "private_box_screen"
     const val FlashcardScreen = "flashcard_screen"
@@ -175,6 +177,7 @@ fun NavigationScreens(
                 }
 
                 SignInScreen(
+                    navController = navController,
                     state = state,
                     onSignInClick = {
                         viewModel.viewModelScope.launch {
@@ -187,6 +190,11 @@ fun NavigationScreens(
                         }
                     }
                 )
+            }
+
+            composable(NavigationSupport.SignUpScreen) {
+
+                SignUpScreen()
             }
 
             composable(NavigationSupport.BoxScreen) {
@@ -261,7 +269,6 @@ fun NavigationScreens(
 
                 PrivateFlashcardScreen(navController, boxUid, viewModel)
             }
-
 
             composable(
                 "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
