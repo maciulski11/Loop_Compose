@@ -239,7 +239,8 @@ fun PrivateScreen(
                 .size(60.dp)
                 .clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() }) {
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
                     showDialogCreateBox.value = true
                 })
 

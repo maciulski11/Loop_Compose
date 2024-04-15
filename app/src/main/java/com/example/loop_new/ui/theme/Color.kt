@@ -22,7 +22,7 @@ val Green = Color(0xFF299C2D)
 val Red = Color(0xFFBD271C)
 val Gray = Color(0xFF888888)
 val Gray2 = Color(0xFFA5A5A5)
-val Gray3 = Color(0xFFD5D0D0)
+val Blueee = Color(0xFF0963AC)
 val Test = Color(0xFF9f9c9c)
 
 val PastelWhite = Color(0xFFF0EFEF)

@@ -1,7 +1,10 @@
 package com.example.loop_new.presentation.screens.sign_in_section
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,11 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +40,8 @@ import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.google.SignInState
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.ui.theme.Blueee
+import com.example.loop_new.ui.theme.White
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -117,36 +124,50 @@ fun SignInScreen(
                 onClick = { /* Obsługa logowania */ },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 22.dp)
-                    .padding(end = 22.dp),
+                    .padding(start = 18.dp)
+                    .padding(end = 18.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Blueee),
+                shape = RoundedCornerShape(20.dp)
             ) {
-                Text("Login")
+                Text(
+                    text = "Sign in",
+                    color = White
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = onSignInClick,  /* Obsługa logowania przez konto Google */
+                onClick = onSignInClick,  /* Support for login by Google account */
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 22.dp)
-                    .padding(end = 22.dp),
-
-                colors = ButtonDefaults.buttonColors(Color(0xFF4285F4))
+                    .padding(start = 18.dp)
+                    .padding(end = 18.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFF4285F4)),
+                shape = RoundedCornerShape(20.dp)
             ) {
                 Text("Login with Google", color = Color.White)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                          navController.navigate(NavigationSupport.SignUpScreen)
-                          },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(Color.Transparent)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        navController.navigate(NavigationSupport.SignUpScreen)
+                    }
             ) {
-                Text("Don't have an account?", color = Color.Gray, fontSize = 16.sp)
+
+                Text(
+                    "Don't have an account?", color = Color.Gray, fontSize = 16.sp,
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                )
             }
         }
     }

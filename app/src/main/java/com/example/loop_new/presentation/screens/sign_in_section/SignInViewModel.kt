@@ -25,11 +25,12 @@ class SignInViewModel : ViewModel() {
      * @param result The result of a sign-in attempt.
      */
     fun onSignInResult(result: SignInResult) {
+
         // Updating the state with the result of the sign-in attempt
         _state.update {
             it.copy(
                 isSignInSuccessful = result.data != null,
-                signInError = result.errorMessage
+                signInError = result.errorMessage,
             )
         }
     }
