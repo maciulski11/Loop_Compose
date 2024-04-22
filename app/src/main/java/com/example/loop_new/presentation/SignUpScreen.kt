@@ -16,10 +16,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,7 +73,7 @@ fun SignUpScreen() {
             OutlinedTextField(
                 value = fullName,
                 onValueChange = { fullName = it },
-                label = { Text("Full Name") },
+                label = { Text("full name") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 60.dp)
@@ -90,7 +86,7 @@ fun SignUpScreen() {
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text("e-mail") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp)
@@ -102,7 +98,7 @@ fun SignUpScreen() {
             OutlinedTextField(
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
-                label = { Text("Phone Number") },
+                label = { Text("phone number") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp)
@@ -115,7 +111,7 @@ fun SignUpScreen() {
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text("password") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp)
@@ -139,7 +135,7 @@ fun SignUpScreen() {
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirm Password") },
+                label = { Text("confirm password") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp)
@@ -161,7 +157,9 @@ fun SignUpScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { /* Obsługa logowania */ },
+                onClick = {
+
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 18.dp)

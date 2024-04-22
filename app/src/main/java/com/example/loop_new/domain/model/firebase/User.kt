@@ -8,7 +8,6 @@ data class User(
     val username: String? = null,
     val profilePictureUrl: String? = null,
     val favoriteStories: List<FavoriteStory>? = null,
-    val stats: List<Statistics>? = null
 )
 
 data class FavoriteStory(
