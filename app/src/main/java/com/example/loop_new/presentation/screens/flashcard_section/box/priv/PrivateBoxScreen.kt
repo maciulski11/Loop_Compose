@@ -20,9 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -30,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
@@ -69,6 +65,7 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.flashcard_section.box.AnimatedLearningButton
 import com.example.loop_new.presentation.screens.flashcard_section.box.BoxItem
+import com.example.loop_new.presentation.viewModel.SignUpViewModel
 import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Green
@@ -117,14 +114,18 @@ fun privateCreateSampleData(): List<Box> {
 fun PrivateBoxScreen(
     navController: NavController,
     viewModel: PrivateBoxViewModel,
+    viewModel1: SignUpViewModel
 ) {
 
     PrivateScreen(
         navController = navController,
         list = viewModel.privateBoxList,
         viewModel,
-    ) { nameInput, describeInput, groupColor ->
+     { nameInput, describeInput, groupColor ->
         viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
+    }
+    ) { nameInput, describeInput ->
+        viewModel1.insert(Box(nameInput, describeInput))
     }
 }
 
@@ -134,6 +135,7 @@ fun PrivateScreen(
     list: List<Box>,
     viewModel: PrivateBoxViewModel,
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
+    onRoom: (nameInput: String, describeInput: String) -> Unit
 ) {
     BackHandler { /* gesture return is off */ }
 
@@ -248,7 +250,11 @@ fun PrivateScreen(
             ShowCreateBoxAlertDialog(
                 { nameInput, describeInput, groupColor ->
                     onAddBox(nameInput, describeInput, groupColor)
-                }, {
+                },
+                { nameInput, describeInput ->
+                    onRoom(nameInput, describeInput)
+                },
+                {
                     showDialogCreateBox.value = false
                 },
                 showDialogCreateBox.value
@@ -359,9 +365,11 @@ fun ShowDeleteBoxAlertDialog(
 @Composable
 fun ShowCreateBoxAlertDialog(
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
+    onRoom: (nameInput: String, describeInput: String) -> Unit,
     onDismiss: () -> Unit,
     showDialog: Boolean,
 ) {
+
     var nameInput by remember { mutableStateOf("") }
     var describeInput by remember { mutableStateOf("") }
     var backgroundColor by remember { mutableStateOf(PastelWhite) }
@@ -511,6 +519,7 @@ fun ShowCreateBoxAlertDialog(
                             colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                             onClick = {
                                 onAddBox(nameInput, describeInput, selectedColorGroup)
+                                onRoom(nameInput, describeInput)
                                 onDismiss()
                             }) {
                             Text(
