@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.sign_in_section
+package com.example.loop_new.presentation.screens.login_section.sign_in
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

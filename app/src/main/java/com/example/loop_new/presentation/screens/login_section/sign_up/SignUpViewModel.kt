@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.viewModel
+package com.example.loop_new.presentation.screens.login_section.sign_up
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -9,14 +9,7 @@ import com.example.loop_new.room.LoopDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SignUpViewModel(application: Application): ViewModel() {
+class SignUpViewModel(): ViewModel() {
 
 
-    private val repository = LoopDatabase.getInstance(application).loopDao()
-
-    fun insert(box: Box) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.insertBox(box)
-        }
-    }
 }

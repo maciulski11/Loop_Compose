@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation
+package com.example.loop_new.presentation.screens.login_section.sign_up
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

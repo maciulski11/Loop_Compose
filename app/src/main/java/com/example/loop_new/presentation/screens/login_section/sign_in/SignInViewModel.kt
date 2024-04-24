@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.sign_in_section
+package com.example.loop_new.presentation.screens.login_section.sign_in
 
 import androidx.lifecycle.ViewModel
 import com.example.loop_new.domain.model.firebase.google.SignInResult
