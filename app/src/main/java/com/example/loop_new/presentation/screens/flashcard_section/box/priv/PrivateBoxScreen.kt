@@ -65,7 +65,7 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.flashcard_section.box.AnimatedLearningButton
 import com.example.loop_new.presentation.screens.flashcard_section.box.BoxItem
-import com.example.loop_new.presentation.viewModel.SignUpViewModel
+import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpViewModel
 import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Green
@@ -114,7 +114,6 @@ fun privateCreateSampleData(): List<Box> {
 fun PrivateBoxScreen(
     navController: NavController,
     viewModel: PrivateBoxViewModel,
-    viewModel1: SignUpViewModel
 ) {
 
     PrivateScreen(
@@ -125,7 +124,7 @@ fun PrivateBoxScreen(
         viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
     }
     ) { nameInput, describeInput ->
-        viewModel1.insert(Box(nameInput, describeInput))
+        viewModel.insert(Box(nameInput, describeInput))
     }
 }
 
@@ -268,6 +267,7 @@ fun PrivateScreen(
                     showDialog = showDialogDeleteBox.value,
                     onDelete = {
                         viewModel.deleteBox(box.uid.toString())
+                        viewModel.delete(box.uid.toString())//room
                     },
                     onDismiss = {
                         showDialogDeleteBox.value = false

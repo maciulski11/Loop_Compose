@@ -1,17 +1,37 @@
 package com.example.loop_new.presentation.screens.flashcard_section.box.priv
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.RoomDatabase
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.room.LoopDatabase
+import com.example.loop_new.room.RoomService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PrivateBoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
+class PrivateBoxViewModel(
+    private val firebaseService: FirebaseService,
+    private val roomService: RoomService,
+) : ViewModel() {
+
+    fun insert(box: Box) {
+        viewModelScope.launch {
+            roomService.insertBox(box)
+        }
+    }
+
+    fun delete(uid: String) {
+        viewModelScope.launch {
+            roomService.deleteBox(uid)
+        }
+    }
 
     val privateBoxList = mutableStateListOf<Box>()
 

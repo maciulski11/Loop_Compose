@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.activity
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 @OptIn(DelicateCoroutinesApi::class)
 class MainActivity : ComponentActivity() {
 
-    private val dependencyProvider = DependencyProvider()
+    private lateinit var dependencyProvider: DependencyProvider
 
     /**
      * Definition of the `googleAuthService` variable with lazy initialization.
@@ -48,13 +49,18 @@ class MainActivity : ComponentActivity() {
         dependencyProvider.dictionaryService
     }
 
+    private val roomService by lazy {
+        dependencyProvider.roomService
+    }
+
     private val service by lazy {
         dependencyProvider.service
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        dependencyProvider = DependencyProvider(application)
 
         lifecycleScope.launch(Dispatchers.IO) {
             firebaseService.addFlashcardsToRepeatSection()
@@ -67,7 +73,8 @@ class MainActivity : ComponentActivity() {
                     firebaseService = firebaseService,
                     translateService = translateService,
                     dictionaryService = dictionaryService,
-                    service = service
+                    service = service,
+                    roomService = roomService
                 )
             }
         }

@@ -30,7 +30,7 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.GoogleAuthService
 import com.example.loop_new.domain.services.Service
 import com.example.loop_new.domain.services.TranslateService
-import com.example.loop_new.presentation.SignUpScreen
+import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpScreen
 import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub.PublicFlashcardScreen
@@ -47,8 +47,8 @@ import com.example.loop_new.presentation.screens.story_section.read.ReadScreen
 import com.example.loop_new.presentation.screens.story_section.read.ReadViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatScreen
 import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatViewModel
-import com.example.loop_new.presentation.screens.sign_in_section.SignInScreen
-import com.example.loop_new.presentation.screens.sign_in_section.SignInViewModel
+import com.example.loop_new.presentation.screens.login_section.sign_in.SignInScreen
+import com.example.loop_new.presentation.screens.login_section.sign_in.SignInViewModel
 import com.example.loop_new.presentation.screens.stats_section.StatsScreen
 import com.example.loop_new.presentation.screens.stats_section.StatsViewModel
 import com.example.loop_new.presentation.screens.story_section.check_understand.CheckUnderstandScreen
@@ -61,7 +61,8 @@ import com.example.loop_new.presentation.screens.story_section.story_favorite.St
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoViewModel
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
-import com.example.loop_new.presentation.viewModel.SignUpViewModel
+import com.example.loop_new.presentation.viewModel.RoomService
+import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpViewModel
 import kotlinx.coroutines.launch
 
 object NavigationSupport {
@@ -91,6 +92,7 @@ fun NavigationScreens(
     service: Service,
     translateService: TranslateService,
     dictionaryService: DictionaryService,
+    roomService: RoomService
 ) {
     val mainViewModel = remember { MainViewModel(service, googleAuthService) }
 
@@ -217,15 +219,10 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    PrivateBoxViewModel(firebaseService)
+                    PrivateBoxViewModel(firebaseService, roomService)
                 }
 
-                val application = LocalContext.current.applicationContext as Application
-                val viewModel1 = remember {
-                    SignUpViewModel(application)
-                }
-
-                PrivateBoxScreen(navController, viewModel, viewModel1)
+                PrivateBoxScreen(navController, viewModel)
             }
 
             composable(
