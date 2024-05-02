@@ -47,7 +47,6 @@ fun StoryCheckAllScreen(
             style = MaterialTheme.typography.h5,
             modifier = Modifier
                 .padding(bottom = 6.dp, start = 16.dp, top = 16.dp)
-
         )
 
         LazyVerticalGrid(
