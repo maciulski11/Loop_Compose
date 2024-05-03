@@ -34,7 +34,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,7 +67,6 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.flashcard_section.box.AnimatedLearningButton
 import com.example.loop_new.presentation.screens.flashcard_section.box.BoxItem
-import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpViewModel
 import com.example.loop_new.ui.theme.Black
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Green
@@ -121,10 +122,10 @@ fun PrivateBoxScreen(
         list = viewModel.privateBoxList,
         viewModel,
      { nameInput, describeInput, groupColor ->
-        viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
+//        viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
     }
-    ) { nameInput, describeInput ->
-        viewModel.insert(Box(nameInput, describeInput))
+    ) { nameInput, describeInput, groupColor ->
+        viewModel.insert(nameInput, describeInput, groupColor)
     }
 }
 
@@ -134,13 +135,17 @@ fun PrivateScreen(
     list: List<Box>,
     viewModel: PrivateBoxViewModel,
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
-    onRoom: (nameInput: String, describeInput: String) -> Unit
+    onRoom: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit
 ) {
     BackHandler { /* gesture return is off */ }
 
+    val boxes by viewModel.boxes.collectAsState(emptyList())
+
     val showDialogCreateBox = remember { mutableStateOf(false) }
     val showDialogDeleteBox = remember { mutableStateOf(false) }
-    val selectedBox = remember { mutableStateOf<Box?>(null) }
+    val selectedBoxIndex = remember { mutableIntStateOf(-1) }
+
+
 
     val constraints = ConstraintSet {
         val boxList = createRefFor("boxList")
@@ -222,12 +227,13 @@ fun PrivateScreen(
                 .layoutId("boxList"),
         ) {
 
-            itemsIndexed(list) { index, box ->
+            itemsIndexed(boxes) { index, box ->
                 BoxItem(box, {
                     navController
                         .navigate("${NavigationSupport.PrivateFlashcardScreen}/${box.uid}/${box.name}")
                 }) {
-                    selectedBox.value = box
+
+                    selectedBoxIndex.value = index // Ustawienie indeksu wybranego pudełka
                     showDialogDeleteBox.value = true
                 }
             }
@@ -250,8 +256,8 @@ fun PrivateScreen(
                 { nameInput, describeInput, groupColor ->
                     onAddBox(nameInput, describeInput, groupColor)
                 },
-                { nameInput, describeInput ->
-                    onRoom(nameInput, describeInput)
+                { nameInput, describeInput, groupColor ->
+                    onRoom(nameInput, describeInput, groupColor)
                 },
                 {
                     showDialogCreateBox.value = false
@@ -261,13 +267,13 @@ fun PrivateScreen(
         }
 
         if (showDialogDeleteBox.value) {
-            selectedBox.value?.let { box ->
+            val selectedBox = if (selectedBoxIndex.value != -1) boxes[selectedBoxIndex.value] else null
+            selectedBox?.let { box ->
                 ShowDeleteBoxAlertDialog(
                     boxName = box.name.toString(),
                     showDialog = showDialogDeleteBox.value,
                     onDelete = {
-                        viewModel.deleteBox(box.uid.toString())
-                        viewModel.delete(box.uid.toString())//room
+                        viewModel.delete(box.uid.toString()) // Usuwanie pudełka
                     },
                     onDismiss = {
                         showDialogDeleteBox.value = false
@@ -365,7 +371,7 @@ fun ShowDeleteBoxAlertDialog(
 @Composable
 fun ShowCreateBoxAlertDialog(
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
-    onRoom: (nameInput: String, describeInput: String) -> Unit,
+    onRoom: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
     onDismiss: () -> Unit,
     showDialog: Boolean,
 ) {
@@ -519,7 +525,7 @@ fun ShowCreateBoxAlertDialog(
                             colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                             onClick = {
                                 onAddBox(nameInput, describeInput, selectedColorGroup)
-                                onRoom(nameInput, describeInput)
+                                onRoom(nameInput, describeInput, selectedColorGroup)
                                 onDismiss()
                             }) {
                             Text(

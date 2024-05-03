@@ -2,6 +2,7 @@ package com.example.loop_new.room
 
 import androidx.lifecycle.LiveData
 import com.example.loop_new.domain.model.firebase.Box
+import kotlinx.coroutines.flow.Flow
 
 interface RoomService {
 
@@ -9,5 +10,5 @@ interface RoomService {
 
     suspend fun deleteBox(uid: String)
 
-    fun fetchBoxes(): LiveData<List<Box>>
+    fun fetchBoxes(): Flow<List<Box>>
 }

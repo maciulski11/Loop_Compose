@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.RoomDatabase
@@ -14,14 +16,54 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.room.LoopDatabase
 import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class PrivateBoxViewModel(
     private val firebaseService: FirebaseService,
     private val roomService: RoomService,
 ) : ViewModel() {
 
-    fun insert(box: Box) {
+
+
+    private val _boxes = MutableStateFlow<List<Box>>(emptyList())
+    val boxes: StateFlow<List<Box>> = _boxes
+
+
+    init {
+//        checkRepeatCollectionWhetherIsEmpty()
+//        setupRepeatCollectionListener()
+//        fetchListOfPrivateBox()
+
+        fetchBoxes()
+    }
+
+    fun insert(name: String, describe: String, colorGroup: List<Color>) {
+
+        val uid = UUID.randomUUID().toString()
+
+        // Convert colors to HEX format
+        val color1 = colorToHex(colorGroup[0])
+        val color2 = colorToHex(colorGroup[1])
+        val color3 = colorToHex(colorGroup[2])
+
+        val box =
+            Box(
+                name = name,
+                describe = describe,
+                uid = uid,
+                color1 = color1,
+                color2 = color2,
+                color3 = color3,
+                permissionToEdit = true,
+                addFlashcardFromStory = true
+            )
+
         viewModelScope.launch {
             roomService.insertBox(box)
         }
@@ -30,20 +72,32 @@ class PrivateBoxViewModel(
     fun delete(uid: String) {
         viewModelScope.launch {
             roomService.deleteBox(uid)
+            fetchBoxes()
+        }
+    }
+
+    fun fetchBoxes() {
+        viewModelScope.launch {
+            roomService.fetchBoxes().collect { boxes ->
+                _boxes.value = boxes
+            }
         }
     }
 
     val privateBoxList = mutableStateListOf<Box>()
 
+
     private val _isListEmpty = mutableStateOf(true)
     val isListEmpty: Boolean
         get() = _isListEmpty.value
 
-    init {
-        checkRepeatCollectionWhetherIsEmpty()
-        setupRepeatCollectionListener()
-        fetchListOfPrivateBox()
-    }
+//    init {
+//        checkRepeatCollectionWhetherIsEmpty()
+//        setupRepeatCollectionListener()
+////        fetchListOfPrivateBox()
+//
+//        fetchBoxes()
+//    }
 
     private fun fetchListOfPrivateBox() {
         viewModelScope.launch {
@@ -107,7 +161,7 @@ class PrivateBoxViewModel(
         )
     }
 
-    fun deleteBox(boxUid: String) {
-        firebaseService.deleteBox(boxUid)
-    }
+//    fun deleteBox(boxUid: String) {
+//        firebaseService.deleteBox(boxUid)
+//    }
 }

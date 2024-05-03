@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.loop_new.domain.model.firebase.Box
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LoopDao: RoomService {
@@ -17,5 +18,5 @@ interface LoopDao: RoomService {
     override suspend fun deleteBox(uid: String)
 
     @Query("SELECT * FROM box")
-    override fun fetchBoxes(): LiveData<List<Box>>
+    override fun fetchBoxes(): Flow<List<Box>>
 }
