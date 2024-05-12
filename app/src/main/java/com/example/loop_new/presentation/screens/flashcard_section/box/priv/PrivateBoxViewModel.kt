@@ -13,8 +13,8 @@ import androidx.room.RoomDatabase
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.presentation.viewModel.RoomService
 import com.example.loop_new.room.LoopDatabase
-import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,7 +76,7 @@ class PrivateBoxViewModel(
         }
     }
 
-    fun fetchBoxes() {
+    private fun fetchBoxes() {
         viewModelScope.launch {
             roomService.fetchBoxes().collect { boxes ->
                 _boxes.value = boxes

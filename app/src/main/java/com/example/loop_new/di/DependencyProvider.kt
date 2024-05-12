@@ -7,6 +7,7 @@ import com.example.loop_new.data.api.TranslateService
 import com.example.loop_new.data.firebase.FirebaseService
 import com.example.loop_new.presentation.viewModel.RoomService
 import com.example.loop_new.room.BoxDao
+import com.example.loop_new.room.FlashcardDao
 import com.example.loop_new.room.LoopDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -26,8 +27,9 @@ class DependencyProvider(application: Application) {
 
     // Room Database
     private val loopDatabase: LoopDatabase = LoopDatabase.getInstance(application)
-    private val boxDao: BoxDao = loopDatabase.loopDao()
-    val roomService: RoomService = RoomService(boxDao)
+    private val boxDao: BoxDao = loopDatabase.boxDao()
+    private val flashcardDao: FlashcardDao = loopDatabase.flashcardDao()
+    val roomService: RoomService = RoomService(boxDao, flashcardDao)
 
     // Service
     val service: Service = Service()

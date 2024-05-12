@@ -7,14 +7,14 @@ import com.example.loop_new.domain.model.firebase.Box
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BoxDao: RoomService {
+interface BoxDao{
 
     @Insert
-    override suspend fun insertBox(box: Box)
+    suspend fun insertBox(box: Box)
 
     @Query("DELETE FROM box WHERE uid = :uid")
-    override suspend fun deleteBox(uid: String)
+    suspend fun deleteBox(uid: String)
 
     @Query("SELECT * FROM box")
-    override fun fetchBoxes(): Flow<List<Box>>
+    fun fetchBoxes(): Flow<List<Box>>
 }

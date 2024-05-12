@@ -43,20 +43,20 @@ import kotlin.math.roundToInt
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PublicScreenPreview() {
-    val sampleData = publicCreateSampleData()
+//    val sampleData = publicCreateSampleData()
 
-    PublicScreen(sampleData, { }, { })
+//    PublicScreen(sampleData, { }, { })
 }
 
-@Composable
-fun publicCreateSampleData(): List<Flashcard> {
-    val sampleData = mutableListOf<Flashcard>()
-
-    for (i in 1..12) {
-        sampleData.add(Flashcard(word = "Flashcard", pronunciation = "(h)wer"))
-    }
-    return sampleData
-}
+//@Composable
+//fun publicCreateSampleData(): List<Flashcard> {
+//    val sampleData = mutableListOf<Flashcard>()
+//
+//    for (i in 1..12) {
+//        sampleData.add(Flashcard(word = "Flashcard", pronunciation = "(h)wer"))
+//    }
+//    return sampleData
+//}
 
 // UI
 @Composable

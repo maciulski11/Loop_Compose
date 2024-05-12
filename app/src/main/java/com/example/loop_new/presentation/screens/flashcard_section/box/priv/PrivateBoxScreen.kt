@@ -230,10 +230,10 @@ fun PrivateScreen(
             itemsIndexed(boxes) { index, box ->
                 BoxItem(box, {
                     navController
-                        .navigate("${NavigationSupport.PrivateFlashcardScreen}/${box.uid}/${box.name}")
+                        .navigate("${NavigationSupport.PrivateFlashcardScreen}/${box.uid}/${box.id}/${box.name}")
                 }) {
 
-                    selectedBoxIndex.value = index // Ustawienie indeksu wybranego pudełka
+                    selectedBoxIndex.intValue = index // Ustawienie indeksu wybranego pudełka
                     showDialogDeleteBox.value = true
                 }
             }
@@ -412,8 +412,7 @@ fun ShowCreateBoxAlertDialog(
                 )
             }
 
-            SnackbarMessage.None -> { /* Don't do anything */
-            }
+            SnackbarMessage.None -> { /* Don't do anything */ }
         }
 
         snackbarMessage = SnackbarMessage.None // Status reset

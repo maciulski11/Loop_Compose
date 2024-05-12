@@ -40,7 +40,7 @@ interface FirebaseService {
 
     fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>>
 
-    fun addFlashcardsToRepeatSection()
+//    fun addFlashcardsToRepeatSection()
 
     fun deleteFlashcardFromRepeatSection(flashcardUid: String)
 

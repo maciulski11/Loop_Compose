@@ -250,45 +250,54 @@ fun NavigationScreens(
                 PublicFlashcardScreen(navController, boxUid, viewModel)
             }
 
-            composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxName}",
+            composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxId}/{boxName}",
                 arguments = listOf(
                     navArgument("boxUid") { type = NavType.StringType },
+                    navArgument("boxId") { type = NavType.IntType},
                     navArgument("boxName") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
                 val boxName = backStackEntry.arguments?.getString("boxName") ?: ""
 
-                LaunchedEffect(boxUid) {
+                LaunchedEffect(boxId) {
                     currentSection.value = boxName
                 }
 
                 val viewModel = remember {
                     PrivateFlashcardViewModel(
                         firebaseService,
+                        roomService,
                         mainViewModel,
-                        boxUid
+                        boxId
                     )
                 }
 
-                PrivateFlashcardScreen(navController, boxUid, viewModel)
+                PrivateFlashcardScreen(navController, boxUid, boxId, viewModel)
             }
 
             composable(
-                "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
-                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+                "${NavigationSupport.AddFlashcardScreen}/{boxUid}/{boxId}",
+                arguments = listOf(
+                    navArgument("boxUid") { type = NavType.StringType },
+                    navArgument("boxId") { type = NavType.IntType}
+                )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
+
                 val viewModel =
                     remember {
                         AddFlashcardViewModel(
                             firebaseService,
                             translateService,
-                            dictionaryService
+                            dictionaryService,
+                            roomService
                         )
                     }
 
-                AddFlashcardScreen(navController, boxUid, viewModel)
+                AddFlashcardScreen(navController, boxUid, boxId, viewModel)
             }
 
             composable(

@@ -1,21 +1,42 @@
 package com.example.loop_new.presentation.viewModel
 
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.room.BoxDao
-import com.example.loop_new.room.RoomService
+import com.example.loop_new.room.FlashcardDao
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
-class RoomService(private val boxDao: BoxDao): RoomService {
+class RoomService(private val boxDao: BoxDao, private var flashcardDao: FlashcardDao) {
 
-    override suspend fun insertBox(box: Box) {
+    suspend fun insertBox(box: Box) {
         boxDao.insertBox(box)
     }
 
-    override suspend fun deleteBox(uid: String) {
+    suspend fun deleteBox(uid: String) {
         boxDao.deleteBox(uid)
     }
 
-    override fun fetchBoxes(): Flow<List<Box>> {
+    fun fetchBoxes(): Flow<List<Box>> {
         return boxDao.fetchBoxes()
+    }
+
+    suspend fun insertFlashCard(flashcard: Flashcard) {
+        val uid = UUID.randomUUID().toString()
+        val data = flashcard.copy(uid = uid)
+
+        flashcardDao.insertFlashCard(data)
+    }
+
+    fun updateFlashCard(flashcard: Flashcard) {
+        TODO("Not yet implemented")
+    }
+
+    suspend fun deleteFlashCard(uid: String) {
+        flashcardDao.deleteFlashCard(uid)
+    }
+
+    fun fetchFlashcardById(boxId: Int): Flow<List<Flashcard>> {
+        return flashcardDao.fetchFlashcardById(boxId)
     }
 }

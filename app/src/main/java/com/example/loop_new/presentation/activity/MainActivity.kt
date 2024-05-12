@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         dependencyProvider = DependencyProvider(application)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            firebaseService.addFlashcardsToRepeatSection()
+//            firebaseService.addFlashcardsToRepeatSection()
         }
 
         setContent {
