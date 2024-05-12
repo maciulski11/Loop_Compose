@@ -47,7 +47,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -77,7 +76,6 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.animations.ProgressLoading
-import com.example.loop_new.presentation.screens.story_section.check_understand.CheckUnderstandScreen
 import com.example.loop_new.ui.theme.Gray2
 import com.example.loop_new.ui.theme.Green
 import com.example.loop_new.ui.theme.Red
