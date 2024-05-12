@@ -113,7 +113,6 @@ fun PrivateScreen(
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
 ) {
-    val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
 
     val flashcardList by viewModel.flashcards.collectAsState(emptyList())
 
@@ -185,6 +184,9 @@ fun PrivateScreen(
                 .layoutId("flashcardList")
         ) {
             items(flashcardList) { flashcard ->
+
+                val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
+
                 FlashcardItem(
                     flashcard,
                     { audioUrl ->
@@ -284,7 +286,7 @@ fun ShowCustomAlertDialog(
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val deleteFlashcard = buildAnnotatedString {
+        val deleteFlashcard = buildAnnotatedString {
         append("Do you want to delete flashcard: ")
         pushStyle(
             SpanStyle(

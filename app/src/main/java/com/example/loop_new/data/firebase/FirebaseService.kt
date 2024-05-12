@@ -122,6 +122,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
      *
      * @param boxUid The unique identifier of the public box to be transferred.
      */
+
+    //TODO: zmienć na dodanie box do bazy room
     override fun addPublicBoxToPrivateSection(boxUid: String) {
         // Begin by attempting to download the specified box from the public section
         firestore.collection(BOX).document(boxUid).get()
@@ -172,6 +174,8 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
      * @param boxData The data of the box including title, description, and colors.
      * @param flashcards A list of flashcards associated with the box.
      */
+
+    //TODO: zmienć na dodanie box do bazy room
     private fun addPrivateBoxWithFlashcards(
         boxUid: String,
         boxData: Map<String, Any>,
@@ -194,60 +198,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
         }.addOnFailureListener { e ->
             logError("addPrivateBoxWithFlashcards: Error adding box and flashcards: ${e.message}")
-        }
-    }
-
-    /**
-     * Create box for flashcards in the user's private section.
-     *
-     * The user can create a box that will have a title, description, and
-     * can choose background colors from the available options.
-     */
-    override fun createBoxInPrivateSection(box: Box) {
-        val uid = UUID.randomUUID().toString()
-        val data = Box(
-            name = box.name,
-            describe = box.describe,
-            uid = uid,
-            color1 = box.color1,
-            color2 = box.color2,
-            color3 = box.color3,
-            permissionToEdit = true
-        )
-
-        try {
-            firestore
-                .collection(USERS).document(currentUser ?: "")
-                .collection(BOX).document(uid)
-                .set(data)
-
-            logSuccess("addBox: Correct addition of box")
-        } catch (e: Exception) {
-            logError("addBox: Error: $e")
-            throw e
-        }
-    }
-
-    /**
-     * Deletes a specific box from the current user's collection in the Firestore database.
-     *
-     * This function attempts to delete a box identified by `boxUid` from the Firestore
-     * collection belonging to the currently signed-in user. It logs the outcome of the
-     * operation, indicating whether the deletion was successful or if an error occurred.
-     *
-     * @param boxUid The unique identifier of the box to be deleted.
-     */
-    override fun deleteBox(boxUid: String) {
-        try {
-            firestore.collection(USERS).document(currentUser ?: "")
-                .collection(BOX).document(boxUid)
-                .delete()
-
-            logSuccess("deleteBox: Success!")
-
-        } catch (e: Exception) {
-            logError("deleteBox: Error: $e")
-            throw e
         }
     }
 
@@ -428,59 +378,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     /**
-     * Adds a new flashcard to a specified box in the user's private section in Firestore.
-     *
-     * This function generates a unique identifier for the new flashcard, associates it with
-     * a specific box using 'boxUid', and then adds it to the Firestore database. It logs the
-     * result of the operation, indicating whether the addition was successful or encountered an error.
-     *
-     * @param flashcard The flashcard object to be added.
-     * @param boxUid The unique identifier of the box to which the flashcard will be added.
-     */
-    override fun addFlashcardInPrivateSection(flashcard: Flashcard, boxUid: String) {
-        val uid = UUID.randomUUID().toString()
-        val data = flashcard.copy(uid = uid, boxUid = boxUid)
-
-        try {
-            firestore.collection(USERS).document(currentUser ?: "")
-                .collection(BOX).document(boxUid)
-                .collection(FLASHCARD).document(uid)
-                .set(data)
-
-            logSuccess("addFlashcard: Correct addition of flashcard")
-
-        } catch (e: Exception) {
-            logError("addFlashcard: Error: $e")
-            throw e
-        }
-    }
-
-    /**
-     * Deletes a specific flashcard from a user's box in the Firestore database.
-     *
-     * This function attempts to delete a flashcard identified by `flashcardUid`
-     * from a specific box identified by `boxUid` within the current user's collection.
-     * It logs the outcome of the operation, indicating success or failure.
-     *
-     * @param boxUid The unique identifier of the box containing the flashcard.
-     * @param flashcardUid The unique identifier of the flashcard to be deleted.
-     */
-    override fun deleteFlashcard(boxUid: String, flashcardUid: String) {
-        try {
-            firestore.collection(USERS).document(currentUser ?: "")
-                .collection(BOX).document(boxUid)
-                .collection(FLASHCARD).document(flashcardUid)
-                .delete()
-
-            logSuccess("deleteFlashcard: Success!")
-
-        } catch (e: Exception) {
-            logError("deleteFlashcard: Error: $e")
-            throw e
-        }
-    }
-
-    /**
      * Fetches a list of public boxes, supporting pagination.
      *
      * This function queries the Firestore database to retrieve public boxes, either starting
@@ -542,47 +439,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     /**
-     * Fetches a list of boxes from the user's private section in Firestore.
-     *
-     * This function sets up a real-time snapshot listener on the user's private box collection.
-     * Any changes in the collection will emit an updated list of boxes through the Flow.
-     * The function handles errors and logs them, and also ensures the proper closure of the listener.
-     *
-     * @return A Flow emitting a list of boxes.
-     */
-    override fun fetchListOfPrivateBox(): Flow<List<Box>> {
-        return callbackFlow {
-            if (currentUser != null) {
-                // Setting up a real-time snapshot listener on the user's box collection
-                val listenerRegistration = firestore.collection(USERS).document(currentUser)
-                    .collection(BOX)
-                    .addSnapshotListener { querySnapshot, error ->
-
-                        // Handle any errors that might occur during snapshot listening
-                        if (error != null) {
-                            close(error)
-                            logError("fetchListOfBoxPrivateBox: Error: $error")
-                            return@addSnapshotListener
-                        }
-
-                        // Map each document in the snapshot to a Box object and send the list through the Flow
-                        val tempList = querySnapshot?.documents?.mapNotNull {
-                            it.toObject(Box::class.java)
-                        } ?: mutableListOf()
-
-                        trySend(tempList).isSuccess
-                        logSuccess("fetchListOfBoxPrivateBox: Success!")
-                    }
-
-                // Ensure the removal of the snapshot listener when the Flow is closed or cancelled
-                awaitClose {
-                    listenerRegistration.remove()
-                }
-            }
-        }
-    }
-
-    /**
      * Fetches a list of flashcards from a specified public box in Firestore.
      *
      * This function sets up a real-time snapshot listener on the flashcard collection of
@@ -617,49 +473,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         // Send the list of flashcards through the Flow
                         trySend(flashcards).isSuccess
                         logSuccess("fetchListOfFlashcardInPublicBox: Success!")
-                    }
-
-            awaitClose {
-                listenerRegistration.remove()
-            }
-        }
-    }
-
-    /**
-     * Fetches a list of flashcards from a specified box in the user's private collection in Firestore.
-     *
-     * This function sets up a real-time snapshot listener on the flashcard collection of
-     * a specific box identified by 'boxUid' in the user's private collection. It emits an
-     * updated list of flashcards through a Flow whenever there are changes in the collection.
-     * The function also handles and logs any errors encountered during the listening process.
-     *
-     * @param boxUid The unique identifier of the private box whose flashcards are to be fetched.
-     * @return A Flow emitting a list of flashcards.
-     */
-    override fun fetchListOfFlashcardInPrivateBox(boxUid: String): Flow<List<Flashcard>> {
-        return callbackFlow {
-            val listenerRegistration =
-                firestore.collection(USERS).document(currentUser ?: "")
-                    .collection(BOX).document(boxUid)
-                    .collection(FLASHCARD)
-                    .addSnapshotListener { flashcardsSnapshot, error ->
-                        if (error != null) {
-                            // Handling any errors encountered while listening to the snapshot
-                            close(error)
-                            logError("fetchListOfFlashcardInPrivateBox: Error: $error")
-                            return@addSnapshotListener
-                        }
-
-                        // Creating a list of Flashcard objects from the snapshot documents
-                        val flashcards = mutableListOf<Flashcard>()
-                        for (document in flashcardsSnapshot!!) {
-                            val flashcard = document.toObject(Flashcard::class.java)
-                            flashcards.add(flashcard)
-                        }
-
-                        // Emitting the list of flashcards through the Flow
-                        trySend(flashcards).isSuccess
-                        logSuccess("fetchListOfFlashcardInPrivateBox: Success!")
                     }
 
             awaitClose {
@@ -743,47 +556,48 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
      * it retrieves all flashcards and checks if they meet the criteria to be added to the 'repeat' section
      * (e.g., based on the 'nextStudyDate'). Eligible flashcards are then added to the 'repeat' section.
      */
-    override fun addFlashcardsToRepeatSection() {
-        if (currentUser != null) {
-            // Query all 'box' documents of the current user
-            firestore.collection(USERS).document(currentUser)
-                .collection(BOX)
-                .get()
-                .addOnSuccessListener { boxSnapshot ->
-                    for (boxDocument in boxSnapshot.documents) {
-                        // Iterating through each 'box' document
-                        val boxID = boxDocument.id
-
-                        // Query all flashcards within the current box
-                        firestore.collection(USERS).document(currentUser)
-                            .collection(BOX).document(boxID)
-                            .collection(FLASHCARD)
-                            .get()
-                            .addOnSuccessListener { flashcardSnapshot ->
-                                for (flashcardDocument in flashcardSnapshot.documents) {
-                                    // Iterating through each flashcard in the box
-                                    val flashcard =
-                                        flashcardDocument.toObject(Flashcard::class.java)
-
-                                    // Check if the flashcard meets the criteria to be added to 'repeat'
-                                    if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
-                                        // Add the flashcard to the 'repeat' section
-                                        addFlashcardToRepeat(flashcard)
-
-                                        logSuccess("fetchRepeatFlashcards: ${flashcard.word}")
-                                    }
-                                }
-                            }
-                            .addOnFailureListener { exception ->
-                                logError("fetchRepeatFlashcards: $exception")
-                            }
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    logError("fetchRepeatFlashcards: $exception")
-                }
-        }
-    }
+    //TODO: zrobic, zeby fiszki dodawaly sie z room do fireebase do sekcji repaet
+//    override fun addFlashcardsToRepeatSection() {
+//        if (currentUser != null) {
+//            // Query all 'box' documents of the current user
+//            firestore.collection(USERS).document(currentUser)
+//                .collection(BOX)
+//                .get()
+//                .addOnSuccessListener { boxSnapshot ->
+//                    for (boxDocument in boxSnapshot.documents) {
+//                        // Iterating through each 'box' document
+//                        val boxID = boxDocument.id
+//
+//                        // Query all flashcards within the current box
+//                        firestore.collection(USERS).document(currentUser)
+//                            .collection(BOX).document(boxID)
+//                            .collection(FLASHCARD)
+//                            .get()
+//                            .addOnSuccessListener { flashcardSnapshot ->
+//                                for (flashcardDocument in flashcardSnapshot.documents) {
+//                                    // Iterating through each flashcard in the box
+//                                    val flashcard =
+//                                        flashcardDocument.toObject(Flashcard::class.java)
+//
+//                                    // Check if the flashcard meets the criteria to be added to 'repeat'
+//                                    if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
+//                                        // Add the flashcard to the 'repeat' section
+//                                        addFlashcardToRepeat(flashcard)
+//
+//                                        logSuccess("fetchRepeatFlashcards: ${flashcard.word}")
+//                                    }
+//                                }
+//                            }
+//                            .addOnFailureListener { exception ->
+//                                logError("fetchRepeatFlashcards: $exception")
+//                            }
+//                    }
+//                }
+//                .addOnFailureListener { exception ->
+//                    logError("fetchRepeatFlashcards: $exception")
+//                }
+//        }
+//    }
 
     /**
      * Adds a flashcard to the 'repeat' collection for the current user if it's not already present.

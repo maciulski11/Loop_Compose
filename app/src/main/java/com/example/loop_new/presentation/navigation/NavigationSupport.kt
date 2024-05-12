@@ -1,7 +1,6 @@
 package com.example.loop_new.presentation.navigation
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -61,8 +60,7 @@ import com.example.loop_new.presentation.screens.story_section.story_favorite.St
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoViewModel
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
-import com.example.loop_new.presentation.viewModel.RoomService
-import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpViewModel
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
 
 object NavigationSupport {
@@ -267,7 +265,6 @@ fun NavigationScreens(
 
                 val viewModel = remember {
                     PrivateFlashcardViewModel(
-                        firebaseService,
                         roomService,
                         mainViewModel,
                         boxId
@@ -290,7 +287,6 @@ fun NavigationScreens(
                 val viewModel =
                     remember {
                         AddFlashcardViewModel(
-                            firebaseService,
                             translateService,
                             dictionaryService,
                             roomService

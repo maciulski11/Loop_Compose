@@ -1,11 +1,9 @@
 package com.example.loop_new.room
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Flashcard
 import kotlinx.coroutines.flow.Flow
 

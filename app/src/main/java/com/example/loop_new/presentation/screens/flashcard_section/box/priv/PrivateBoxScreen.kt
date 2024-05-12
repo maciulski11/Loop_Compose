@@ -119,11 +119,7 @@ fun PrivateBoxScreen(
 
     PrivateScreen(
         navController = navController,
-        list = viewModel.privateBoxList,
-        viewModel,
-     { nameInput, describeInput, groupColor ->
-//        viewModel.createBoxInPrivateSection(nameInput, describeInput, groupColor)
-    }
+        viewModel
     ) { nameInput, describeInput, groupColor ->
         viewModel.insert(nameInput, describeInput, groupColor)
     }
@@ -132,10 +128,8 @@ fun PrivateBoxScreen(
 @Composable
 fun PrivateScreen(
     navController: NavController,
-    list: List<Box>,
     viewModel: PrivateBoxViewModel,
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
-    onRoom: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit
 ) {
     BackHandler { /* gesture return is off */ }
 
@@ -191,7 +185,7 @@ fun PrivateScreen(
             contentScale = ContentScale.Crop // lub inny ContentScale według potrzeb
         )
 
-        if (list.isEmpty()) {
+        if (boxes.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -255,9 +249,6 @@ fun PrivateScreen(
             ShowCreateBoxAlertDialog(
                 { nameInput, describeInput, groupColor ->
                     onAddBox(nameInput, describeInput, groupColor)
-                },
-                { nameInput, describeInput, groupColor ->
-                    onRoom(nameInput, describeInput, groupColor)
                 },
                 {
                     showDialogCreateBox.value = false
@@ -371,7 +362,6 @@ fun ShowDeleteBoxAlertDialog(
 @Composable
 fun ShowCreateBoxAlertDialog(
     onAddBox: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
-    onRoom: (nameInput: String, describeInput: String, colors: List<Color>) -> Unit,
     onDismiss: () -> Unit,
     showDialog: Boolean,
 ) {
@@ -524,7 +514,6 @@ fun ShowCreateBoxAlertDialog(
                             colors = ButtonDefaults.buttonColors(backgroundColor = Green),
                             onClick = {
                                 onAddBox(nameInput, describeInput, selectedColorGroup)
-                                onRoom(nameInput, describeInput, selectedColorGroup)
                                 onDismiss()
                             }) {
                             Text(

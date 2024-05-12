@@ -1,7 +1,5 @@
 package com.example.loop_new.domain.model.firebase
 
-import java.sql.Timestamp
-
 data class User(
     val email: String? = null,
     val uid: String? = null,
