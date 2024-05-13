@@ -19,18 +19,18 @@ class PrivateFlashcardViewModel(
     val flashcards: StateFlow<List<Flashcard>> = _flashcards
 
     init {
-        fetchFlashcardById(boxId)
+        fetchFlashcardsById(boxId)
     }
 
     fun delete(uid: String) {
         viewModelScope.launch {
-            roomService.deleteFlashCard(uid)
+            roomService.deleteFlashcard(uid)
         }
     }
 
-    private fun fetchFlashcardById(boxId: Int) {
+    private fun fetchFlashcardsById(boxId: Int) {
         viewModelScope.launch {
-            roomService.fetchFlashcardById(boxId).collect { flashcard ->
+            roomService.fetchFlashcardsById(boxId).collect { flashcard ->
                 _flashcards.value = flashcard
             }
         }

@@ -26,15 +26,24 @@ class RoomService(private val boxDao: BoxDao, private var flashcardDao: Flashcar
         flashcardDao.insertFlashCard(data)
     }
 
-    fun updateFlashCard(flashcard: Flashcard) {
-        TODO("Not yet implemented")
+    suspend fun updateFlashCardKnowledgeLevel(flashcardId: Int, newKnowledgeLevel: String) {
+        val flashcard = flashcardDao.getFlashcardById(flashcardId)
+        flashcard?.let {
+            // Zaktualizowanie poziomu wiedzy
+            val updatedFlashcard = it.copy(knowledgeLevel = newKnowledgeLevel)
+            flashcardDao.updateFlashCard(updatedFlashcard)
+        }
     }
 
-    suspend fun deleteFlashCard(uid: String) {
+    suspend fun deleteFlashcard(uid: String) {
         flashcardDao.deleteFlashCard(uid)
     }
 
-    fun fetchFlashcardById(boxId: Int): Flow<List<Flashcard>> {
-        return flashcardDao.fetchFlashcardById(boxId)
+    fun fetchFlashcardsById(boxId: Int): Flow<List<Flashcard>> {
+        return flashcardDao.fetchFlashcardsById(boxId)
+    }
+
+    fun fetchFlashcardsByIdInLesson(boxId: Int): List<Flashcard> {
+        return flashcardDao.fetchFlashcardsByIdInLesson(boxId)
     }
 }

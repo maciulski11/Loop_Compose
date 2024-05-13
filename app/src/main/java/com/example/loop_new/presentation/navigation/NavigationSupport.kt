@@ -297,19 +297,20 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.LessonScreen}/{boxUid}",
-                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+                "${NavigationSupport.LessonScreen}/{boxId}",
+                arguments = listOf(navArgument("boxId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
                 val viewModel = remember {
                     LessonViewModel(
                         firebaseService,
                         mainViewModel,
-                        boxUid
+                        roomService,
+                        boxId
                     )
                 }
 
-                LessonScreen(navController, viewModel, boxUid)
+                LessonScreen(navController, viewModel, boxId)
             }
 
             composable(NavigationSupport.RepeatScreen) {

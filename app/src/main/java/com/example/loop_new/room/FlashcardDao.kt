@@ -14,12 +14,19 @@ interface FlashcardDao {
     suspend fun insertFlashCard(flashcard: Flashcard)
 
     @Update
-    fun updateFlashCard(flashcard: Flashcard)
+    suspend fun updateFlashCard(flashcard: Flashcard)
 
     @Query("DELETE FROM flashcard WHERE uid = :uid")
     suspend fun deleteFlashCard(uid: String)
 
+    @Query("SELECT * FROM flashcard WHERE idFlashcard = :flashcardId")
+    suspend fun getFlashcardById(flashcardId: Int): Flashcard?
+
     // Query -> load note by id
     @Query("SELECT * FROM flashcard WHERE boxId = :boxId")
-    fun fetchFlashcardById(boxId: Int): Flow<List<Flashcard>>
+    fun fetchFlashcardsById(boxId: Int): Flow<List<Flashcard>>
+
+    @Query("SELECT * FROM flashcard WHERE boxId = :boxId")
+    fun fetchFlashcardsByIdInLesson(boxId: Int): List<Flashcard>
+
 }
