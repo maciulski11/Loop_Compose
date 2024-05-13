@@ -11,12 +11,13 @@ import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.DictionaryService
 import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.TranslateService
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
 
 class AddFlashcardViewModel(
-    private val firebaseService: FirebaseService,
     private val translateService: TranslateService,
     private val dictionaryService: DictionaryService,
+    private val roomService: RoomService,
 ) : ViewModel() {
 
     var translate: String by mutableStateOf("")
@@ -25,14 +26,16 @@ class AddFlashcardViewModel(
     var pronunciation: String by mutableStateOf("")
     private var audioUrl: String by mutableStateOf("")
 
-    fun addFlashcard(
+    fun insertFlashcard(
         word: String,
         translate: String,
         meaning: String,
         example: String,
         pronunciation: String,
         boxUid: String,
+        boxId: Int
     ) {
+
         val flashcardData = Flashcard(
             word = word,
             translate = translate,
@@ -40,17 +43,12 @@ class AddFlashcardViewModel(
             example = example,
             pronunciation = pronunciation,
             audioUrl = audioUrl,
+            boxUid = boxUid,
+            boxId = boxId
         )
 
         viewModelScope.launch {
-            try {
-                firebaseService.addFlashcardInPrivateSection(flashcardData, boxUid)
-                Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Success")
-
-            } catch (e: Exception) {
-
-                Log.e(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Error: $e")
-            }
+            roomService.insertFlashCard(flashcardData)
         }
     }
 

@@ -1,7 +1,6 @@
 package com.example.loop_new.presentation.navigation
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -61,8 +60,7 @@ import com.example.loop_new.presentation.screens.story_section.story_favorite.St
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoViewModel
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
-import com.example.loop_new.presentation.viewModel.RoomService
-import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpViewModel
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
 
 object NavigationSupport {
@@ -250,61 +248,69 @@ fun NavigationScreens(
                 PublicFlashcardScreen(navController, boxUid, viewModel)
             }
 
-            composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxName}",
+            composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxId}/{boxName}",
                 arguments = listOf(
                     navArgument("boxUid") { type = NavType.StringType },
+                    navArgument("boxId") { type = NavType.IntType},
                     navArgument("boxName") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
                 val boxName = backStackEntry.arguments?.getString("boxName") ?: ""
 
-                LaunchedEffect(boxUid) {
+                LaunchedEffect(boxId) {
                     currentSection.value = boxName
                 }
 
                 val viewModel = remember {
                     PrivateFlashcardViewModel(
-                        firebaseService,
+                        roomService,
                         mainViewModel,
-                        boxUid
+                        boxId
                     )
                 }
 
-                PrivateFlashcardScreen(navController, boxUid, viewModel)
+                PrivateFlashcardScreen(navController, boxUid, boxId, viewModel)
             }
 
             composable(
-                "${NavigationSupport.AddFlashcardScreen}/{boxUid}",
-                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+                "${NavigationSupport.AddFlashcardScreen}/{boxUid}/{boxId}",
+                arguments = listOf(
+                    navArgument("boxUid") { type = NavType.StringType },
+                    navArgument("boxId") { type = NavType.IntType}
+                )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
+
                 val viewModel =
                     remember {
                         AddFlashcardViewModel(
-                            firebaseService,
                             translateService,
-                            dictionaryService
+                            dictionaryService,
+                            roomService
                         )
                     }
 
-                AddFlashcardScreen(navController, boxUid, viewModel)
+                AddFlashcardScreen(navController, boxUid, boxId, viewModel)
             }
 
             composable(
-                "${NavigationSupport.LessonScreen}/{boxUid}",
-                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
+                "${NavigationSupport.LessonScreen}/{boxId}",
+                arguments = listOf(navArgument("boxId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
+                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
                 val viewModel = remember {
                     LessonViewModel(
                         firebaseService,
                         mainViewModel,
-                        boxUid
+                        roomService,
+                        boxId
                     )
                 }
 
-                LessonScreen(navController, viewModel, boxUid)
+                LessonScreen(navController, viewModel, boxId)
             }
 
             composable(NavigationSupport.RepeatScreen) {

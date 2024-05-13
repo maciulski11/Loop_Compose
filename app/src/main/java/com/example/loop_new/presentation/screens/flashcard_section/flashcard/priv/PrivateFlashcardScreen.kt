@@ -26,6 +26,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,26 +61,27 @@ import com.example.loop_new.ui.theme.White
 @Composable
 fun PrivateScreenPreview() {
     val navController = rememberNavController()
-    val sampleData = privateCreateSampleData()
+//    val sampleData = privateCreateSampleData()
 
 //    PrivateScreen(navController = navController, boxUid = "", sampleData, { }, { })
 }
 
-@Composable
-fun privateCreateSampleData(): List<Flashcard> {
-    val sampleData = mutableListOf<Flashcard>()
-
-    for (i in 1..12) {
-        sampleData.add(Flashcard(word = "Flashcard", pronunciation = "(h)wer"))
-    }
-    return sampleData
-}
+//@Composable
+//fun privateCreateSampleData(): List<Flashcard> {
+//    val sampleData = mutableListOf<Flashcard>()
+//
+//    for (i in 1..12) {
+//        sampleData.add(Flashcard(word = "Flashcard", pronunciation = "(h)wer"))
+//    }
+//    return sampleData
+//}
 
 // UI
 @Composable
 fun PrivateFlashcardScreen(
     navController: NavController,
     boxUid: String,
+    boxId: Int,
     viewModel: PrivateFlashcardViewModel,
 ) {
     // Support for custom return behavior
@@ -91,12 +93,13 @@ fun PrivateFlashcardScreen(
     PrivateScreen(
         navController,
         boxUid,
-        viewModel.flashcardList.value ?: emptyList(),
+        boxId,
+        viewModel,
         { audioUrl ->
             viewModel.playAudioFromUrl(audioUrl)
         },
         { flashcardUid ->
-            viewModel.deleteFlashcard(boxUid, flashcardUid)
+            viewModel.delete(flashcardUid)
         }
     )
 }
@@ -105,11 +108,14 @@ fun PrivateFlashcardScreen(
 fun PrivateScreen(
     navController: NavController,
     boxUid: String,
-    list: List<Flashcard>,
+    boxId: Int,
+    viewModel: PrivateFlashcardViewModel,
     onPlayAudioFromUrl: (String) -> Unit,
     onDeleteFlashcard: (String) -> Unit,
 ) {
-    val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
+
+    val flashcardList by viewModel.flashcards.collectAsState(emptyList())
+
 
     val constraints = ConstraintSet {
         val flashcardsList = createRefFor("flashcardList")
@@ -144,7 +150,7 @@ fun PrivateScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        if (list.isEmpty()) {
+        if (flashcardList.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -177,7 +183,10 @@ fun PrivateScreen(
                 .fillMaxWidth()
                 .layoutId("flashcardList")
         ) {
-            items(list) { flashcard ->
+            items(flashcardList) { flashcard ->
+
+                val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
+
                 FlashcardItem(
                     flashcard,
                     { audioUrl ->
@@ -216,7 +225,7 @@ fun PrivateScreen(
                 ) {
 
                     when {
-                        list.isEmpty() -> {
+                        flashcardList.isEmpty() -> {
                             showPopup = true
                             alertText = "Box is empty!"
                             // Hide the message after a few seconds
@@ -228,7 +237,7 @@ fun PrivateScreen(
                                 )
                         }
 
-                        list.size < 3 -> {
+                        flashcardList.size < 3 -> {
                             showPopup = true
                             alertText = "Minimum 3 flashcards!"
                             // Hide the message after a few seconds
@@ -240,8 +249,8 @@ fun PrivateScreen(
                                 )
                         }
 
-                        list.size >= 3 -> {
-                            navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
+                        flashcardList.size >= 3 -> {
+                            navController.navigate("${NavigationSupport.LessonScreen}/$boxId")
                         }
                     }
                 }
@@ -265,7 +274,7 @@ fun PrivateScreen(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid")
+                    navController.navigate("${NavigationSupport.AddFlashcardScreen}/$boxUid/$boxId")
                 }
         )
     }
@@ -277,7 +286,7 @@ fun ShowCustomAlertDialog(
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val deleteFlashcard = buildAnnotatedString {
+        val deleteFlashcard = buildAnnotatedString {
         append("Do you want to delete flashcard: ")
         pushStyle(
             SpanStyle(

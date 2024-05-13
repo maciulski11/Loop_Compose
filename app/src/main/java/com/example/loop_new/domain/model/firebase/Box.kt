@@ -15,5 +15,5 @@ data class Box(
     val addFlashcardFromStory: Boolean? = null,
 
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    var id: Int = 0
 )

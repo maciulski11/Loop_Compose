@@ -36,7 +36,7 @@ class ReadViewModel(
 
     init {
         fetchStory(storyUid)
-        fetchListOfPrivateBox()
+//        fetchListOfPrivateBox()
     }
 
     private fun fetchStory(storyUid: String) {
@@ -68,36 +68,37 @@ class ReadViewModel(
         }
     }
 
-    fun addFlashcard(word: String, boxUid: String) {
-        val flashcardData = Flashcard(
-            word = word,
-            translate = translate,
-            meaning = meaning,
-            example = example,
-            pronunciation = pronunciation,
-            audioUrl = audioUrl,
-        )
-
-        viewModelScope.launch {
-            try {
-                firebaseService.addFlashcardInPrivateSection(flashcardData, boxUid)
-                Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Success")
-
-            } catch (e: Exception) {
-
-                Log.e(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Error: $e")
-            }
-        }
-    }
-
-    private fun fetchListOfPrivateBox() {
-        viewModelScope.launch {
-            firebaseService.fetchListOfPrivateBox().collect { loadedBoxes ->
-                privateBoxList.clear()
-                loadedBoxes.filter { it.addFlashcardFromStory != false }.forEach {
-                    privateBoxList.add(it)
-                }
-            }
-        }
-    }
+    //TODO: zmienic to na dodawanie fiszke do room
+//    fun addFlashcard(word: String, boxUid: String) {
+//        val flashcardData = Flashcard(
+//            word = word,
+//            translate = translate,
+//            meaning = meaning,
+//            example = example,
+//            pronunciation = pronunciation,
+//            audioUrl = audioUrl,
+//        )
+//
+//        viewModelScope.launch {
+//            try {
+//                firebaseService.addFlashcardInPrivateSection(flashcardData, boxUid)
+//                Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Success")
+//
+//            } catch (e: Exception) {
+//
+//                Log.e(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Error: $e")
+//            }
+//        }
+//    }
+//
+//    private fun fetchListOfPrivateBox() {
+//        viewModelScope.launch {
+//            firebaseService.fetchListOfPrivateBox().collect { loadedBoxes ->
+//                privateBoxList.clear()
+//                loadedBoxes.filter { it.addFlashcardFromStory != false }.forEach {
+//                    privateBoxList.add(it)
+//                }
+//            }
+//        }
+//    }
 }

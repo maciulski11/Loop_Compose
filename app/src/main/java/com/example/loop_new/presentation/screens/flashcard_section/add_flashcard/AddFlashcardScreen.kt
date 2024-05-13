@@ -41,6 +41,7 @@ fun AddFlashcardScreenPreview() {
 fun AddFlashcardScreen(
     navController: NavController,
     boxUid: String,
+    boxId: Int,
     viewModel: AddFlashcardViewModel,
 ) {
 
@@ -48,13 +49,14 @@ fun AddFlashcardScreen(
         viewModel,
         navController,
         { word, translate, pronunciation, mean, example ->
-            viewModel.addFlashcard(
+            viewModel.insertFlashcard(
                 word,
                 translate,
                 mean,
                 example,
                 pronunciation,
-                boxUid
+                boxUid,
+                boxId
             )
         },
         { word ->

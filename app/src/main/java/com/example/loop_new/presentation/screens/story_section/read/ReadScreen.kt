@@ -436,7 +436,7 @@ private fun BottomDrawerContent(
                             Button(
                                 onClick = {
                                     scope.launch { drawerState.close() }
-                                    viewModel.addFlashcard(word = word, item.uid.toString())
+//                                    viewModel.addFlashcard(word = word, item.uid.toString())
 
                                     showSnackbar()
                                 },
