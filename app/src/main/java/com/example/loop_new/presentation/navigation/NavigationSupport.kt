@@ -90,7 +90,7 @@ fun NavigationScreens(
     service: Service,
     translateService: TranslateService,
     dictionaryService: DictionaryService,
-    roomService: RoomService
+    roomService: RoomService,
 ) {
     val mainViewModel = remember { MainViewModel(service, googleAuthService) }
 
@@ -251,7 +251,7 @@ fun NavigationScreens(
             composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxId}/{boxName}",
                 arguments = listOf(
                     navArgument("boxUid") { type = NavType.StringType },
-                    navArgument("boxId") { type = NavType.IntType},
+                    navArgument("boxId") { type = NavType.IntType },
                     navArgument("boxName") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
@@ -278,7 +278,7 @@ fun NavigationScreens(
                 "${NavigationSupport.AddFlashcardScreen}/{boxUid}/{boxId}",
                 arguments = listOf(
                     navArgument("boxUid") { type = NavType.StringType },
-                    navArgument("boxId") { type = NavType.IntType}
+                    navArgument("boxId") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
                 val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
@@ -310,7 +310,7 @@ fun NavigationScreens(
                     )
                 }
 
-                LessonScreen(navController, viewModel, boxId)
+                LessonScreen(navController, viewModel)
             }
 
             composable(NavigationSupport.RepeatScreen) {
@@ -348,7 +348,8 @@ fun NavigationScreens(
                 StoryScreen(navController, viewModel)
             }
 
-            composable("${NavigationSupport.StoryCheckAllScreen}/{category}",
+            composable(
+                "${NavigationSupport.StoryCheckAllScreen}/{category}",
                 arguments = listOf(navArgument("category") { type = NavType.StringType })
             ) { backStackEntry ->
                 val category = backStackEntry.arguments?.getString("category") ?: ""

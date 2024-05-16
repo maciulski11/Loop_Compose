@@ -49,7 +49,6 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
-import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.FlashcardItem
 import com.example.loop_new.ui.theme.Black
