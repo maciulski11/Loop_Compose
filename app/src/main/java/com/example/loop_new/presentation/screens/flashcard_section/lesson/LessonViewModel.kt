@@ -55,7 +55,8 @@ class LessonViewModel(
                 _flashcardList.postValue(newFlashcardList) // Ustaw nową listę w _flashcardList za pomocą postValue()
                 _currentFlashcard.value = newFlashcardList.firstOrNull()
 
-                progressText = currentFlashcard.value?.let { "0 / ${newFlashcardList.size}" } ?: "0 / 0" // Sprawdź, czy currentFlashcard nie jest nullem, aby uniknąć NullPointerException
+                progressText = currentFlashcard.value?.let { "0 / ${newFlashcardList.size}" }
+                    ?: "0 / 0" // Sprawdź, czy currentFlashcard nie jest nullem, aby uniknąć NullPointerException
 
                 Log.d(LogTags.LESSON_VIEW_MODEL, "fetchListOfFlashcard: Success!")
             } catch (e: Exception) {
@@ -69,7 +70,8 @@ class LessonViewModel(
     }
 
     fun moveToNextFlashcard(navController: NavController) {
-        val currentList = flashcardList.value ?: return // Pobierz listę kartek lub zwróć null, jeśli lista jest pusta
+        val currentList = flashcardList.value
+            ?: return // Pobierz listę kartek lub zwróć null, jeśli lista jest pusta
         val currentIndex = currentList.indexOf(_currentFlashcard.value)
         val totalFlashcards = currentList.size
 
@@ -84,34 +86,25 @@ class LessonViewModel(
             Log.d(LogTags.LESSON_VIEW_MODEL, "moveToNextFlashcard: No next flashcard available")
         }
 
-        progressText = currentFlashcard.value?.let { "${currentIndex + 1} / $totalFlashcards" } ?: "0 / 0" // Sprawdź, czy currentFlashcard nie jest nullem, aby uniknąć NullPointerException
+        progressText = currentFlashcard.value?.let { "${currentIndex + 1} / $totalFlashcards" }
+            ?: "0 / 0" // Sprawdź, czy currentFlashcard nie jest nullem, aby uniknąć NullPointerException
     }
 
-    fun updateFlashCardKnowledgeLevel(flashcardId: Int, newKnowledgeLevel: String) {
-        viewModelScope.launch{
+    fun updateFlashcardToKnow(flashcardId: Int, newKnowledgeLevel: String) {
+        viewModelScope.launch {
             roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel)
         }
     }
 
-
-
-
-
-    fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
+    fun updateFlashcardToSomewhatKnow(flashcardId: Int, newKnowledgeLevel: String) {
         viewModelScope.launch {
-            firebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
+            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel)
         }
     }
 
-    fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
+    fun updateFlashcardToDoNotKnow(flashcardId: Int, newKnowledgeLevel: String) {
         viewModelScope.launch {
-            firebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
-        }
-    }
-
-    fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
-        viewModelScope.launch {
-            firebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
+            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel)
         }
     }
 
