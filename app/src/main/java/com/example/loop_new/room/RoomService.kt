@@ -46,4 +46,5 @@ class RoomService(private val boxDao: BoxDao, private var flashcardDao: Flashcar
     fun fetchFlashcardsByIdInLesson(boxId: Int): List<Flashcard> {
         return flashcardDao.fetchFlashcardsByIdInLesson(boxId)
     }
+
 }
