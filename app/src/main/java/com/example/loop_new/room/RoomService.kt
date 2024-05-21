@@ -1,6 +1,7 @@
 package com.example.loop_new.room
 
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.BoxWithFlashcards
 import com.example.loop_new.domain.model.firebase.Flashcard
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -43,8 +44,7 @@ class RoomService(private val boxDao: BoxDao, private var flashcardDao: Flashcar
         return flashcardDao.fetchFlashcardsById(boxId)
     }
 
-    fun fetchFlashcardsByIdInLesson(boxId: Int): List<Flashcard> {
-        return flashcardDao.fetchFlashcardsByIdInLesson(boxId)
+    suspend fun fetchBoxWithFlashcards(boxId: Int): BoxWithFlashcards {
+        return boxDao.fetchBoxWithFlashcards(boxId)
     }
-
 }
