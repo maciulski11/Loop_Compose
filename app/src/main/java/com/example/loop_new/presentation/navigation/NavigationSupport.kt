@@ -80,6 +80,7 @@ object NavigationSupport {
     const val StoryInfoScreen = "story_info_screen"
     const val StoryFavoriteScreen = "story_favorite_screen"
     const val StatsScreen = "stats_screen"
+
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "SuspiciousIndentation")
@@ -309,8 +310,8 @@ fun NavigationScreens(
                         boxId
                     )
                 }
-
                 LessonScreen(navController, viewModel)
+
             }
 
             composable(NavigationSupport.RepeatScreen) {

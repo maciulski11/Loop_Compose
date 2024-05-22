@@ -17,6 +17,8 @@ import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -30,8 +32,8 @@ class LessonViewModel(
     private val _flashcardList = MutableLiveData<List<Flashcard>>()
     val flashcardList: LiveData<List<Flashcard>> = _flashcardList
 
-    private val _currentFlashcard = MutableLiveData<Flashcard?>(null)
-    val currentFlashcard: LiveData<Flashcard?> = _currentFlashcard
+    private val _currentFlashcard = MutableStateFlow<Flashcard?>(null)
+    val currentFlashcard: StateFlow<Flashcard?> = _currentFlashcard
 
     var progress by mutableFloatStateOf(0f)
     var progressText by mutableStateOf("")
@@ -41,20 +43,23 @@ class LessonViewModel(
     }
 
     private fun fetchFlashcardsForBox(boxId: Int) {
-        viewModelScope.launch {
-            try {
-                val boxWithFlashcards = withContext(Dispatchers.IO) {
-                    roomService.fetchBoxWithFlashcards(boxId)
+        // Check if data already exists to avoid reloading
+        if (_flashcardList.value.isNullOrEmpty()) {
+            viewModelScope.launch {
+                try {
+                    val boxWithFlashcards = withContext(Dispatchers.IO) {
+                        roomService.fetchBoxWithFlashcards(boxId)
+                    }
+                    _currentFlashcard.value = boxWithFlashcards.flashcards.firstOrNull()
+                    _flashcardList.postValue(boxWithFlashcards.flashcards)
+
+                    progressText = _currentFlashcard.value?.let { "0 / ${boxWithFlashcards.flashcards.size}" }
+                        ?: "0 / 0"
+
+                    Log.d("FlashcardViewModel", "getFlashcardsForBox: Success!")
+                } catch (e: Exception) {
+                    Log.e("FlashcardViewModel", "getFlashcardsForBox: Error: $e")
                 }
-                _flashcardList.postValue(boxWithFlashcards.flashcards)
-                _currentFlashcard.value = boxWithFlashcards.flashcards.firstOrNull()
-
-                progressText = _currentFlashcard.value?.let { "0 / ${boxWithFlashcards.flashcards.size}" }
-                    ?: "0 / 0"
-
-                Log.d("FlashcardViewModel", "getFlashcardsForBox: Success!")
-            } catch (e: Exception) {
-                Log.e("FlashcardViewModel", "getFlashcardsForBox: Error: $e")
             }
         }
     }

@@ -139,8 +139,6 @@ fun PrivateScreen(
     val showDialogDeleteBox = remember { mutableStateOf(false) }
     val selectedBoxIndex = remember { mutableIntStateOf(-1) }
 
-
-
     val constraints = ConstraintSet {
         val boxList = createRefFor("boxList")
         val addBoxButton = createRefFor("addBoxButton")
