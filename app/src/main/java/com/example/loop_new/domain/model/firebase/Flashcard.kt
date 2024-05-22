@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(tableName = "flashcard",
     foreignKeys = [
@@ -28,8 +29,8 @@ data class Flashcard(
     val uid: String? = null,
     val boxUid: String? = null,
     val knowledgeLevel: String? = KnowledgeLevel.NEW_WORD.value,
-//    var lastStudiedDate: Timestamp? = null,
-//    var nextStudyDate: Timestamp? = null,
+    var lastStudiedDate: String? = null,
+    var nextStudyDate: String? = null,
     var isReadyToStudy: Boolean? = null,
     @PrimaryKey(autoGenerate = true)
     val idFlashcard: Int = 0

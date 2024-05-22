@@ -4,6 +4,10 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.BoxWithFlashcards
 import com.example.loop_new.domain.model.firebase.Flashcard
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class RoomService(private val boxDao: BoxDao, private var flashcardDao: FlashcardDao) {
@@ -27,11 +31,26 @@ class RoomService(private val boxDao: BoxDao, private var flashcardDao: Flashcar
         flashcardDao.insertFlashCard(data)
     }
 
-    suspend fun updateFlashCardKnowledgeLevel(flashcardId: Int, newKnowledgeLevel: String) {
+    suspend fun updateFlashCardKnowledgeLevel(flashcardId: Int, newKnowledgeLevel: String, timeToRepeat: Int) {
+
         val flashcard = flashcardDao.getFlashcardById(flashcardId)
         flashcard?.let {
-            // Zaktualizowanie poziomu wiedzy
-            val updatedFlashcard = it.copy(knowledgeLevel = newKnowledgeLevel)
+            val currentDate = Date()
+            val nextStudyDate = Calendar.getInstance().apply {
+                time = currentDate
+                add(Calendar.HOUR, timeToRepeat)
+            }.time
+
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val lastStudiedDateStr = dateFormat.format(currentDate)
+            val nextStudyDateStr = dateFormat.format(nextStudyDate)
+
+            val updatedFlashcard = it.copy(
+                knowledgeLevel = newKnowledgeLevel,
+                lastStudiedDate = lastStudiedDateStr,
+                nextStudyDate = nextStudyDateStr
+            )
+
             flashcardDao.updateFlashCard(updatedFlashcard)
         }
     }

@@ -97,19 +97,19 @@ class LessonViewModel(
 
     fun updateFlashcardToKnow(flashcardId: Int, newKnowledgeLevel: String) {
         viewModelScope.launch {
-            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel)
+            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel, 24)
         }
     }
 
     fun updateFlashcardToSomewhatKnow(flashcardId: Int, newKnowledgeLevel: String) {
         viewModelScope.launch {
-            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel)
+            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel, 12)
         }
     }
 
     fun updateFlashcardToDoNotKnow(flashcardId: Int, newKnowledgeLevel: String) {
         viewModelScope.launch {
-            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel)
+            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel, 6)
         }
     }
 
