@@ -2,6 +2,8 @@ package com.example.loop_new.presentation.screens.flashcard_section.lesson
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import com.example.loop_new.domain.model.firebase.KnowledgeLevel
 import com.example.loop_new.presentation.screens.flashcard_section.LessonRepeatScreen
@@ -10,7 +12,7 @@ import com.example.loop_new.presentation.screens.flashcard_section.LessonRepeatS
 @Composable
 fun LessonScreen(navController: NavController, viewModel: LessonViewModel) {
 
-    val currentFlashcard = viewModel.currentFlashcard.value
+    val currentFlashcard by viewModel.currentFlashcard.collectAsState(initial = null)
     val flashcardList = viewModel.flashcardList.value.orEmpty() // Jeśli lista jest null, zwróć pustą listę
     val indexOfFlashcard = flashcardList.indexOf(currentFlashcard)
 

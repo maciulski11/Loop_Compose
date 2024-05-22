@@ -78,12 +78,12 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("androidx.compose.material:material:1.5.4")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
-    implementation("androidx.compose.animation:animation:1.0.0")
+    implementation("androidx.compose.animation:animation:1.6.7")
 
     // Firebase
     implementation("com.google.firebase:firebase-auth:22.3.0")

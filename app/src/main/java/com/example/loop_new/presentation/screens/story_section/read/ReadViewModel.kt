@@ -14,12 +14,14 @@ import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.services.DictionaryService
 import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.TranslateService
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
 
 class ReadViewModel(
     private val firebaseService: FirebaseService,
     private val translateService: TranslateService,
     private val dictionaryService: DictionaryService,
+    private val roomService: RoomService,
     storyUid: String,
 ) : ViewModel() {
 
@@ -36,7 +38,7 @@ class ReadViewModel(
 
     init {
         fetchStory(storyUid)
-//        fetchListOfPrivateBox()
+        fetchListOfPrivateBox()
     }
 
     private fun fetchStory(storyUid: String) {
@@ -68,37 +70,38 @@ class ReadViewModel(
         }
     }
 
-    //TODO: zmienic to na dodawanie fiszke do room
-//    fun addFlashcard(word: String, boxUid: String) {
-//        val flashcardData = Flashcard(
-//            word = word,
-//            translate = translate,
-//            meaning = meaning,
-//            example = example,
-//            pronunciation = pronunciation,
-//            audioUrl = audioUrl,
-//        )
-//
-//        viewModelScope.launch {
-//            try {
-//                firebaseService.addFlashcardInPrivateSection(flashcardData, boxUid)
-//                Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Success")
-//
-//            } catch (e: Exception) {
-//
-//                Log.e(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard: Error: $e")
-//            }
-//        }
-//    }
-//
-//    private fun fetchListOfPrivateBox() {
-//        viewModelScope.launch {
-//            firebaseService.fetchListOfPrivateBox().collect { loadedBoxes ->
-//                privateBoxList.clear()
-//                loadedBoxes.filter { it.addFlashcardFromStory != false }.forEach {
-//                    privateBoxList.add(it)
-//                }
-//            }
-//        }
-//    }
+    fun addFlashcard(word: String, boxId: Int, boxUid: String) {
+        val flashcardData = Flashcard(
+            word = word,
+            translate = translate,
+            meaning = meaning,
+            example = example,
+            pronunciation = pronunciation,
+            audioUrl = audioUrl,
+            boxId = boxId,
+            boxUid = boxUid
+        )
+
+        viewModelScope.launch {
+            try {
+                roomService.insertFlashCard(flashcardData)
+                Log.d(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard to room: Success")
+
+            } catch (e: Exception) {
+
+                Log.e(LogTags.ADD_FLASHCARD_VIEW_MODEL, "addFlashcard to room: Error: $e")
+            }
+        }
+    }
+
+    private fun fetchListOfPrivateBox() {
+        viewModelScope.launch {
+            roomService.fetchBoxes().collect { loadedBoxes ->
+                privateBoxList.clear()
+                loadedBoxes.filter { it.addFlashcardFromStory != false }.forEach {
+                    privateBoxList.add(it)
+                }
+            }
+        }
+    }
 }
