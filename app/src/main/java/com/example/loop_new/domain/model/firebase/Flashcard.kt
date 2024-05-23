@@ -29,8 +29,8 @@ data class Flashcard(
     val uid: String? = null,
     val boxUid: String? = null,
     val knowledgeLevel: String? = KnowledgeLevel.NEW_WORD.value,
-    var lastStudiedDate: String? = null,
-    var nextStudyDate: String? = null,
+    var lastStudiedDate: Long? = null,
+    var nextStudyDate: Long? = null,
     var isReadyToStudy: Boolean? = null,
     @PrimaryKey(autoGenerate = true)
     val idFlashcard: Int = 0

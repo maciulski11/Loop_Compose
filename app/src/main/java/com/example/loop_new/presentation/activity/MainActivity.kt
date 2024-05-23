@@ -13,6 +13,9 @@ import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(DelicateCoroutinesApi::class)
 class MainActivity : ComponentActivity() {
@@ -63,7 +66,9 @@ class MainActivity : ComponentActivity() {
         dependencyProvider = DependencyProvider(application)
 
         lifecycleScope.launch(Dispatchers.IO) {
-//            firebaseService.addFlashcardsToRepeatSection()
+            val currentTime =
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+            roomService.updateRepeatSection(currentTime)
         }
 
         setContent {

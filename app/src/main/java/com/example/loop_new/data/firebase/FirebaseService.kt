@@ -550,56 +550,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     /**
-     * Adds eligible flashcards to the 'repeat' section for the current user.
-     *
-     * This function iterates through all the 'box' documents of the current user. For each box,
-     * it retrieves all flashcards and checks if they meet the criteria to be added to the 'repeat' section
-     * (e.g., based on the 'nextStudyDate'). Eligible flashcards are then added to the 'repeat' section.
-     */
-    //TODO: zrobic, zeby fiszki dodawaly sie z room do fireebase do sekcji repaet
-//    override fun addFlashcardsToRepeatSection() {
-//        if (currentUser != null) {
-//            // Query all 'box' documents of the current user
-//            firestore.collection(USERS).document(currentUser)
-//                .collection(BOX)
-//                .get()
-//                .addOnSuccessListener { boxSnapshot ->
-//                    for (boxDocument in boxSnapshot.documents) {
-//                        // Iterating through each 'box' document
-//                        val boxID = boxDocument.id
-//
-//                        // Query all flashcards within the current box
-//                        firestore.collection(USERS).document(currentUser)
-//                            .collection(BOX).document(boxID)
-//                            .collection(FLASHCARD)
-//                            .get()
-//                            .addOnSuccessListener { flashcardSnapshot ->
-//                                for (flashcardDocument in flashcardSnapshot.documents) {
-//                                    // Iterating through each flashcard in the box
-//                                    val flashcard =
-//                                        flashcardDocument.toObject(Flashcard::class.java)
-//
-//                                    // Check if the flashcard meets the criteria to be added to 'repeat'
-//                                    if (flashcard?.nextStudyDate != null && flashcard.nextStudyDate!! <= currentTime) {
-//                                        // Add the flashcard to the 'repeat' section
-//                                        addFlashcardToRepeat(flashcard)
-//
-//                                        logSuccess("fetchRepeatFlashcards: ${flashcard.word}")
-//                                    }
-//                                }
-//                            }
-//                            .addOnFailureListener { exception ->
-//                                logError("fetchRepeatFlashcards: $exception")
-//                            }
-//                    }
-//                }
-//                .addOnFailureListener { exception ->
-//                    logError("fetchRepeatFlashcards: $exception")
-//                }
-//        }
-//    }
-
-    /**
      * Adds a flashcard to the 'repeat' collection for the current user if it's not already present.
      *
      * This function first checks if the specified flashcard already exists in the 'repeat'

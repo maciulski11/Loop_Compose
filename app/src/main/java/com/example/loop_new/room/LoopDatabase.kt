@@ -4,15 +4,17 @@ import android.app.Application
 import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.domain.model.firebase.RepeatSection
 
-@Database(entities = [Flashcard::class, Box::class], version = 1)
+@Database(entities = [Flashcard::class, Box::class, RepeatSection::class], version = 2)
 abstract class LoopDatabase : RoomDatabase() {
 
     abstract fun boxDao(): BoxDao
     abstract fun flashcardDao(): FlashcardDao
+
+    abstract fun repeatSectionDao(): RepeatSectionDao
 
     companion object {
         @Volatile
@@ -28,8 +30,10 @@ abstract class LoopDatabase : RoomDatabase() {
             return databaseBuilder(
                 application,
                 LoopDatabase::class.java,
-                "database1"
-            ).build()
+                "loop_database"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
     }
 }

@@ -9,6 +9,7 @@ import com.example.loop_new.room.RoomService
 import com.example.loop_new.room.BoxDao
 import com.example.loop_new.room.FlashcardDao
 import com.example.loop_new.room.LoopDatabase
+import com.example.loop_new.room.RepeatSectionDao
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.DelicateCoroutinesApi
 
@@ -29,7 +30,8 @@ class DependencyProvider(application: Application) {
     private val loopDatabase: LoopDatabase = LoopDatabase.getInstance(application)
     private val boxDao: BoxDao = loopDatabase.boxDao()
     private val flashcardDao: FlashcardDao = loopDatabase.flashcardDao()
-    val roomService: RoomService = RoomService(boxDao, flashcardDao)
+    private val repeatSectionDao: RepeatSectionDao = loopDatabase.repeatSectionDao()
+    val roomService: RoomService = RoomService(boxDao, flashcardDao, repeatSectionDao)
 
     // Service
     val service: Service = Service()
