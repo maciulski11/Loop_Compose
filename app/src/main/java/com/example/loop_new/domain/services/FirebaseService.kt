@@ -38,10 +38,6 @@ interface FirebaseService {
 
     fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String)
 
-    fun setupRepeatCollectionListener(onCollectionUpdate: (Boolean) -> Unit)
-
-    suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean
-
     // Story
     fun fetchListOfStory(): Flow<Category>
 

@@ -320,64 +320,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     }
 
     /**
-     * Sets up a real-time listener for changes in the user's 'repeat' collection in Firestore.
-     *
-     * This function creates a Firestore snapshot listener on the 'repeat' collection
-     * of the current user. It triggers a callback function with a boolean flag indicating
-     * whether the collection is empty whenever there is an update in the collection.
-     * The function logs any errors encountered but does not stop the application.
-     *
-     * @param onCollectionUpdate A callback function that is triggered with the update status of the collection.
-     */
-    override fun setupRepeatCollectionListener(onCollectionUpdate: (Boolean) -> Unit) {
-        if (currentUser != null) {
-            firestore.collection(USERS).document(currentUser)
-                .collection(REPEAT)
-                .addSnapshotListener { querySnapshot, error ->
-                    if (error != null) {
-                        logError("Repeat section listener error: $error")
-                        return@addSnapshotListener
-                    }
-
-                    // Update status based on data from Firestore
-                    querySnapshot?.let {
-                        onCollectionUpdate(it.isEmpty)
-                    }
-                }
-        }
-    }
-
-    /**
-     * Checks whether the 'repeat' collection for the current user in Firestore is empty.
-     *
-     * This suspend function asynchronously retrieves the 'repeat' collection of the
-     * current user from Firestore and returns a Boolean value indicating whether the
-     * collection is empty. If an error occurs during the Firestore operation, the function
-     * logs the error and returns false, indicating the check could not be completed.
-     *
-     * @return Boolean indicating whether the 'repeat' collection is empty (true if empty, false otherwise).
-     */
-    override suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean {
-        if (currentUser != null) {
-            return try {
-                // Asynchronously retrieve the 'repeat' collection for the current user
-                val querySnapshot = firestore.collection(USERS).document(currentUser)
-                    .collection(REPEAT)
-                    .get()
-                    .await()
-
-                // Return true if the collection is empty, false otherwise
-                querySnapshot.isEmpty
-            } catch (exception: Exception) {
-                logError("checkFirestoreCollection exception: $exception")
-                false // Return false in case of an exception
-            }
-        }
-        // Return false if there is no current user
-        return false
-    }
-
-    /**
      * Fetches a list of public boxes, supporting pagination.
      *
      * This function queries the Firestore database to retrieve public boxes, either starting

@@ -20,8 +20,13 @@ class PrivateBoxViewModel(
     private val _boxes = MutableStateFlow<List<Box>>(emptyList())
     val boxes: StateFlow<List<Box>> = _boxes
 
+    private val _isListEmpty = mutableStateOf(true)
+    val isListEmpty: Boolean
+        get() = _isListEmpty.value
+
     init {
         fetchBoxes()
+        checkRepeatCollectionWhetherIsEmpty()
     }
 
     fun insert(name: String, describe: String, colorGroup: List<Color>) {
@@ -65,22 +70,9 @@ class PrivateBoxViewModel(
         }
     }
 
-    // Firebase
-    private val _isListEmpty = mutableStateOf(true)
-    val isListEmpty: Boolean
-        get() = _isListEmpty.value
-
-    private fun setupRepeatCollectionListener() {
-        viewModelScope.launch {
-            firebaseService.setupRepeatCollectionListener { isEmpty ->
-                _isListEmpty.value = isEmpty
-            }
-        }
-    }
-
     private fun checkRepeatCollectionWhetherIsEmpty() {
         viewModelScope.launch {
-            _isListEmpty.value = firebaseService.checkRepeatCollectionWhetherIsEmpty()
+            _isListEmpty.value = roomService.checkRepeatCollectionWhetherIsEmpty()
         }
     }
 

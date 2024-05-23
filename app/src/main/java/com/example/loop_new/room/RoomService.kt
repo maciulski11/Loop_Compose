@@ -115,4 +115,17 @@ class RoomService(
             Log.d("RepeatSection", "Repeat section already has 30 flashcards")
         }
     }
+
+    suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean {
+        return try {
+            // Asynchronously retrieve the count of records in the repeat section
+            val repeatSectionCount = repeatSectionDao.getRepeatSectionCount()
+
+            // Return true if the count is 0, indicating that the collection is empty
+            repeatSectionCount == 0
+        } catch (exception: Exception) {
+            Log.e("checkRepeatCollectionWhetherIsEmpty exception:", "$exception")
+            false // Return false in case of an exception
+        }
+    }
 }

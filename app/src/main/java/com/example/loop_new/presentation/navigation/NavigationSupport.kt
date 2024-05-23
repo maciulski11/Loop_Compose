@@ -206,7 +206,7 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    PublicBoxViewModel(firebaseService)
+                    PublicBoxViewModel(firebaseService, roomService)
                 }
 
                 PublicBoxScreen(navController, viewModel)
