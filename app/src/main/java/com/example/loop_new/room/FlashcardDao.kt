@@ -22,6 +22,9 @@ interface FlashcardDao {
     @Query("SELECT * FROM flashcard WHERE idFlashcard = :flashcardId")
     suspend fun getFlashcardById(flashcardId: Int): Flashcard?
 
+    @Query("SELECT * FROM flashcard WHERE nextStudyDate <= :currentTime LIMIT :limit")
+    suspend fun getFlashcardsForRepeat(currentTime: Long, limit: Int): List<Flashcard>
+
     // Query -> load note by id
     @Query("SELECT * FROM flashcard WHERE boxId = :boxId")
     fun fetchFlashcardsById(boxId: Int): Flow<List<Flashcard>>
