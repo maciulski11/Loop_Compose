@@ -5,14 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
-import com.example.loop_new.presentation.screens.flashcard_section.LessonRepeatScreen
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
 
-    val currentFlashcard by viewModel.currentFlashcard.collectAsState()
-    val flashcardList = viewModel.flashcardList.value
+    val currentFlashcard by viewModel.currentRepeatSection.collectAsState()
+    val flashcardList = viewModel.repeatSectionList.value
 
     // Dodajmy sprawdzenie, czy currentFlashcard nie jest nullem
     val indexOfFlashcard = if (currentFlashcard != null) {
@@ -22,11 +21,10 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
     }
 
     if (indexOfFlashcard != -1) {
-        val boxUid = flashcardList[indexOfFlashcard].boxUid.toString()
-        val flashcardUid = flashcardList[indexOfFlashcard].uid.toString()
+        val flashcardId = flashcardList[indexOfFlashcard].flashcardId ?: -1
 
         currentFlashcard?.let {
-            LessonRepeatScreen(
+            LessonSectionScreen(
                 navController = navController,
                 flashcardList = flashcardList,
                 progressText = viewModel.progressText,
@@ -36,25 +34,16 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
                     viewModel.playAudioFromUrl(audioUrl)
                 },
                 {
-                    viewModel.updateFlashcardToKnow(
-                        boxUid = boxUid,
-                        flashcardUid = flashcardUid
-                    )
-                    viewModel.moveToNextFlashcard(navController)
+                    viewModel.updateFlashcardToKnow(flashcardId)
+                    viewModel.moveToNextRepeatSection(navController)
                 },
                 {
-                    viewModel.updateFlashcardToSomewhatKnow(
-                        boxUid = boxUid,
-                        flashcardUid = flashcardUid
-                    )
-                    viewModel.moveToNextFlashcard(navController)
+                    viewModel.updateFlashcardToSomewhatKnow(flashcardId)
+                    viewModel.moveToNextRepeatSection(navController)
                 },
                 {
-                    viewModel.updateFlashcardToDoNotKnow(
-                        boxUid = boxUid,
-                        flashcardUid = flashcardUid
-                    )
-                    viewModel.moveToNextFlashcard(navController)
+                    viewModel.updateFlashcardToDoNotKnow(flashcardId)
+                    viewModel.moveToNextRepeatSection(navController)
                 }
             )
         }

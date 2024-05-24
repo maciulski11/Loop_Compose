@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LessonViewModel(
-    private val firebaseService: FirebaseService,
     private val mainViewModel: MainViewModel,
     private val roomService: RoomService,
     boxId: Int,
@@ -64,11 +63,11 @@ class LessonViewModel(
         }
     }
 
-    fun addLessonStatsToFirestore(flashcardUid: String, status: String) {
-        viewModelScope.launch {
-            firebaseService.addLessonStatsToFirestore(flashcardUid, status)
-        }
-    }
+//    fun addLessonStatsToFirestore(flashcardUid: String, status: String) {
+//        viewModelScope.launch {
+//            firebaseService.addLessonStatsToFirestore(flashcardUid, status)
+//        }
+//    }
 
     private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
         return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
@@ -95,31 +94,25 @@ class LessonViewModel(
             ?: "0 / 0" // Sprawdź, czy currentFlashcard nie jest nullem, aby uniknąć NullPointerException
     }
 
-    fun updateFlashcardToKnow(flashcardId: Int, newKnowledgeLevel: String) {
+    fun updateFlashcardToKnow(flashcardId: Int) {
         viewModelScope.launch {
-            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel, 1)
+            mainViewModel.updateFlashcardToKnow(flashcardId)
         }
     }
 
-    fun updateFlashcardToSomewhatKnow(flashcardId: Int, newKnowledgeLevel: String) {
+    fun updateFlashcardToSomewhatKnow(flashcardId: Int) {
         viewModelScope.launch {
-            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel, 0)
+            mainViewModel.updateFlashcardToSomewhatKnow(flashcardId)
         }
     }
 
-    fun updateFlashcardToDoNotKnow(flashcardId: Int, newKnowledgeLevel: String) {
+    fun updateFlashcardToDoNotKnow(flashcardId: Int) {
         viewModelScope.launch {
-            roomService.updateFlashCardKnowledgeLevel(flashcardId, newKnowledgeLevel, 0)
+            mainViewModel.updateFlashcardToDoNotKnow(flashcardId)
         }
     }
 
     fun playAudioFromUrl(audioUrl: String) {
         mainViewModel.playAudioFromUrl(audioUrl)
-    }
-
-    fun deleteFlashcardFromRepeatSection(flashcardUid: String) {
-        viewModelScope.launch {
-            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
-        }
     }
 }

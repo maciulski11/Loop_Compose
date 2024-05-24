@@ -29,7 +29,4 @@ interface FlashcardDao {
     @Query("SELECT * FROM flashcard WHERE boxId = :boxId")
     fun fetchFlashcardsById(boxId: Int): Flow<List<Flashcard>>
 
-    @Query("SELECT * FROM flashcard WHERE boxId = :boxId")
-    fun fetchFlashcardsByIdInLesson(boxId: Int): List<Flashcard>
-
 }
