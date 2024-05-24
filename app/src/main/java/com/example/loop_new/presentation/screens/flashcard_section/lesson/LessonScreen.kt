@@ -15,7 +15,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel) {
     val indexOfFlashcard = flashcardList.indexOf(currentFlashcard)
 
     currentFlashcard?.let {
-        LessonRepeatScreen(
+        Lesson(
             navController = navController,
             flashcardList = flashcardList,
             progressText = viewModel.progressText,

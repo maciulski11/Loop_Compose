@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.flashcard_section
+package com.example.loop_new.presentation.screens.flashcard_section.repeat
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
@@ -65,8 +65,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
-import com.example.loop_new.domain.model.firebase.Flashcard
+import com.example.loop_new.domain.model.firebase.RepeatSection
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.flashcard_section.lesson.visible
 import com.example.loop_new.ui.theme.Blue
 import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.Gray2
@@ -78,15 +79,15 @@ import kotlin.math.roundToInt
 
 @Preview(showBackground = true)
 @Composable
-fun LessonRepeatScreenPreview() {
+fun RepeatScreenPreview() {
     val navController = rememberNavController()
 
-    LessonRepeatScreen(
+    Repeat(
         navController = navController,
-        flashcardList = createSampleData(),
+        repeatList = createRepeatData(),
         progressText = "1/22",
         progress = 1f,
-        currentFlashcard = Flashcard(),
+        currentFlashcard = RepeatSection(),
         onPlayAudio = { },
         onKnowFlashcard = { },
         onSomewhatKnowFlashcard = { },
@@ -95,23 +96,23 @@ fun LessonRepeatScreenPreview() {
 }
 
 @Composable
-fun createSampleData(): List<Flashcard> {
-    val sampleData = mutableListOf<Flashcard>()
+fun createRepeatData(): List<RepeatSection> {
+    val sampleData = mutableListOf<RepeatSection>()
 
     for (i in 1..22) {
-        sampleData.add(Flashcard(word = "Box $i", pronunciation = "Description $i"))
+        sampleData.add(RepeatSection(word = "Box $i", pronunciation = "Description $i"))
     }
     return sampleData
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LessonRepeatScreen(
+fun Repeat(
     navController: NavController,
-    flashcardList: List<Flashcard>,
+    repeatList: List<RepeatSection>,
     progressText: String,
     progress: Float,
-    currentFlashcard: Flashcard,
+    currentFlashcard: RepeatSection,
     onPlayAudio: (String) -> Unit,
     onKnowFlashcard: () -> Unit,
     onSomewhatKnowFlashcard: () -> Unit,
@@ -152,7 +153,7 @@ fun LessonRepeatScreen(
     val offsetXSwipe = swipeableStateX.offset.value
     val offsetYSwipe = swipeableStateY.offset.value
 
-    // Użyj offsetYSwipe do obsługi przesuwania i offsetYAnimation dla animacji
+    // offsetYSwipe to handle shifting and offsetYAnimation for animation
     val offsetX = if (isVisibleLeft || isVisibleRight) offsetXAnimation else offsetXSwipe
     val offsetY = if (isVisibleUp) offsetYAnimation else offsetYSwipe
 
@@ -174,7 +175,7 @@ fun LessonRepeatScreen(
             }
 
             isVisibleRight -> {
-                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                delay(400)
                 onKnowFlashcard()
                 isVisibleRight = false
             }
@@ -185,7 +186,7 @@ fun LessonRepeatScreen(
             }
 
             isVisibleLeft -> {
-                delay(400) // Opóźnienie, aby pozwolić na zakończenie animacji
+                delay(400)
                 onDoNotKnowFlashcard()
                 isVisibleLeft = false
             }
@@ -196,7 +197,7 @@ fun LessonRepeatScreen(
             }
 
             isVisibleUp -> {
-                delay(450) // Opóźnienie, aby pozwolić na zakończenie animacji
+                delay(450)
                 onSomewhatKnowFlashcard()
                 isVisibleUp = false
             }
@@ -239,8 +240,7 @@ fun LessonRepeatScreen(
                     }
             )
 
-
-            // Dodaj tekst z numerem bieżącej fiszki i całkowitą liczbą fiszek
+            // Progress Text
             Text(
                 text = progressText,
                 modifier = Modifier
@@ -251,18 +251,17 @@ fun LessonRepeatScreen(
                 color = Gray,
                 fontSize = 16.sp
             )
-
         }
 
-        // Dodaj pasek postępu tutaj
+        // Progress bar
         LinearProgressIndicator(
             progress = progress / 100f,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp)
-                .padding(start = 12.dp, end = 12.dp) // Marginesy od startu i końca
-                .background(Gray2, shape = RoundedCornerShape(6.dp)) // Kolor tła i zaokrąglone rogi
-                .clip(RoundedCornerShape(6.dp)), // Zaokrąglone rogi dla samego paska postępu // Kolor tła i zaokrąglone rogi
+                .padding(start = 12.dp, end = 12.dp)
+                .background(Gray2, shape = RoundedCornerShape(6.dp))
+                .clip(RoundedCornerShape(6.dp)),
             color = Blue
         )
 
@@ -276,9 +275,9 @@ fun LessonRepeatScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                if (flashcardList.indexOf(currentFlashcard) < flashcardList.size - 1) {
-                    // Renderuj zawartość następnej fiszki, jeśli nie jesteś na ostatniej
-                    val flashcard = flashcardList.indexOf(currentFlashcard) + 1
+                if (repeatList.indexOf(currentFlashcard) < repeatList.size - 1) {
+                    // Render the contents of the next flashcard if you are not on the last one
+                    val flashcard = repeatList.indexOf(currentFlashcard) + 1
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -295,7 +294,7 @@ fun LessonRepeatScreen(
                         ) {
 
                             Text(
-                                text = flashcardList[flashcard].word.toString(),
+                                text = repeatList[flashcard].word.toString(),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 28.sp,
                                 color = Black,
@@ -306,7 +305,7 @@ fun LessonRepeatScreen(
                             Image(
                                 painter = painterResource(
                                     id =
-                                    if (flashcardList[flashcard].audioUrl.isNullOrEmpty()) {
+                                    if (repeatList[flashcard].audioUrl.isNullOrEmpty()) {
                                         R.drawable.baseline_volume
                                     } else {
                                         R.drawable.baseline_volume_off
@@ -319,7 +318,7 @@ fun LessonRepeatScreen(
                         }
 
                         Text(
-                            text = flashcardList[flashcard].pronunciation.toString(),
+                            text = repeatList[flashcard].pronunciation.toString(),
                             fontWeight = FontWeight.Bold,
                             fontSize = 21.sp,
                             color = Orange
@@ -355,7 +354,7 @@ fun LessonRepeatScreen(
                 ) {
                     coroutineScope.launch {
                         delay(320)
-                        // Resetuj rotację do 0, aby przygotować się na kolejną animację
+                        // Reset rotation to 0 to prepare for the next animation
                         rotationY.snapTo(0f)
                         isFront = !isFront
                         isAnimating = !isAnimating
@@ -363,7 +362,7 @@ fun LessonRepeatScreen(
                     triggerRotation()
                 }
             ) {
-                FlashcardItem(flashcard = currentFlashcard, isFront, isAnimating) { audioUrl ->
+                RepeatItem(flashcard = currentFlashcard, isFront, isAnimating) { audioUrl ->
                     onPlayAudio(audioUrl)
                 }
             }
@@ -417,13 +416,12 @@ fun LessonRepeatScreen(
         }
     }
 
-    // Obsługa niestandardowego zachowania powrotu
     BackHandler {
         showDialogBackState.value = true
     }
 
     if (showDialogBackState.value) {
-        ShowCustomAlertDialog(
+        ShowRepeatAlertDialog(
             {
                 navController.navigate(NavigationSupport.PrivateBoxScreen)
             },
@@ -435,8 +433,8 @@ fun LessonRepeatScreen(
 }
 
 @Composable
-fun FlashcardItem(
-    flashcard: Flashcard,
+fun RepeatItem(
+    flashcard: RepeatSection,
     front: Boolean,
     isAnimating: Boolean,
     onPlayAudioFromUrl: (String) -> Unit,
@@ -445,27 +443,27 @@ fun FlashcardItem(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 34.dp, bottom = 40.dp, start = 40.dp, end = 40.dp)
-            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
+            .clip(RoundedCornerShape(20.dp))
             .border(3.dp, Blue, RoundedCornerShape(20.dp))
-            .background(White), // Białe tło z zaokrąglonymi rogami
+            .background(White),
         contentAlignment = Alignment.Center
     ) {
         if (!isAnimating) {
             if (front) {
                 // The front side of the flashcard
-                FrontSide(flashcard) { audioUrl ->
+                FrontSideRepeat(flashcard) { audioUrl ->
                     onPlayAudioFromUrl(audioUrl)
                 }
             } else {
                 // The back side of the flashcard
-                BackSide(flashcard)
+                BackSideRepeat(flashcard)
             }
         }
     }
 }
 
 @Composable
-fun FrontSide(flashcard: Flashcard, onPlayAudioFromUrl: (String) -> Unit) {
+fun FrontSideRepeat(flashcard: RepeatSection, onPlayAudioFromUrl: (String) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -521,7 +519,7 @@ fun FrontSide(flashcard: Flashcard, onPlayAudioFromUrl: (String) -> Unit) {
 }
 
 @Composable
-fun BackSide(flashcard: Flashcard) {
+fun BackSideRepeat(flashcard: RepeatSection) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -559,7 +557,7 @@ fun BackSide(flashcard: Flashcard) {
 }
 
 @Composable
-fun ShowCustomAlertDialog(
+fun ShowRepeatAlertDialog(
     onBack: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -577,9 +575,9 @@ fun ShowCustomAlertDialog(
         modifier = Modifier
             .height(150.dp)
             .width(300.dp)
-            .clip(RoundedCornerShape(20.dp)) // Zaokrąglenie rogu
+            .clip(RoundedCornerShape(20.dp)) 
             .border(3.dp, Black, RoundedCornerShape(20.dp))
-            .background(White), // Białe tło z zaokrąglonymi rogami
+            .background(White),
         onDismissRequest = { /* Touching the screen turns off it */ },
         title = {
             Text(
@@ -587,7 +585,7 @@ fun ShowCustomAlertDialog(
                 fontSize = 22.sp,
                 modifier = Modifier
                     .padding(start = 12.dp, end = 12.dp, bottom = 20.dp)
-                    .wrapContentWidth(Alignment.CenterHorizontally) // Wyśrodkowanie w poziomie
+                    .wrapContentWidth(Alignment.CenterHorizontally)
             )
         },
         buttons = {
@@ -638,7 +636,7 @@ fun ShowCustomAlertDialog(
 }
 
 @Composable
-fun Modifier.visible(visibility: Boolean): Modifier = if (visibility) {
+fun Modifier.visible1(visibility: Boolean): Modifier = if (visibility) {
     this
 } else {
     this.then(Modifier.size(0.dp))

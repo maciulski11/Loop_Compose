@@ -24,9 +24,9 @@ fun RepeatScreen(navController: NavController, viewModel: RepeatViewModel) {
         val flashcardId = flashcardList[indexOfFlashcard].flashcardId ?: -1
 
         currentFlashcard?.let {
-            LessonSectionScreen(
+            Repeat(
                 navController = navController,
-                flashcardList = flashcardList,
+                repeatList = flashcardList,
                 progressText = viewModel.progressText,
                 progress = viewModel.progress,
                 currentFlashcard = it,
