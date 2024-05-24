@@ -13,30 +13,16 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirebaseService {
 
-    // Flashcards
     fun createNewGoogleUser()
 
     fun getSignedInUser(): User?
 
+    // Flashcards
     fun addPublicBoxToPrivateSection(boxUid: String)
 
     fun fetchListOfPublicBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>>
 
     fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>>
-
-    fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>>
-
-    fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>>
-
-//    fun addFlashcardsToRepeatSection()
-
-    fun deleteFlashcardFromRepeatSection(flashcardUid: String)
-
-    fun updateFlashcardToKnow(boxUid: String, flashcardUid: String)
-
-    fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String)
-
-    fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String)
 
     // Story
     fun fetchListOfStory(): Flow<Category>
