@@ -12,9 +12,12 @@ interface RepeatSectionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFlashcards(vararg flashcards: RepeatSection)
 
-//    @Query("DELETE FROM repeat_section WHERE flashcardId = :flashcardId")
-//    suspend fun deleteFlashcardById(flashcardId: Int)
+    @Query("DELETE FROM repeat_section WHERE flashcardId = :flashcardId")
+    suspend fun deleteFlashcardInRepeatSection(flashcardId: Int)
 
     @Query("SELECT COUNT(*) FROM repeat_section")
-    suspend fun getRepeatSectionCount(): Int
+    suspend fun fetchCountOfFlashcardsInRepeatSection(): Int
+
+    @Query("SELECT * FROM repeat_section")
+    suspend fun fetchFlashcardsInRepeatSection(): List<RepeatSection>
 }

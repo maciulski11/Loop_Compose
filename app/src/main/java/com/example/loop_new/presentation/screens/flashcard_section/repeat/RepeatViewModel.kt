@@ -9,107 +9,114 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.loop_new.LogTags
-import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.domain.model.firebase.RepeatSection
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.viewModel.MainViewModel
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RepeatViewModel(
-    private val firebaseService: FirebaseService,
-    private val mainViewModel: MainViewModel,
+    private val roomService: RoomService,
+    private val mainViewModel: MainViewModel
 ) : ViewModel() {
 
-    val flashcardList = MutableStateFlow<List<Flashcard>>(emptyList())
-    private val _currentFlashcard = MutableStateFlow<Flashcard?>(null)
-    val currentFlashcard: StateFlow<Flashcard?> = _currentFlashcard
+    private val _repeatSectionList = MutableStateFlow<List<RepeatSection>>(emptyList())
+    val repeatSectionList: StateFlow<List<RepeatSection>> = _repeatSectionList
+
+    private val _currentRepeatSection = MutableStateFlow<RepeatSection?>(null)
+    val currentRepeatSection: StateFlow<RepeatSection?> = _currentRepeatSection
 
     var progress by mutableFloatStateOf(0f)
     var progressText: String by mutableStateOf("")
 
     init {
-        fetchListOfFlashcard()
+        fetchListOfRepeatSection()
     }
 
-    private fun fetchListOfFlashcard() {
+    private fun fetchListOfRepeatSection() {
         viewModelScope.launch {
             try {
-                firebaseService.fetchListOfFlashcardInRepeat()
-                    .collect { newFlashcardList ->
-                        flashcardList.value = newFlashcardList
-                        Log.d("RepeatViewModel", "New flashcard list: $newFlashcardList")
+                val newRepeatSectionList = roomService.fetchFlashcardsInRepeatSection()
+                _repeatSectionList.value = newRepeatSectionList
+                Log.d("RepeatViewModel", "New repeat section list: $newRepeatSectionList")
 
-                        if (newFlashcardList.isNotEmpty()) {
-                            _currentFlashcard.value = newFlashcardList.firstOrNull()
-                            progressText = "0 / ${newFlashcardList.size}"
-                        } else {
-                            _currentFlashcard.value = null
-                            progressText = "0 / 0"
-                        }
-                    }
+                if (newRepeatSectionList.isNotEmpty()) {
+                    _currentRepeatSection.value = newRepeatSectionList.first()
+                    progressText = "1 / ${newRepeatSectionList.size}"
+                } else {
+                    _currentRepeatSection.value = null
+                    progressText = "0 / 0"
+                }
 
-                Log.d(LogTags.LESSON_VIEW_MODEL, "fetchListOfFlashcard: Success!")
+                Log.d(LogTags.LESSON_VIEW_MODEL, "fetchListOfRepeatSection: Success!")
 
             } catch (e: Exception) {
-
-                Log.e(LogTags.LESSON_VIEW_MODEL, "fetchListOfFlashcard: Error: $e")
+                Log.e(LogTags.LESSON_VIEW_MODEL, "fetchListOfRepeatSection: Error: $e")
             }
         }
     }
+
+
 
     private fun calculateProgress(currentIndex: Int, totalFlashcards: Int): Float {
         return (currentIndex.toFloat() / totalFlashcards.toFloat()) * 100f
     }
 
-    fun moveToNextFlashcard(navController: NavController) {
-        val currentList = flashcardList.value
-        val currentIndex = currentList.indexOf(_currentFlashcard.value)
-        val totalFlashcards = currentList.size
+    fun moveToNextRepeatSection(navController: NavController) {
+        val currentList = repeatSectionList.value
+        val currentIndex = currentList.indexOf(_currentRepeatSection.value)
+        val totalSections = currentList.size
 
         if (currentIndex >= 0 && currentIndex < currentList.size - 1) {
 
-            _currentFlashcard.value = currentList[currentIndex + 1]
-            // Oblicz postęp na podstawie indeksu
-            progress = calculateProgress(currentIndex + 1, totalFlashcards)
+            _currentRepeatSection.value = currentList[currentIndex + 1]
+            // Calculate progress based on index
+            progress = calculateProgress(currentIndex + 1, totalSections)
 
         } else if (currentIndex == currentList.size - 1) {
 
-            progress = calculateProgress(currentIndex + 1, totalFlashcards)
-            // Nawiguj do innego ekranu, jeśli jesteś na ostatniej karcie
+            progress = calculateProgress(currentIndex + 1, totalSections)
+            // Navigate to another screen if on the last card
             navController.navigate(NavigationSupport.PrivateBoxScreen)
 
-            // Zablokuj przewijanie, gdy użytkownik osiągnął ostatnią kartę
-            flashcardList.value = emptyList()
-            _currentFlashcard.value = null
+            // Lock scrolling when the user reaches the last card
+            _repeatSectionList.value = emptyList()
+            _currentRepeatSection.value = null
 
         } else {
 
-            Log.d(LogTags.LESSON_VIEW_MODEL, "moveToNextFlashcard: No next flashcard available")
+            Log.d(LogTags.LESSON_VIEW_MODEL, "moveToNextRepeatSection: No next repeat section available")
         }
 
-        progressText = currentFlashcard.let { "${currentIndex + 1} / $totalFlashcards" }
+        progressText = currentRepeatSection.value?.let { "${currentIndex + 1} / $totalSections" } ?: "0 / 0"
     }
 
-    fun updateFlashcardToKnow(boxUid: String, flashcardUid: String) {
+    fun updateFlashcardToKnow(flashcardId: Int) {
         viewModelScope.launch {
-            firebaseService.updateFlashcardToKnow(boxUid, flashcardUid)
-            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
-        }
-    }
-
-    fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String) {
-        viewModelScope.launch {
-            firebaseService.updateFlashcardToSomewhatKnow(boxUid, flashcardUid)
-            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
+            mainViewModel.updateFlashcardToKnow(flashcardId)
+            deleteFlashcardInRepeatSection(flashcardId)
         }
     }
 
-    fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String) {
+    fun updateFlashcardToSomewhatKnow(flashcardId: Int) {
         viewModelScope.launch {
-            firebaseService.updateFlashcardToDoNotKnow(boxUid, flashcardUid)
-            firebaseService.deleteFlashcardFromRepeatSection(flashcardUid)
+            mainViewModel.updateFlashcardToSomewhatKnow(flashcardId)
+            deleteFlashcardInRepeatSection(flashcardId)
+        }
+    }
+
+    fun updateFlashcardToDoNotKnow(flashcardId: Int) {
+        viewModelScope.launch {
+            mainViewModel.updateFlashcardToDoNotKnow(flashcardId)
+            deleteFlashcardInRepeatSection(flashcardId)
+        }
+    }
+
+    private fun deleteFlashcardInRepeatSection(flashcardId: Int) {
+        viewModelScope.launch {
+            roomService.deleteFlashcardInRepeatSection(flashcardId)
         }
     }
 

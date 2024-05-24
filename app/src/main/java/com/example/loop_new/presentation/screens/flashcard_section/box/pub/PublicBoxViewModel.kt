@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.room.RoomService
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
 
-class PublicBoxViewModel(private val firebaseService: FirebaseService) : ViewModel() {
+class PublicBoxViewModel(
+    private val firebaseService: FirebaseService,
+    private val roomService: RoomService
+) : ViewModel() {
 
     val publicBoxList = mutableStateListOf<Box>()
     private var hasMoreData = mutableStateOf(false)
@@ -26,7 +30,6 @@ class PublicBoxViewModel(private val firebaseService: FirebaseService) : ViewMod
 
     init {
         checkRepeatCollectionWhetherIsEmpty()
-        setupRepeatCollectionListener()
         fetchListOfPublicBox()
     }
 
@@ -54,17 +57,9 @@ class PublicBoxViewModel(private val firebaseService: FirebaseService) : ViewMod
         }
     }
 
-    private fun setupRepeatCollectionListener() {
-        viewModelScope.launch {
-            firebaseService.setupRepeatCollectionListener { isEmpty ->
-                _isListEmpty.value = isEmpty
-            }
-        }
-    }
-
     private fun checkRepeatCollectionWhetherIsEmpty() {
         viewModelScope.launch {
-            _isListEmpty.value = firebaseService.checkRepeatCollectionWhetherIsEmpty()
+            _isListEmpty.value = roomService.checkRepeatCollectionWhetherIsEmpty()
         }
     }
 }

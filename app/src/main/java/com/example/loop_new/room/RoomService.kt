@@ -35,10 +35,10 @@ class RoomService(
         flashcardDao.insertFlashCard(data)
     }
 
-    suspend fun updateFlashCardKnowledgeLevel(
+    suspend fun updateFlashcardKnowledgeLevel(
         flashcardId: Int,
         newKnowledgeLevel: String,
-        timeToRepeat: Int,
+        timeToRepeat: Int
     ) {
         val flashcard = flashcardDao.getFlashcardById(flashcardId)
         flashcard?.let {
@@ -78,7 +78,7 @@ class RoomService(
 
         Log.d("RepeatSection", "Converted current time to milliseconds: $currentTimeMillis")
 
-        val repeatSectionCount = repeatSectionDao.getRepeatSectionCount()
+        val repeatSectionCount = repeatSectionDao.fetchCountOfFlashcardsInRepeatSection()
         Log.d("RepeatSection", "Repeat section count: $repeatSectionCount")
 
         if (repeatSectionCount < 30) {
@@ -114,5 +114,26 @@ class RoomService(
         } else {
             Log.d("RepeatSection", "Repeat section already has 30 flashcards")
         }
+    }
+
+    suspend fun checkRepeatCollectionWhetherIsEmpty(): Boolean {
+        return try {
+            // Asynchronously retrieve the count of records in the repeat section
+            val repeatSectionCount = repeatSectionDao.fetchCountOfFlashcardsInRepeatSection()
+
+            // Return true if the count is 0, indicating that the collection is empty
+            repeatSectionCount == 0
+        } catch (exception: Exception) {
+            Log.e("checkRepeatCollectionWhetherIsEmpty exception:", "$exception")
+            false // Return false in case of an exception
+        }
+    }
+
+    suspend fun fetchFlashcardsInRepeatSection(): List<RepeatSection> {
+        return repeatSectionDao.fetchFlashcardsInRepeatSection()
+    }
+
+    suspend fun deleteFlashcardInRepeatSection(flashcardId: Int) {
+        repeatSectionDao.deleteFlashcardInRepeatSection(flashcardId)
     }
 }

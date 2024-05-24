@@ -93,7 +93,7 @@ fun NavigationScreens(
     dictionaryService: DictionaryService,
     roomService: RoomService,
 ) {
-    val mainViewModel = remember { MainViewModel(service, googleAuthService) }
+    val mainViewModel = remember { MainViewModel(service, googleAuthService, roomService) }
 
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -133,7 +133,7 @@ fun NavigationScreens(
         },
         drawerContent = {
             DrawerHeader()
-            Drawer(scaffoldState, scope, navController, MainViewModel(service, googleAuthService))
+            Drawer(scaffoldState, scope, navController, MainViewModel(service, googleAuthService, roomService))
         }
     ) {
         NavHost(
@@ -206,7 +206,7 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    PublicBoxViewModel(firebaseService)
+                    PublicBoxViewModel(firebaseService, roomService)
                 }
 
                 PublicBoxScreen(navController, viewModel)
@@ -304,7 +304,6 @@ fun NavigationScreens(
                 val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
                 val viewModel = remember {
                     LessonViewModel(
-                        firebaseService,
                         mainViewModel,
                         roomService,
                         boxId
@@ -317,7 +316,7 @@ fun NavigationScreens(
             composable(NavigationSupport.RepeatScreen) {
                 val viewModel = remember {
                     RepeatViewModel(
-                        firebaseService,
+                        roomService,
                         mainViewModel
                     )
                 }

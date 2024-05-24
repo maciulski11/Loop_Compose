@@ -5,8 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
-import com.example.loop_new.domain.model.firebase.KnowledgeLevel
-import com.example.loop_new.presentation.screens.flashcard_section.LessonRepeatScreen
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -17,7 +15,7 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel) {
     val indexOfFlashcard = flashcardList.indexOf(currentFlashcard)
 
     currentFlashcard?.let {
-        LessonRepeatScreen(
+        Lesson(
             navController = navController,
             flashcardList = flashcardList,
             progressText = viewModel.progressText,
@@ -26,38 +24,27 @@ fun LessonScreen(navController: NavController, viewModel: LessonViewModel) {
             { audioUrl ->
                 viewModel.playAudioFromUrl(audioUrl)
             },
-            {   // onKnowFlashcard
-                viewModel.updateFlashcardToKnow(
-                    flashcardList[indexOfFlashcard].idFlashcard,
-                    KnowledgeLevel.KNOW.value
-                )
+            {
+                // onKnowFlashcard
+                viewModel.updateFlashcardToKnow(flashcardList[indexOfFlashcard].idFlashcard)
                 viewModel.moveToNextFlashcard(navController)
 
 //                viewModel.addLessonStatsToFirestore(flashcardList[indexOfFlashcard].uid.toString(), KnowledgeLevel.KNOW.value)
-
-//                viewModel.deleteFlashcardFromRepeatSection(flashcardList[indexOfFlashcard].uid.toString())
             },
-            {   // onSomewhatKnowFlashcard
-                viewModel.updateFlashcardToSomewhatKnow(
-                    flashcardList[indexOfFlashcard].idFlashcard,
-                    KnowledgeLevel.SOMEWHAT_KNOW.value
-                )
+            {
+                // onSomewhatKnowFlashcard
+                viewModel.updateFlashcardToSomewhatKnow(flashcardList[indexOfFlashcard].idFlashcard)
                 viewModel.moveToNextFlashcard(navController)
 
 //                viewModel.addLessonStatsToFirestore(flashcardList[indexOfFlashcard].uid.toString(), KnowledgeLevel.SOMEWHAT_KNOW.value)
-
-//                viewModel.deleteFlashcardFromRepeatSection(flashcardList[indexOfFlashcard].uid.toString())
             },
-            {   // onDoNotKnowFlashcard
-                viewModel.updateFlashcardToDoNotKnow(
-                    flashcardList[indexOfFlashcard].idFlashcard,
-                    KnowledgeLevel.DO_NOT_KNOW.value
-                )
+            {
+                // onDoNotKnowFlashcard
+                viewModel.updateFlashcardToDoNotKnow(flashcardList[indexOfFlashcard].idFlashcard)
                 viewModel.moveToNextFlashcard(navController)
 
 //                viewModel.addLessonStatsToFirestore(flashcardList[indexOfFlashcard].uid.toString(), KnowledgeLevel.DO_NOT_KNOW.value)
 
-//                viewModel.deleteFlashcardFromRepeatSection(flashcardList[indexOfFlashcard].uid.toString())
             }
         )
     }
