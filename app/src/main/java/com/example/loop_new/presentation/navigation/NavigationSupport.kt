@@ -242,6 +242,7 @@ fun NavigationScreens(
                     PublicFlashcardViewModel(
                         firebaseService,
                         mainViewModel,
+                        roomService,
                         boxUid
                     )
                 }
