@@ -243,7 +243,11 @@ fun NavigationScreens(
                         firebaseService,
                         mainViewModel,
                         roomService,
+<<<<<<< Updated upstream
                         boxUid
+=======
+                        box.uid ?: ""
+>>>>>>> Stashed changes
                     )
                 }
 
