@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.services.FirebaseService
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class StoryInfoViewModel(
     private val firebaseService: FirebaseService,

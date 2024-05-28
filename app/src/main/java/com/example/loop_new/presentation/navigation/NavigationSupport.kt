@@ -245,12 +245,8 @@ fun NavigationScreens(
                     PublicFlashcardViewModel(
                         firebaseService,
                         mainViewModel,
-<<<<<<< Updated upstream
-                        boxUid
-=======
-                        roomService,
-                        box.uid ?: ""
->>>>>>> Stashed changes
+
+   
                     )
                 }
 

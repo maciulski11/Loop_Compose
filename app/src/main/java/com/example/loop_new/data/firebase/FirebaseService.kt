@@ -1,7 +1,6 @@
 package com.example.loop_new.data.firebase
 
 import android.util.Log
-import com.example.loop_new.FlashcardFields
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.Box
@@ -23,19 +22,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
 class FirebaseService(private val firestore: FirebaseFirestore) :
@@ -44,7 +39,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     companion object {
         const val BOX = "box"
         const val FLASHCARD = "flashcard"
-        const val REPEAT = "repeat"
         const val USERS = "users"
         const val STORY = "story"
         const val FAVORITE_STORIES = "favoriteStories"
@@ -53,155 +47,9 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
     private val auth = Firebase.auth
     private val currentUser = auth.currentUser?.uid
 
-    private val currentTime = Timestamp.now()
-
-    // Create a calendar with date
-    private val calendar = Calendar.getInstance()
-
     private fun logSuccess(message: String) {
         Log.d(LogTags.FIREBASE_SERVICES, message)
-    }
-
-    private fun logError(message: String) {
-        Log.e(LogTags.FIREBASE_SERVICES, message)
-    }
-
-    /**
-     * Creates a new user record in the Firestore database using Google user data.
-     *
-     * This function checks if a Google user is currently signed in and, if so,
-     * adds their information to the Firestore database under the "users" collection.
-     * It handles success and failure scenarios for the database operation.
-     */
-    override fun createNewGoogleUser() {
-        // Fetch the currently signed-in Google user
-        val signedInUser = getSignedInUser()
-
-        if (signedInUser != null) {
-            try {
-                // Attempt to add the Google user's data to the Firestore database
-                firestore.collection(USERS).document(signedInUser.uid ?: "")
-                    .set(signedInUser)
-                    .addOnSuccessListener {
-                        logSuccess("createNewGoogleUser: Successful, created new google user!")
-                    }
-                    .addOnFailureListener { e ->
-                        logError("createNewGoogleUser: ${e.printStackTrace()}")
-                    }
-            } catch (e: Exception) {
-                logError("createNewGoogleUser: ${e.printStackTrace()}")
-            }
-        }
-    }
-
-    /**
-     * Fetch the currently signed-in Google user's data.
-     *
-     * This function checks the Firebase Authentication's current user and, if a user is signed in,
-     * creates and returns a User object containing the user's data
-     *
-     * @return A User object with the signed-in user's data, or null if no user is signed in.
-     */
-    override fun getSignedInUser(): User? = auth.currentUser?.run {
-        User(
-            email = email,
-            uid = uid,
-            username = displayName,
-            profilePictureUrl = photoUrl?.toString()
-        )
-    }
-
-    /**
-     * Download and transfer the box with flashcards from the public section to
-     * the user's private section.
-     *
-     * In this function, a public box with flashcards is downloaded and
-     * then added to the user's private section. The function handles the
-     * retrieval of the box and its associated flashcards, and then triggers
-     * their addition to the private section.
-     *
-     * @param boxUid The unique identifier of the public box to be transferred.
-     */
-
-    //TODO: zmienć na dodanie box do bazy room
-    override fun addPublicBoxToPrivateSection(boxUid: String) {
-        // Begin by attempting to download the specified box from the public section
-        firestore.collection(BOX).document(boxUid).get()
-            .addOnSuccessListener { document ->
-                // Check if the box document exists in the Firestore database
-                if (document.exists()) {
-                    val boxData = document.data
-                    // Proceed if the box data is successfully retrieved
-                    if (boxData != null) {
-                        // Next, download all flashcards associated with this box
-                        firestore.collection(BOX).document(boxUid)
-                            .collection(FLASHCARD)
-                            .whereEqualTo("boxUid", boxUid)
-                            .get()
-                            .addOnSuccessListener { querySnapshot ->
-                                // Convert the snapshot documents to Flashcard objects.
-                                val flashcards = querySnapshot.documents.mapNotNull { document ->
-                                    document.toObject(Flashcard::class.java)
-                                }
-                                logSuccess("addPublicBoxToPrivateSection: Downloaded box with: $flashcards")
-
-                                // Finally, transfer the box and its flashcards to the private section
-                                addPrivateBoxWithFlashcards(boxUid, boxData, flashcards)
-                            }
-                            .addOnFailureListener { e ->
-                                logError("addPublicBoxToPrivateSection: Error downloading flashcards: ${e.message}")
-                            }
-                    }
-                } else {
-                    logSuccess("addPublicBoxToPrivateSection: Box does not exist")
-                }
-            }
-            .addOnFailureListener { e ->
-                logError("addPublicBoxToPrivateSection: Błąd pobierania boxa: ${e.message}")
-            }
-    }
-
-    /**
-     * Adds a box along with its associated flashcards to the user's private section.
-     *
-     * This function takes a box and its related flashcards and adds them to the
-     * Firestore database under the current user's private collection. It performs
-     * this operation as a batch to ensure atomicity, meaning either all operations
-     * succeed or none do. This function is a continuation of the process started
-     * in 'createBoxInPrivateSection'.
-     *
-     * @param boxUid The unique identifier of the box.
-     * @param boxData The data of the box including title, description, and colors.
-     * @param flashcards A list of flashcards associated with the box.
-     */
-
-    //TODO: zmienć na dodanie box do bazy room
-    private fun addPrivateBoxWithFlashcards(
-        boxUid: String,
-        boxData: Map<String, Any>,
-        flashcards: List<Flashcard>,
-    ) {
-        val userBoxRef = firestore.collection(USERS).document(currentUser ?: "")
-            .collection(BOX).document(boxUid)
-
-        firestore.runBatch { batch ->
-            // Add the box to the user's private collection
-            batch.set(userBoxRef, boxData)
-
-            // Add each associated flashcard to the box in the user's private collection
-            flashcards.forEach { flashcard ->
-                val flashcardRef = userBoxRef.collection(FLASHCARD).document(flashcard.uid ?: "")
-                batch.set(flashcardRef, flashcard)
-            }
-        }.addOnSuccessListener {
-            logSuccess("addPrivateBoxWithFlashcards: Box and flashcards successfully added to private collection")
-
-        }.addOnFailureListener { e ->
-            logError("addPrivateBoxWithFlashcards: Error adding box and flashcards: ${e.message}")
-        }
-    }
-
-    /**
+    
      * Fetches a list of public boxes, supporting pagination.
      *
      * This function queries the Firestore database to retrieve public boxes, either starting
@@ -275,35 +123,22 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
      */
     override fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>> {
         return callbackFlow {
-            // Setting up a real-time snapshot listener on the flashcard collection
-            val listenerRegistration =
-                firestore.collection(BOX).document(boxUid)
-                    .collection(FLASHCARD)
-                    .addSnapshotListener { flashcardsSnapshot, error ->
-                        // Handle any errors encountered during snapshot listening
-                        if (error != null) {
-                            close(error)
-                            logError("fetchListOfFlashcardInPublicBox: Error: $error")
-                            return@addSnapshotListener
-                        }
-
-                        // Map each document in the snapshot to a Flashcard object
-                        val flashcards = mutableListOf<Flashcard>()
-                        for (document in flashcardsSnapshot!!) {
-                            val flashcard = document.toObject(Flashcard::class.java)
-                            flashcards.add(flashcard)
-                        }
-
-                        // Send the list of flashcards through the Flow
-                        trySend(flashcards).isSuccess
-                        logSuccess("fetchListOfFlashcardInPublicBox: Success!")
+            val listenerRegistration = firestore.collection(BOX).document(boxUid)
+                .collection(FLASHCARD)
+                .addSnapshotListener { flashcardsSnapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        logError("fetchListOfFlashcardInPublicBox: Error: $error")
+                        return@addSnapshotListener
                     }
 
-            awaitClose {
-                listenerRegistration.remove()
-            }
-        }
-    }
+                    if (flashcardsSnapshot == null) {
+                        logError("fetchListOfFlashcardInPublicBox: Snapshot is null")
+                        trySend(emptyList<Flashcard>()).isSuccess
+                        return@addSnapshotListener
+                    }
+
+
 
     override fun fetchListOfStory(): Flow<Category> {
         return callbackFlow {
