@@ -1,5 +1,9 @@
 package com.example.loop_new.domain.model.firebase
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "story")
 data class Story(
     val title: String? = null,
     val text: List<TextContent>? = null,
@@ -11,7 +15,10 @@ data class Story(
     val image: String? = null,
     val favoriteStories: List<FavoriteStory>? = null,
     val viewList: List<String>? = null,
-    val favorite: Boolean? = null
+    val favorite: Boolean? = null,
+
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
     )
 
 data class TextContent(

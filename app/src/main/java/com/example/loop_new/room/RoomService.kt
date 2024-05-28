@@ -32,13 +32,13 @@ class RoomService(
         val uid = UUID.randomUUID().toString()
         val data = flashcard.copy(uid = uid)
 
-        flashcardDao.insertFlashCard(data)
+        flashcardDao.insertFlashcard(data)
     }
 
     suspend fun updateFlashcardKnowledgeLevel(
         flashcardId: Int,
         newKnowledgeLevel: String,
-        timeToRepeat: Int
+        timeToRepeat: Int,
     ) {
         val flashcard = flashcardDao.getFlashcardById(flashcardId)
         flashcard?.let {
@@ -67,13 +67,33 @@ class RoomService(
         return flashcardDao.fetchFlashcardsById(boxId)
     }
 
-    suspend fun fetchBoxWithFlashcards(boxId: Int): BoxWithFlashcards {
-        return boxDao.fetchBoxWithFlashcards(boxId)
+    suspend fun fetchBoxWithFlashcards(boxUid: String): BoxWithFlashcards {
+        return boxDao.fetchBoxWithFlashcards(boxUid)
+    }
+
+    private suspend fun addBoxAndGetId(box: Box): Long {
+        return boxDao.insertPublicBox(box)
+    }
+
+    private suspend fun addFlashcards(flashcards: List<Flashcard>) {
+        flashcardDao.insertPublicFlashcards(flashcards)
+    }
+
+    suspend fun addPrivateBoxWithFlashcards(box: Box, flashcards: List<Flashcard>) {
+        try {
+            val boxId = addBoxAndGetId(box)
+            val flashcardsWithBoxId = flashcards.map { it.copy(boxId = boxId.toInt()) }
+            addFlashcards(flashcardsWithBoxId)
+            Log.d("YourViewModel", "addPrivateBoxWithFlashcards: Box and flashcards successfully added to Room database")
+        } catch (e: Exception) {
+            Log.e("YourViewModel", "addPrivateBoxWithFlashcards: Error adding box and flashcards: ${e.message}")
+        }
     }
 
     suspend fun updateRepeatSection(currentTime: String) {
         // Convert the current time to milliseconds
-        val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(currentTime)
+        val currentDate =
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(currentTime)
         val currentTimeMillis = currentDate?.time ?: 0
 
         Log.d("RepeatSection", "Converted current time to milliseconds: $currentTimeMillis")
@@ -84,7 +104,8 @@ class RoomService(
         if (repeatSectionCount < 30) {
             val neededFlashcards = 30 - repeatSectionCount
             // Fetch flashcards for repetition
-            val flashcardsForRepeat = flashcardDao.getFlashcardsForRepeat(currentTimeMillis, neededFlashcards)
+            val flashcardsForRepeat =
+                flashcardDao.getFlashcardsForRepeat(currentTimeMillis, neededFlashcards)
             Log.d("RepeatSection", "Number of flashcards for repeat: ${flashcardsForRepeat.size}")
 
             if (flashcardsForRepeat.isNotEmpty()) {

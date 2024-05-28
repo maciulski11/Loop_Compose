@@ -30,7 +30,7 @@ abstract class LoopDatabase : RoomDatabase() {
             return databaseBuilder(
                 application,
                 LoopDatabase::class.java,
-                "loop_database"
+                "loop_databaseXXpp"
             )
                 .fallbackToDestructiveMigration()
                 .build()

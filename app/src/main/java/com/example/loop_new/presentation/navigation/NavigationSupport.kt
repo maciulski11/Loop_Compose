@@ -1,6 +1,7 @@
 package com.example.loop_new.presentation.navigation
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.services.DictionaryService
 import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.GoogleAuthService
@@ -61,6 +63,7 @@ import com.example.loop_new.presentation.screens.story_section.story_info.StoryI
 import com.example.loop_new.presentation.screens.story_section.story_info.StoryInfoScreen
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import com.example.loop_new.room.RoomService
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 object NavigationSupport {
@@ -225,17 +228,17 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.FlashcardScreen}/{boxUid}/{boxName}",
+                "${NavigationSupport.FlashcardScreen}/{boxJson}",
                 arguments = listOf(
-                    navArgument("boxUid") { type = NavType.StringType },
-                    navArgument("boxName") { type = NavType.StringType },
+                    navArgument("boxJson") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
-                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
-                val boxName = backStackEntry.arguments?.getString("boxName") ?: ""
+                val boxJson = backStackEntry.arguments?.getString("boxJson") ?: ""
+                val decodedBoxJson = Uri.decode(boxJson)
+                val box = Gson().fromJson(decodedBoxJson, Box::class.java)
 
-                LaunchedEffect(boxUid) {
-                    currentSection.value = boxName
+                LaunchedEffect(box.uid) {
+                    currentSection.value = box.name ?: ""
                 }
 
                 val viewModel = remember {
@@ -243,15 +246,12 @@ fun NavigationScreens(
                         firebaseService,
                         mainViewModel,
                         roomService,
-<<<<<<< Updated upstream
-                        boxUid
-=======
                         box.uid ?: ""
->>>>>>> Stashed changes
+
                     )
                 }
 
-                PublicFlashcardScreen(navController, boxUid, viewModel)
+                PublicFlashcardScreen(navController, box, viewModel)
             }
 
             composable("${NavigationSupport.PrivateFlashcardScreen}/{boxUid}/{boxId}/{boxName}",
@@ -303,15 +303,15 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.LessonScreen}/{boxId}",
-                arguments = listOf(navArgument("boxId") { type = NavType.IntType })
+                "${NavigationSupport.LessonScreen}/{boxUid}",
+                arguments = listOf(navArgument("boxUid") { type = NavType.StringType })
             ) { backStackEntry ->
-                val boxId = backStackEntry.arguments?.getInt("boxId") ?: 0
+                val boxUid = backStackEntry.arguments?.getString("boxUid") ?: ""
                 val viewModel = remember {
                     LessonViewModel(
                         mainViewModel,
                         roomService,
-                        boxId
+                        boxUid
                     )
                 }
                 LessonScreen(navController, viewModel)

@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirebaseService {
 
-    // Flashcards
     fun createNewGoogleUser()
 
     fun getSignedInUser(): User?
+
 
     fun fetchListOfPublicBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>>
 

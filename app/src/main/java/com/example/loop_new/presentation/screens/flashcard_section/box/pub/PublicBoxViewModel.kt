@@ -1,10 +1,12 @@
 package com.example.loop_new.presentation.screens.flashcard_section.box.pub
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.room.RoomService
 import com.google.firebase.firestore.DocumentSnapshot

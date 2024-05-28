@@ -249,7 +249,7 @@ fun PrivateScreen(
                         }
 
                         flashcardList.size >= 3 -> {
-                            navController.navigate("${NavigationSupport.LessonScreen}/$boxId")
+                            navController.navigate("${NavigationSupport.LessonScreen}/$boxUid")
                         }
                     }
                 }

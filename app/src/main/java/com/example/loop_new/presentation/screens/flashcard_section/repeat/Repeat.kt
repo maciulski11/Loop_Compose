@@ -575,7 +575,7 @@ fun ShowRepeatAlertDialog(
         modifier = Modifier
             .height(150.dp)
             .width(300.dp)
-            .clip(RoundedCornerShape(20.dp)) 
+            .clip(RoundedCornerShape(20.dp))
             .border(3.dp, Black, RoundedCornerShape(20.dp))
             .background(White),
         onDismissRequest = { /* Touching the screen turns off it */ },
