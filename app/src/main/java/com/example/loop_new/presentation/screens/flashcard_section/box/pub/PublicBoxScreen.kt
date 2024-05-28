@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.flashcard_section.box.pub
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
@@ -39,6 +40,7 @@ import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.presentation.screens.flashcard_section.box.AnimatedLearningButton
 import com.example.loop_new.presentation.screens.flashcard_section.box.BoxItem
+import com.google.gson.Gson
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -169,7 +171,11 @@ fun PublicScreen(
             itemsIndexed(filteredList) { index, box ->
                 BoxItem(box,
                     onClick = {
-                        navController.navigate("${NavigationSupport.FlashcardScreen}/${box.uid}/${box.name}")
+
+                        val boxJson = Uri.encode(Gson().toJson(box))
+                        navController.navigate("${NavigationSupport.FlashcardScreen}/$boxJson")
+
+//                        navController.navigate("${NavigationSupport.FlashcardScreen}/${box.uid}/${box.name}")
                     })
                 { showDialogDeleteBox.value = false }
 

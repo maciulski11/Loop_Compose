@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.Date
 
 @Entity(tableName = "flashcard",
     foreignKeys = [
@@ -14,7 +13,7 @@ import java.util.Date
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["boxId"])] // Dodanie indeksu dla kolumny boxId
+    indices = [Index(value = ["boxId"])] // Adding an index for the boxId column
 )
 
 data class Flashcard(
@@ -32,6 +31,7 @@ data class Flashcard(
     var lastStudiedDate: Long? = null,
     var nextStudyDate: Long? = null,
     var isReadyToStudy: Boolean? = null,
+
     @PrimaryKey(autoGenerate = true)
     val idFlashcard: Int = 0
 )

@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 class LessonViewModel(
     private val mainViewModel: MainViewModel,
     private val roomService: RoomService,
-    boxId: Int,
+    boxUid: String,
 ) : ViewModel() {
 
     private val _flashcardList = MutableLiveData<List<Flashcard>>()
@@ -38,16 +38,16 @@ class LessonViewModel(
     var progressText by mutableStateOf("")
 
     init {
-        fetchFlashcardsForBox(boxId)
+        fetchFlashcardsForBox(boxUid)
     }
 
-    private fun fetchFlashcardsForBox(boxId: Int) {
+    private fun fetchFlashcardsForBox(boxUid: String) {
         // Check if data already exists to avoid reloading
         if (_flashcardList.value.isNullOrEmpty()) {
             viewModelScope.launch {
                 try {
                     val boxWithFlashcards = withContext(Dispatchers.IO) {
-                        roomService.fetchBoxWithFlashcards(boxId)
+                        roomService.fetchBoxWithFlashcards(boxUid)
                     }
                     _currentFlashcard.value = boxWithFlashcards.flashcards.firstOrNull()
                     _flashcardList.postValue(boxWithFlashcards.flashcards)
