@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
+import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.FlashcardItem
@@ -62,7 +64,7 @@ fun PublicScreenPreview() {
 @Composable
 fun PublicFlashcardScreen(
     navController: NavController,
-    boxUid: String,
+    box: Box,
     viewModel: PublicFlashcardViewModel,
 ) {
 
@@ -71,14 +73,39 @@ fun PublicFlashcardScreen(
         navController.navigate(NavigationSupport.BoxScreen)
     }
 
+
+    val flashcards = viewModel.flashcardList.value
+
+    val boxAddedToDatabase = remember { mutableStateOf(false) }
+
     PublicScreen(
-        viewModel.flashcardList.value ?: emptyList(),
-        { audioUrl ->
+        list = flashcards,
+        onPlayAudioFromUrl = { audioUrl ->
             viewModel.playAudioFromUrl(audioUrl)
         },
-        {
-            viewModel.addPublicBoxToPrivateSection(boxUid)
-            navController.navigate("${NavigationSupport.LessonScreen}/${boxUid}")
+        addPublicBoxToPrivateSection = {
+            if (!boxAddedToDatabase.value) {
+                val dataOfBox = box.copy(
+                    permissionToEdit = false,
+                    addFlashcardFromStory = false
+                )
+
+                val uniqueFlashcards = mutableListOf<Flashcard>()
+
+                for (flashcard in viewModel.flashcardList.value) {
+                    val isDuplicate = uniqueFlashcards.any { it.uid == flashcard.uid }
+                    if (!isDuplicate) {
+                        uniqueFlashcards.add(flashcard)
+                    }
+                }
+
+                Log.d("PublicFlashcardScreen", "Unique flashcards to add: ${uniqueFlashcards.size}")
+                uniqueFlashcards.forEach { Log.d("PublicFlashcardScreen", "Flashcard: $it") }
+
+                viewModel.addPublicBoxToPrivateSection(dataOfBox, uniqueFlashcards)
+                boxAddedToDatabase.value = true
+            }
+            navController.navigate("${NavigationSupport.LessonScreen}/${box.uid}")
         }
     )
 }

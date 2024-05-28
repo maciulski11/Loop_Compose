@@ -11,7 +11,13 @@ import kotlinx.coroutines.flow.Flow
 interface FlashcardDao {
 
     @Insert
-    suspend fun insertFlashCard(flashcard: Flashcard)
+    suspend fun insertFlashcard(flashcard: Flashcard)
+
+    @Insert
+    suspend fun insertFlashcards(flashcards: List<Flashcard>)
+
+    @Insert
+    suspend fun insertPublicFlashcards(flashcards: List<Flashcard>)
 
     @Update
     suspend fun updateFlashCard(flashcard: Flashcard)

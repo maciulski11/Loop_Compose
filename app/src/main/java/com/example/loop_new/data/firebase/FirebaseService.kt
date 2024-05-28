@@ -49,58 +49,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
 
     private fun logSuccess(message: String) {
         Log.d(LogTags.FIREBASE_SERVICES, message)
-    }
-
-    private fun logError(message: String) {
-        Log.e(LogTags.FIREBASE_SERVICES, message)
-    }
-
-    /**
-     * Creates a new user record in the Firestore database using Google user data.
-     *
-     * This function checks if a Google user is currently signed in and, if so,
-     * adds their information to the Firestore database under the "users" collection.
-     * It handles success and failure scenarios for the database operation.
-     */
-    override fun createNewGoogleUser() {
-        // Fetch the currently signed-in Google user
-        val signedInUser = getSignedInUser()
-
-        if (signedInUser != null) {
-            try {
-                // Attempt to add the Google user's data to the Firestore database
-                firestore.collection(USERS).document(signedInUser.uid ?: "")
-                    .set(signedInUser)
-                    .addOnSuccessListener {
-                        logSuccess("createNewGoogleUser: Successful, created new google user!")
-                    }
-                    .addOnFailureListener { e ->
-                        logError("createNewGoogleUser: ${e.printStackTrace()}")
-                    }
-            } catch (e: Exception) {
-                logError("createNewGoogleUser: ${e.printStackTrace()}")
-            }
-        }
-    }
-
-    /**
-     * Fetch the currently signed-in Google user's data.
-     *
-     * This function checks the Firebase Authentication's current user and, if a user is signed in,
-     * creates and returns a User object containing the user's data
-     *
-     * @return A User object with the signed-in user's data, or null if no user is signed in.
-     */
-    override fun getSignedInUser(): User? = auth.currentUser?.run {
-        User(
-            email = email,
-            uid = uid,
-            username = displayName,
-            profilePictureUrl = photoUrl?.toString()
-        )
-    }
-
-    /**
+    
      * Fetches a list of public boxes, supporting pagination.
      *
      * This function queries the Firestore database to retrieve public boxes, either starting
@@ -189,19 +138,7 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
                         return@addSnapshotListener
                     }
 
-                    val flashcards = flashcardsSnapshot.documents.mapNotNull { document ->
-                        document.toObject(Flashcard::class.java)
-                    }
 
-                    trySend(flashcards).isSuccess
-                    logSuccess("fetchListOfFlashcardInPublicBox: Success! Flashcards: ${flashcards.size}")
-                }
-
-            awaitClose {
-                listenerRegistration.remove()
-            }
-        }
-    }
 
     override fun fetchListOfStory(): Flow<Category> {
         return callbackFlow {

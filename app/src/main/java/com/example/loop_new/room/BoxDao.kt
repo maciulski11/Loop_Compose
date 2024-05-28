@@ -14,6 +14,9 @@ interface BoxDao{
     @Insert
     suspend fun insertBox(box: Box)
 
+    @Insert
+    suspend fun insertPublicBox(box: Box): Long
+
     @Query("DELETE FROM box WHERE uid = :uid")
     suspend fun deleteBox(uid: String)
 
@@ -21,6 +24,6 @@ interface BoxDao{
     fun fetchBoxes(): Flow<List<Box>>
 
     @Transaction
-    @Query("SELECT * FROM box WHERE id = :boxId")
-    suspend fun fetchBoxWithFlashcards(boxId: Int): BoxWithFlashcards
+    @Query("SELECT * FROM box WHERE uid = :boxUid")
+    suspend fun fetchBoxWithFlashcards(boxUid: String): BoxWithFlashcards
 }
