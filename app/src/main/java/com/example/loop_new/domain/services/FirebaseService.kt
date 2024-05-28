@@ -7,7 +7,6 @@ import com.example.loop_new.domain.model.firebase.Statistics
 import com.example.loop_new.domain.model.firebase.StatsSummary
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.User
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.Flow
 
@@ -18,25 +17,9 @@ interface FirebaseService {
 
     fun getSignedInUser(): User?
 
-    fun addPublicBoxToPrivateSection(boxUid: String)
-
     fun fetchListOfPublicBox(lastDocSnapshot: DocumentSnapshot?): Flow<Pair<List<Box>, DocumentSnapshot?>>
 
     fun fetchListOfFlashcardInPublicBox(boxUid: String): Flow<List<Flashcard>>
-
-    fun fetchListOfFlashcardInLesson(boxUid: String): Flow<List<Flashcard>>
-
-    fun fetchListOfFlashcardInRepeat(): Flow<List<Flashcard>>
-
-//    fun addFlashcardsToRepeatSection()
-
-    fun deleteFlashcardFromRepeatSection(flashcardUid: String)
-
-    fun updateFlashcardToKnow(boxUid: String, flashcardUid: String)
-
-    fun updateFlashcardToSomewhatKnow(boxUid: String, flashcardUid: String)
-
-    fun updateFlashcardToDoNotKnow(boxUid: String, flashcardUid: String)
 
     // Story
     fun fetchListOfStory(): Flow<Category>
