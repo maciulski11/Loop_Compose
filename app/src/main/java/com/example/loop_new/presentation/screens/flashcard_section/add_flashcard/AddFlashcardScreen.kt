@@ -24,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.loop_new.R
-import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.ui.theme.Orange
 import com.example.loop_new.ui.theme.Typography
 

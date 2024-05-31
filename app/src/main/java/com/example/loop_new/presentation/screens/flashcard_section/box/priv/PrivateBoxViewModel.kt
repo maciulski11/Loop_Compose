@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,8 +12,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class PrivateBoxViewModel(
-    private val firebaseService: FirebaseService,
-    private val roomService: RoomService,
+    private val roomService: RoomService
 ) : ViewModel() {
 
     private val _boxes = MutableStateFlow<List<Box>>(emptyList())

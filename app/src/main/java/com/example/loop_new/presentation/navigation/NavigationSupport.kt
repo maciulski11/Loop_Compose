@@ -136,7 +136,12 @@ fun NavigationScreens(
         },
         drawerContent = {
             DrawerHeader()
-            Drawer(scaffoldState, scope, navController, MainViewModel(service, googleAuthService, roomService))
+            Drawer(
+                scaffoldState,
+                scope,
+                navController,
+                MainViewModel(service, googleAuthService, roomService)
+            )
         }
     ) {
         NavHost(
@@ -221,7 +226,7 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    PrivateBoxViewModel(firebaseService, roomService)
+                    PrivateBoxViewModel(roomService)
                 }
 
                 PrivateBoxScreen(navController, viewModel)
@@ -402,7 +407,13 @@ fun NavigationScreens(
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
 
                 val viewModel = remember {
-                    ReadViewModel(firebaseService, translateService, dictionaryService, roomService ,storyUid)
+                    ReadViewModel(
+                        firebaseService,
+                        translateService,
+                        dictionaryService,
+                        roomService,
+                        storyUid
+                    )
                 }
 
                 ReadScreen(navController, viewModel)

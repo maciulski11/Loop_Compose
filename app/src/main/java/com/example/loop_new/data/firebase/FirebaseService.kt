@@ -14,7 +14,6 @@ import com.example.loop_new.domain.model.firebase.TextContent
 import com.example.loop_new.domain.model.firebase.User
 import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.ui.theme.categoryOfStory
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue

@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.DictionaryService
-import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ class AddFlashcardViewModel(
         example: String,
         pronunciation: String,
         boxUid: String,
-        boxId: Int
+        boxId: Int,
     ) {
 
         val flashcardData = Flashcard(

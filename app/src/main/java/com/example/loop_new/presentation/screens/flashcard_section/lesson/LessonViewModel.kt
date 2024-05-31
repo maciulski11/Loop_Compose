@@ -12,7 +12,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.viewModel.MainViewModel
 import com.example.loop_new.room.RoomService
