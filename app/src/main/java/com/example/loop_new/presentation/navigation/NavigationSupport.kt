@@ -382,7 +382,7 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    StoryInfoViewModel(firebaseService, storyUid)
+                    StoryInfoViewModel(firebaseService, roomService, storyUid)
                 }
 
                 StoryInfoScreen(navController, viewModel)

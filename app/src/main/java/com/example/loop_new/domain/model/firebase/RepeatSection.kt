@@ -14,5 +14,5 @@ data class RepeatSection(
     val audioUrl: String? = null,
     val boxId: Int? = null,
     @PrimaryKey
-    val flashcardId: Int? = null,
+    val flashcardId: Int? = null
 )

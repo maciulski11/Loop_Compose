@@ -7,6 +7,7 @@ import com.example.loop_new.data.api.TranslateService
 import com.example.loop_new.data.firebase.FirebaseService
 import com.example.loop_new.room.RoomService
 import com.example.loop_new.room.BoxDao
+import com.example.loop_new.room.FavoriteStoryDao
 import com.example.loop_new.room.FlashcardDao
 import com.example.loop_new.room.LoopDatabase
 import com.example.loop_new.room.RepeatSectionDao
@@ -31,7 +32,8 @@ class DependencyProvider(application: Application) {
     private val boxDao: BoxDao = loopDatabase.boxDao()
     private val flashcardDao: FlashcardDao = loopDatabase.flashcardDao()
     private val repeatSectionDao: RepeatSectionDao = loopDatabase.repeatSectionDao()
-    val roomService: RoomService = RoomService(boxDao, flashcardDao, repeatSectionDao)
+    private val favoriteStoryDao: FavoriteStoryDao = loopDatabase.favoriteDao()
+    val roomService: RoomService = RoomService(boxDao, flashcardDao, favoriteStoryDao, repeatSectionDao)
 
     // Service
     val service: Service = Service()

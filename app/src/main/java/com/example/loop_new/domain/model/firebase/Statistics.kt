@@ -1,7 +1,5 @@
 package com.example.loop_new.domain.model.firebase
 
-import java.sql.Timestamp
-
 data class Statistics (
     val allFlashcards: List<AllFlashcards>,
 ){
