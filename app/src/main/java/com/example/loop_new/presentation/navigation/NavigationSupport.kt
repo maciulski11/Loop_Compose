@@ -394,7 +394,7 @@ fun NavigationScreens(
                 }
 
                 val viewModel = remember {
-                    StoryFavoriteViewModel(firebaseService)
+                    StoryFavoriteViewModel(roomService)
                 }
 
                 StoryFavoriteScreen(navController, viewModel)

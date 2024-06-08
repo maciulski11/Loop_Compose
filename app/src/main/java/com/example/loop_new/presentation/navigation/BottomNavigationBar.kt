@@ -21,13 +21,13 @@ data class BottomNavItem(val route: String, val icon: Int, val size: DpSize)
 val mainBottomNavItems = listOf(
     BottomNavItem(
         NavigationSupport.StoryScreen,
-        icon = R.drawable.reading_button,
-        size = DpSize(44.dp, 44.dp)
+        icon = R.drawable.book_read,
+        size = DpSize(46.dp, 46.dp)
     ),
     BottomNavItem(
         NavigationSupport.StoryFavoriteScreen,
-        icon = R.drawable.baseline_star_outline_44,
-        size = DpSize(50.dp, 50.dp)
+        icon = R.drawable.bookmark,
+        size = DpSize(44.dp, 44.dp)
     ),
     BottomNavItem(
         NavigationSupport.PrivateBoxScreen,
