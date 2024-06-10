@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.BoxWithFlashcards
 import com.example.loop_new.domain.model.firebase.Favorite
+import com.example.loop_new.domain.model.firebase.FavoriteStoryWithChapters
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.RepeatSection
 import com.example.loop_new.domain.model.firebase.Story
@@ -117,8 +118,16 @@ class RoomService(
         }
     }
 
+    suspend fun fetchStory(storyUid: String): Favorite {
+        return favoriteStoryDao.fetchStory(storyUid)
+    }
+
     fun fetchStories(): Flow<List<Favorite>> {
         return favoriteStoryDao.fetchStories()
+    }
+
+    suspend fun fetchFavoriteStoryWithChapters(storyId: Int): FavoriteStoryWithChapters? {
+        return favoriteStoryDao.fetchFavoriteStoryWithChapters(storyId)
     }
 
     suspend fun deleteStory(storyId: Int) {

@@ -96,7 +96,7 @@ fun StoryScreen(navController: NavController, viewModel: StoryViewModel) {
                                     favorite = story.favoriteStories?.any { it.favorite == true }
                                         ?: false) {
                                     navController
-                                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}")
+                                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/firebase")
                                 }
                             }
                         }

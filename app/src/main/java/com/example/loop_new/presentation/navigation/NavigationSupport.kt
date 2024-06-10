@@ -372,17 +372,21 @@ fun NavigationScreens(
             }
 
             composable(
-                "${NavigationSupport.StoryInfoScreen}/{storyUid}",
-                arguments = listOf(navArgument("storyUid") { type = NavType.StringType })
+                "${NavigationSupport.StoryInfoScreen}/{storyUid}/{database}",
+                arguments = listOf(
+                    navArgument("storyUid") { type = NavType.StringType },
+                    navArgument("database") { type = NavType.StringType }
+                )
             ) { backStackEntry ->
                 val storyUid = backStackEntry.arguments?.getString("storyUid") ?: ""
+                val database = backStackEntry.arguments?.getString("database") ?: ""
 
                 LaunchedEffect(storyUid) {
                     currentSection.value = "Loop"
                 }
 
                 val viewModel = remember {
-                    StoryInfoViewModel(firebaseService, roomService, storyUid)
+                    StoryInfoViewModel(firebaseService, roomService, storyUid, database)
                 }
 
                 StoryInfoScreen(navController, viewModel)

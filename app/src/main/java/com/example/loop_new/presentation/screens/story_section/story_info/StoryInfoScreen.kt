@@ -1,6 +1,5 @@
 package com.example.loop_new.presentation.screens.story_section.story_info
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,6 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.loop_new.R
-import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.animations.ProgressLoading
 import com.example.loop_new.ui.theme.BlueOfBackgroundApp
@@ -53,7 +51,7 @@ fun StoryInfoScreenPreview() {
 @Composable
 fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel) {
 
-    if (viewModel.storyDetails == null) {
+    if (viewModel.storyDetails == null && viewModel.favoriteDetails == null) {
 
         ProgressLoading()
 
@@ -64,7 +62,11 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                 .fillMaxSize()
         ) {
             GlideImage(
-                model = viewModel.storyDetails?.image ?: "",
+                model = if (viewModel.favoriteDetails != null) {
+                    viewModel.favoriteDetails?.image
+                } else {
+                    viewModel.storyDetails?.image ?: ""
+                },
                 contentDescription = "loadImage",
                 modifier = Modifier
                     .height(276.dp)
@@ -97,17 +99,29 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {
-                    Text(
-                        text = viewModel.storyDetails?.title.toString(),
-                        fontSize = 26.sp,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(2.dp)
-                    )
+                    (if (viewModel.favoriteDetails != null) {
+                        viewModel.favoriteDetails?.title
+                    } else {
+                        viewModel.storyDetails?.title ?: ""
+                    })?.let {
+                        Text(
+                            text = it,
+                            fontSize = 26.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(2.dp)
+                        )
+                    }
                 }
 
                 Text(
-                    text = "author: ${viewModel.storyDetails?.author}",
+                    text = "author: ${
+                        if (viewModel.favoriteDetails != null) {
+                            viewModel.favoriteDetails?.author
+                        } else {
+                            viewModel.storyDetails?.author ?: ""
+                        }
+                    }",
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -115,49 +129,63 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                 )
 
                 Text(
-                    text = "level: ${viewModel.storyDetails?.level?.toUpperCase(Locale.ROOT)}",
+                    text = "level: ${
+                        if (viewModel.favoriteDetails != null) {
+                            viewModel.favoriteDetails?.level?.toUpperCase(Locale.ROOT)
+                        } else {
+                            viewModel.storyDetails?.level?.toUpperCase(Locale.ROOT) ?: ""
+                        }
+                    }",
                     fontSize = 16.sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 4.dp)
                 )
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.read_eye_24),
-                        contentDescription = "amountOfView",
+                if (viewModel.storyDetails != null) {
+                    Row(
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .size(28.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .background(BlueOfBackgroundApp, RoundedCornerShape(12.dp))
-                            .border(2.dp, BlueOfBackgroundApp, RoundedCornerShape(12.dp))
+                            .padding(top = 6.dp)
+                            .align(Alignment.CenterHorizontally)
                     ) {
-                        Text(
-                            text = viewModel.storyDetails?.viewList?.size.toString(),
-                            color = White,
+                        Icon(
+                            painter = painterResource(id = R.drawable.read_eye_24),
+                            contentDescription = "amountOfView",
                             modifier = Modifier
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                .align(Alignment.CenterVertically)
+                                .size(28.dp)
                         )
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .background(BlueOfBackgroundApp, RoundedCornerShape(12.dp))
+                                .border(2.dp, BlueOfBackgroundApp, RoundedCornerShape(12.dp))
+                        ) {
+                            Text(
+                                text = viewModel.storyDetails?.viewList?.size.toString(),
+                                color = White,
+                                modifier = Modifier
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
                     }
                 }
 
-                Text(
-                    text = viewModel.storyDetails?.category.toString(),
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                (if (viewModel.favoriteDetails != null) {
+                    viewModel.favoriteDetails?.category
+                } else {
+                    viewModel.storyDetails?.category ?: ""
+                })?.let {
+                    Text(
+                        text = it,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .padding(top = 6.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
 
                 Row(
                     modifier = Modifier
@@ -171,11 +199,20 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                             .padding(top = 4.dp),
                         onClick = {
                             navController
-                                .navigate("${NavigationSupport.ReadScreen}/${viewModel.storyDetails?.uid}")
+                                .navigate(
+                                    "${NavigationSupport.ReadScreen}/${
+                                        if (viewModel.favoriteDetails != null) {
+                                            viewModel.favoriteDetails?.uid
+                                        } else {
+                                            viewModel.storyDetails?.uid ?: ""
+                                        }
+                                    }"
+                                )
 
-                            viewModel.addStoryUidToViewList(viewModel.storyDetails!!.uid.toString())
-                            viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!)
-
+                            if (viewModel.storyDetails != null) {
+                                viewModel.addStoryUidToViewList(viewModel.storyDetails!!.uid.toString())
+                                viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!)
+                            }
                         }
                     ) {
                         Text(text = "Read")
@@ -223,13 +260,19 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = 12.dp, horizontal = 16.dp),
-                    fontSize = 16.sp,
-                    text = viewModel.storyDetails?.entry.toString()
-                )
+                (if (viewModel.favoriteDetails != null) {
+                    viewModel.favoriteDetails?.entry
+                } else {
+                    viewModel.storyDetails?.entry ?: ""
+                })?.let {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 12.dp, horizontal = 16.dp),
+                        fontSize = 16.sp,
+                        text = it
+                    )
+                }
             }
         }
     }
