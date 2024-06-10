@@ -8,9 +8,12 @@ import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.RepeatSection
-import com.example.loop_new.domain.model.firebase.Story
+import com.example.loop_new.domain.model.firebase.TextContentRoom
 
-@Database(entities = [Flashcard::class, Box::class, RepeatSection::class, Favorite::class], version = 2)
+@Database(
+    entities = [Flashcard::class, Box::class, RepeatSection::class, Favorite::class, TextContentRoom::class],
+    version = 2
+)
 abstract class LoopDatabase : RoomDatabase() {
 
     abstract fun boxDao(): BoxDao
@@ -32,7 +35,7 @@ abstract class LoopDatabase : RoomDatabase() {
             return databaseBuilder(
                 application,
                 LoopDatabase::class.java,
-                "loop_databasemokXXp212p"
+                "loop_0000eee"
             )
                 .fallbackToDestructiveMigration()
                 .build()

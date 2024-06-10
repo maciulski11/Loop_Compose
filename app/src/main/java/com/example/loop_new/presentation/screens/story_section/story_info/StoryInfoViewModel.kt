@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
 
 class StoryInfoViewModel(
     private val firebaseService: FirebaseService,
+    private val roomService: RoomService,
     storyUid: String,
 ) : ViewModel() {
 
@@ -28,21 +30,15 @@ class StoryInfoViewModel(
         firebaseService.addStoryUidToViewList(uid)
     }
 
-    fun addStoryToFavoriteSection() {
+    fun addStoryToFavoriteSection1(story: Story) {
         viewModelScope.launch {
-            firebaseService.addStoryToFavoriteSection(
-                storyDetails?.uid.toString(),
-                storyDetails?.category.toString(),
-            )
+            roomService.insertStoryWithTextContents(story)
         }
     }
 
-    fun removeStoryFromFavoriteSection() {
+    fun deleteStory(storyId: Int) {
         viewModelScope.launch {
-            firebaseService.removeStoryFromFavoriteSection(
-                storyDetails?.uid.toString(),
-                storyDetails?.category.toString()
-            )
+            roomService.deleteStory(storyId)
         }
     }
 }

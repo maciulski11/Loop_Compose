@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "flashcard",
     foreignKeys = [
-        ForeignKey(entity = Box::class,
+        ForeignKey(
+            entity = Box::class,
             parentColumns = ["id"],
             childColumns = ["boxId"],
             onDelete = ForeignKey.CASCADE

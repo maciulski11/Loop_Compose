@@ -3,8 +3,11 @@ package com.example.loop_new.room
 import android.util.Log
 import com.example.loop_new.domain.model.firebase.Box
 import com.example.loop_new.domain.model.firebase.BoxWithFlashcards
+import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.model.firebase.RepeatSection
+import com.example.loop_new.domain.model.firebase.Story
+import com.example.loop_new.domain.model.firebase.TextContentRoom
 import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -12,8 +15,9 @@ import java.util.UUID
 
 class RoomService(
     private val boxDao: BoxDao,
-    private var flashcardDao: FlashcardDao,
-    private var repeatSectionDao: RepeatSectionDao,
+    private val flashcardDao: FlashcardDao,
+    private val favoriteStoryDao: FavoriteStoryDao,
+    private val repeatSectionDao: RepeatSectionDao,
 ) {
 
     suspend fun insertBox(box: Box) {
@@ -77,6 +81,48 @@ class RoomService(
 
     private suspend fun addFlashcards(flashcards: List<Flashcard>) {
         flashcardDao.insertPublicFlashcards(flashcards)
+    }
+
+    suspend fun insertStoryWithTextContents(story: Story) {
+        // We convert data from Story to Favorite
+         val favorite = Favorite(
+            title = story.title,
+            author = story.author,
+            entry = story.entry,
+            uid = story.uid,
+            level = story.level,
+            category = story.category,
+            image = story.image,
+            favorite = story.favorite
+        )
+
+        // We save Favorite and get its ID
+        var favoriteId = favoriteStoryDao.insertFavorite(favorite)
+
+        if (favoriteId == -1L) {
+            // If favoriteId == -1, it means the entry already exists
+            val existingFavorite = favoriteStoryDao.getFavoriteByUid(story.uid!!)
+            favoriteId = existingFavorite?.id?.toLong() ?: return
+        }
+
+        // For each TextContent entity we create and save a TextContentRoom
+        story.text?.forEachIndexed { index, textContent ->
+            val textContentRoom = TextContentRoom(
+                chapter = textContent.chapter,
+                content = textContent.content,
+                indexOfChapter = index + 1, // indexes should start from 1
+                storyId = favoriteId.toInt()
+            )
+            favoriteStoryDao.insertTextContent(textContentRoom)
+        }
+    }
+
+    fun fetchStories(): Flow<List<Favorite>> {
+        return favoriteStoryDao.fetchStories()
+    }
+
+    suspend fun deleteStory(storyId: Int) {
+        favoriteStoryDao.deleteBox(storyId)
     }
 
     suspend fun addPrivateBoxWithFlashcards(box: Box, flashcards: List<Flashcard>) {
