@@ -126,8 +126,8 @@ class RoomService(
         return favoriteStoryDao.fetchStories()
     }
 
-    suspend fun fetchFavoriteStoryWithChapters(storyId: Int): FavoriteStoryWithChapters? {
-        return favoriteStoryDao.fetchFavoriteStoryWithChapters(storyId)
+    suspend fun fetchFavoriteStoryWithChapters(storyUid: String): FavoriteStoryWithChapters? {
+        return favoriteStoryDao.fetchFavoriteStoryWithChapters(storyUid)
     }
 
     suspend fun deleteStory(storyId: Int) {

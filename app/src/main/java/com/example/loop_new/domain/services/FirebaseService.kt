@@ -28,12 +28,6 @@ interface FirebaseService {
 
     suspend fun fetchStory(storyUid: String): Story?
 
-    suspend fun fetchFavoriteStories(): List<Story>
-
-    suspend fun addStoryToFavoriteSection(storyId: String, category: String)
-
-    suspend fun removeStoryFromFavoriteSection(storyId: String, category: String)
-
     fun addStoryUidToViewList(uidStory: String)
 
     // Stats

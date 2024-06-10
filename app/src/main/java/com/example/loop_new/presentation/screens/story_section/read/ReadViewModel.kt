@@ -9,24 +9,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loop_new.LogTags
 import com.example.loop_new.domain.model.firebase.Box
+import com.example.loop_new.domain.model.firebase.FavoriteStoryWithChapters
 import com.example.loop_new.domain.model.firebase.Flashcard
-import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.services.DictionaryService
-import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.launch
 
 class ReadViewModel(
-    private val firebaseService: FirebaseService,
     private val translateService: TranslateService,
     private val dictionaryService: DictionaryService,
     private val roomService: RoomService,
     storyUid: String,
 ) : ViewModel() {
 
-    private var _storyDetails: Story? = null
-    val storyDetails: Story? get() = _storyDetails
+    private var _storyDetails: FavoriteStoryWithChapters? = null
+    val storyDetails: FavoriteStoryWithChapters? get() = _storyDetails
 
     val privateBoxList = mutableStateListOf<Box>()
 
@@ -43,7 +41,9 @@ class ReadViewModel(
 
     private fun fetchStory(storyUid: String) {
         viewModelScope.launch {
-            _storyDetails = firebaseService.fetchStory(storyUid)
+            viewModelScope.launch {
+                _storyDetails = roomService.fetchFavoriteStoryWithChapters(storyUid)
+            }
         }
     }
 

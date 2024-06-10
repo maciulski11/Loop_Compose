@@ -412,7 +412,6 @@ fun NavigationScreens(
 
                 val viewModel = remember {
                     ReadViewModel(
-                        firebaseService,
                         translateService,
                         dictionaryService,
                         roomService,

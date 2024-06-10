@@ -33,7 +33,6 @@ import androidx.compose.material.BottomDrawerState
 import androidx.compose.material.BottomDrawerValue
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
@@ -73,7 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Box
-import com.example.loop_new.domain.model.firebase.Story
+import com.example.loop_new.domain.model.firebase.FavoriteStoryWithChapters
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.animations.ProgressLoading
 import com.example.loop_new.ui.theme.Gray2
@@ -130,7 +129,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
         ) {
 
             Text(
-                text = viewModel.storyDetails?.text?.getOrNull(currentPage)?.chapter ?: "",
+                text = viewModel.storyDetails?.textContent?.getOrNull(currentPage)?.chapter ?: "",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -169,7 +168,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                     ),
                     onClick = { offset ->
                         val wordWithIndices = findWordAtIndex(
-                            viewModel.storyDetails?.text?.getOrNull(currentPage)?.content ?: "",
+                            viewModel.storyDetails?.textContent?.getOrNull(currentPage)?.content ?: "",
                             offset
                         )
                         { clickedWord ->
@@ -223,12 +222,12 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
 
                 Text(
                     fontSize = 22.sp,
-                    text = "${currentPage + 1}/${viewModel.storyDetails?.text?.size ?: 0}"
+                    text = "${currentPage + 1}/${viewModel.storyDetails?.textContent?.size ?: 0}"
                 )
 
                 Image(
                     painter = painterResource(
-                        id = if (currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1) {
+                        id = if (currentPage < (viewModel.storyDetails?.textContent?.size ?: 0) - 1) {
                             R.drawable.baseline_arrow_right_44
                         } else {
                             R.drawable.baseline_close_red_54
@@ -240,7 +239,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {
-                            if (currentPage < (viewModel.storyDetails?.text?.size ?: 0) - 1) {
+                            if (currentPage < (viewModel.storyDetails?.textContent?.size ?: 0) - 1) {
                                 currentPage++
 
                             } else {
@@ -286,13 +285,13 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
 }
 
 @Composable
-fun createAnnotatedStringForPage(page: Int, story: Story?): AnnotatedString {
+fun createAnnotatedStringForPage(page: Int, story: FavoriteStoryWithChapters?): AnnotatedString {
 
     // Sprawdź, czy story nie jest nullem i czy posiada odpowiednie dane
-    if (story?.text != null) {
+    if (story?.textContent != null) {
         // Sprawdź, czy currentPage mieści się w zakresie dostępnych rozdziałów
-        if (page >= 0 && page < story.text.size) {
-            val content = story.text[page].content ?: ""
+        if (page >= 0 && page < story.textContent.size) {
+            val content = story.textContent[page].content ?: ""
 
             // Stwórz AnnotatedString z różnymi stylami dla chapter i content
             val annotatedString = buildAnnotatedString {

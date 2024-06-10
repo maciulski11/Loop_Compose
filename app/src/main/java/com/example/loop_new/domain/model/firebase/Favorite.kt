@@ -29,8 +29,8 @@ data class Favorite(
         )
     ],
     indices = [Index(value = ["chapter", "storyId"], unique = true)]
-
 )
+
 data class TextContentRoom(
     val chapter: String? = null,
     val content: String? = null,

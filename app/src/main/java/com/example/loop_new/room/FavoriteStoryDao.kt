@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.domain.model.firebase.FavoriteStoryWithChapters
-import com.example.loop_new.domain.model.firebase.Story
 import com.example.loop_new.domain.model.firebase.TextContentRoom
 import kotlinx.coroutines.flow.Flow
 
@@ -30,8 +29,8 @@ interface FavoriteStoryDao {
     fun fetchStories(): Flow<List<Favorite>>
 
     @Transaction
-    @Query("SELECT * FROM story WHERE id = :storyId")
-    suspend fun fetchFavoriteStoryWithChapters(storyId: Int): FavoriteStoryWithChapters?
+    @Query("SELECT * FROM story WHERE uid = :storyUid")
+    suspend fun fetchFavoriteStoryWithChapters(storyUid: String): FavoriteStoryWithChapters?
 
     @Query("DELETE FROM story WHERE id = :storyId")
     suspend fun deleteBox(storyId: Int)
