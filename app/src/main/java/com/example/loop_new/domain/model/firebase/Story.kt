@@ -1,8 +1,5 @@
 package com.example.loop_new.domain.model.firebase
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
 data class Story(
     val title: String? = null,
     val text: List<TextContent>? = null,
@@ -15,9 +12,9 @@ data class Story(
     val favoriteStories: List<FavoriteStory>? = null,
     val viewList: List<String>? = null,
     val favorite: Boolean? = null,
-    )
+)
 
 data class TextContent(
     val chapter: String? = null,
-    val content: String? = null,
+    val content: String? = null
 )

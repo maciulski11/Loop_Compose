@@ -2,19 +2,18 @@ package com.example.loop_new.presentation.screens.story_section.story_favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.loop_new.domain.model.firebase.Story
-import com.example.loop_new.domain.services.FirebaseService
+import com.example.loop_new.domain.model.firebase.Favorite
+import com.example.loop_new.room.RoomService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StoryFavoriteViewModel(private val firebaseService: FirebaseService) : ViewModel() {
+class StoryFavoriteViewModel(
+    private val roomService: RoomService
+) : ViewModel() {
 
-    private val _stories = MutableStateFlow<List<Story>>(emptyList())
-    val stories: StateFlow<List<Story>> = _stories
-
-    private val _isLoading = MutableStateFlow<Boolean>(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _stories = MutableStateFlow<List<Favorite>>(emptyList())
+    val stories: StateFlow<List<Favorite>> = _stories
 
     init {
         viewModelScope.launch {
@@ -23,19 +22,11 @@ class StoryFavoriteViewModel(private val firebaseService: FirebaseService) : Vie
     }
 
     private suspend fun fetchFavoriteStories() {
-        // Set the loading state to true before downloading the data
-        _isLoading.value = true
 
-        try {
-            val favoriteStories = firebaseService.fetchFavoriteStories()
-            _stories.value = favoriteStories
-
-        } catch (e: Exception) {
-            // Obsługa błędów, np. wyświetlenie komunikatu użytkownikowi
-
-        } finally {
-            // Data is finished downloading, set the loading status to false
-            _isLoading.value = false
+        viewModelScope.launch {
+            roomService.fetchStories().collect { story ->
+                _stories.value = story
+            }
         }
     }
 }

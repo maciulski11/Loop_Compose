@@ -3,8 +3,6 @@ package com.example.loop_new.presentation.screens.story_section.story_info
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +34,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.loop_new.R
+import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.animations.ProgressLoading
 import com.example.loop_new.ui.theme.BlueOfBackgroundApp
@@ -175,6 +174,8 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                                 .navigate("${NavigationSupport.ReadScreen}/${viewModel.storyDetails?.uid}")
 
                             viewModel.addStoryUidToViewList(viewModel.storyDetails!!.uid.toString())
+                            viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!)
+
                         }
                     ) {
                         Text(text = "Read")
@@ -193,29 +194,31 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                         painterResource(id = R.drawable.star)
                     }
 
-                    Image(
-                        painter = image,
-                        contentDescription = "favorite",
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .align(Alignment.CenterVertically)
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                viewModel.apply {
-                                    if (isFavorite.value) {
-                                        // Add to favorite
-                                        removeStoryFromFavoriteSection()
-                                    } else {
-                                        // Delete from favorite
-                                        addStoryToFavoriteSection()
-                                    }
-                                }
-                                // Update status isFavorite after click
-                                isFavorite.value = !isFavorite.value
-                            }
-                    )
+//                    Image(
+//                        painter = image,
+//                        contentDescription = "favorite",
+//                        modifier = Modifier
+//                            .padding(4.dp)
+//                            .align(Alignment.CenterVertically)
+//                            .clickable(
+//                                indication = null,
+//                                interactionSource = remember { MutableInteractionSource() }
+//                            ) {
+//                                viewModel.apply {
+//                                    if (isFavorite.value) {
+//                                        // Add to favorite
+////                                        removeStoryFromFavoriteSection()
+//                                        viewModel.deleteStory()
+//                                    } else {
+//                                        // Delete from favorite
+////                                        addStoryToFavoriteSection()
+//                                            viewModel.addStoryToFavoriteSection1(viewModel.storyDetails?.title.toString(), viewModel.storyDetails?.uid.toString())
+//                                    }
+//                                }
+//                                // Update status isFavorite after click
+//                                isFavorite.value = !isFavorite.value
+//                            }
+//                    )
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))
