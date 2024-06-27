@@ -29,4 +29,10 @@ class StoryFavoriteViewModel(
             }
         }
     }
+
+    fun deleteStory(storyId: Int) {
+        viewModelScope.launch {
+            roomService.deleteStory(storyId)
+        }
+    }
 }

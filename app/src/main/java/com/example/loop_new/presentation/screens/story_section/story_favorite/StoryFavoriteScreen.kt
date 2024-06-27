@@ -1,7 +1,7 @@
 package com.example.loop_new.presentation.screens.story_section.story_favorite
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,13 +19,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +39,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.presentation.navigation.NavigationSupport
+import com.example.loop_new.presentation.screens.dialogs.DeleteFavoriteStoryDialog
 import com.example.loop_new.ui.theme.Black2
 import com.example.loop_new.ui.theme.White
 import com.example.loop_new.ui.theme.colorA1
@@ -63,19 +67,24 @@ fun StoryFavoriteScreen(navController: NavController, viewModel: StoryFavoriteVi
     ) {
         items(stories) { story ->
             FavoriteStoryItem(
-                story,
-            ) {
-                navController
-                    .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/room")
-            }
+                story = story,
+                onClick = {
+                    navController
+                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/room")
+                },
+                onDelete = {
+                    viewModel.deleteStory(story.id)
+                }
+            )
         }
-
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun FavoriteStoryItem(story: Favorite, onClick: () -> Unit) {
+fun FavoriteStoryItem(story: Favorite, onClick: () -> Unit, onDelete: () -> Unit) {
+
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -83,8 +92,15 @@ fun FavoriteStoryItem(story: Favorite, onClick: () -> Unit) {
             .width(122.dp)
             .padding(6.dp)
             .background(White, shape = RoundedCornerShape(4.dp))
-            .clickable {
-                onClick()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        showDialog = true
+                    },
+                    onTap = {
+                        onClick()
+                    }
+                )
             }
     ) {
 
@@ -100,23 +116,6 @@ fun FavoriteStoryItem(story: Favorite, onClick: () -> Unit) {
                     .clip(shape = RoundedCornerShape(4.dp)),
                 contentScale = ContentScale.Crop
             )
-
-//            val image = if (story.favorite) {
-//                painterResource(id = R.drawable.star_gold)
-//            } else {
-//                null
-//            }
-//
-//            if (image != null) {
-//                Image(
-//                    painter = image,
-//                    contentDescription = "favorite",
-//                    modifier = Modifier
-//                        .padding(4.dp)
-//                        .align(Alignment.BottomEnd)
-//                        .size(20.dp)
-//                )
-//            }
 
             Box(
                 modifier = Modifier
@@ -188,5 +187,18 @@ fun FavoriteStoryItem(story: Favorite, onClick: () -> Unit) {
                 modifier = Modifier.padding(bottom = 2.dp)
             )
         }
+    }
+
+    if (showDialog) {
+        DeleteFavoriteStoryDialog(
+            story = story,
+            onDelete = {
+                onDelete()
+                showDialog = false
+            },
+            onClose = {
+                showDialog = false
+            }
+        )
     }
 }
