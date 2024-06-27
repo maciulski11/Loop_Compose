@@ -40,6 +40,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberBottomDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -116,7 +117,9 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
     var currentPage by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
 
-    if (viewModel.storyDetails == null) {
+    val story by viewModel.storyDetails.collectAsState()
+
+    if (story == null) {
 
         ProgressLoading()
 
@@ -129,7 +132,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
         ) {
 
             Text(
-                text = viewModel.storyDetails?.textContent?.getOrNull(currentPage)?.chapter ?: "",
+                text = story?.textContent?.getOrNull(currentPage)?.chapter ?: "",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -143,7 +146,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
             ) {
 
                 ClickableText(
-                    text = createAnnotatedStringForPage(currentPage, viewModel.storyDetails),
+                    text = createAnnotatedStringForPage(currentPage, story),
                     modifier = Modifier
                         .padding(bottom = 14.dp, start = 12.dp, end = 12.dp)
                         .pointerInteropFilter { event ->
@@ -168,7 +171,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                     ),
                     onClick = { offset ->
                         val wordWithIndices = findWordAtIndex(
-                            viewModel.storyDetails?.textContent?.getOrNull(currentPage)?.content ?: "",
+                            story?.textContent?.getOrNull(currentPage)?.content ?: "",
                             offset
                         )
                         { clickedWord ->
@@ -222,12 +225,12 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
 
                 Text(
                     fontSize = 22.sp,
-                    text = "${currentPage + 1}/${viewModel.storyDetails?.textContent?.size ?: 0}"
+                    text = "${currentPage + 1}/${story?.textContent?.size ?: 0}"
                 )
 
                 Image(
                     painter = painterResource(
-                        id = if (currentPage < (viewModel.storyDetails?.textContent?.size ?: 0) - 1) {
+                        id = if (currentPage < (story?.textContent?.size ?: 0) - 1) {
                             R.drawable.baseline_arrow_right_44
                         } else {
                             R.drawable.baseline_close_red_54
@@ -239,7 +242,7 @@ fun ReadScreen(navController: NavController, viewModel: ReadViewModel) {
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) {
-                            if (currentPage < (viewModel.storyDetails?.textContent?.size ?: 0) - 1) {
+                            if (currentPage < (story?.textContent?.size ?: 0) - 1) {
                                 currentPage++
 
                             } else {

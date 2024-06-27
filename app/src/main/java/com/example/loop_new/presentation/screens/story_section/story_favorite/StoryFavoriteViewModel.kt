@@ -30,9 +30,9 @@ class StoryFavoriteViewModel(
         }
     }
 
-    fun deleteStory(storyId: Int) {
+    fun deleteStoryWithChapters(storyId: Int) {
         viewModelScope.launch {
-            roomService.deleteStory(storyId)
+            roomService.deleteStoryWithChapters(storyId)
         }
     }
 }

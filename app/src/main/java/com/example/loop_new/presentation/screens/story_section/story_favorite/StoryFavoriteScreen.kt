@@ -73,7 +73,7 @@ fun StoryFavoriteScreen(navController: NavController, viewModel: StoryFavoriteVi
                         .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/room")
                 },
                 onDelete = {
-                    viewModel.deleteStory(story.id)
+                    viewModel.deleteStoryWithChapters(story.id)
                 }
             )
         }

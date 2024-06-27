@@ -30,8 +30,17 @@ interface FavoriteStoryDao {
 
     @Transaction
     @Query("SELECT * FROM story WHERE uid = :storyUid")
-    suspend fun fetchFavoriteStoryWithChapters(storyUid: String): FavoriteStoryWithChapters?
+    fun fetchFavoriteStoryWithChapters(storyUid: String): Flow<FavoriteStoryWithChapters?>
+
+    @Transaction
+    suspend fun deleteStoryWithChapters(storyId: Int) {
+        deleteChaptersByStoryId(storyId)
+        deleteStory(storyId)
+    }
 
     @Query("DELETE FROM story WHERE id = :storyId")
     suspend fun deleteStory(storyId: Int)
+
+    @Query("DELETE FROM text_content WHERE storyId = :storyId")
+    suspend fun deleteChaptersByStoryId(storyId: Int)
 }

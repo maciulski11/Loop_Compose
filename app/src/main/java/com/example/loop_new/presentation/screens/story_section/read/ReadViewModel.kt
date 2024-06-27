@@ -14,6 +14,8 @@ import com.example.loop_new.domain.model.firebase.Flashcard
 import com.example.loop_new.domain.services.DictionaryService
 import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.room.RoomService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ReadViewModel(
@@ -23,8 +25,8 @@ class ReadViewModel(
     storyUid: String,
 ) : ViewModel() {
 
-    private var _storyDetails: FavoriteStoryWithChapters? = null
-    val storyDetails: FavoriteStoryWithChapters? get() = _storyDetails
+    private val _storyDetails = MutableStateFlow<FavoriteStoryWithChapters?>(null)
+    val storyDetails: StateFlow<FavoriteStoryWithChapters?> = _storyDetails
 
     val privateBoxList = mutableStateListOf<Box>()
 
@@ -41,9 +43,10 @@ class ReadViewModel(
 
     private fun fetchStory(storyUid: String) {
         viewModelScope.launch {
-            viewModelScope.launch {
-                _storyDetails = roomService.fetchFavoriteStoryWithChapters(storyUid)
-            }
+            roomService.fetchFavoriteStoryWithChapters(storyUid)
+                .collect { story ->
+                    _storyDetails.value = story
+                }
         }
     }
 

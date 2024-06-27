@@ -126,12 +126,12 @@ class RoomService(
         return favoriteStoryDao.fetchStories()
     }
 
-    suspend fun fetchFavoriteStoryWithChapters(storyUid: String): FavoriteStoryWithChapters? {
+    fun fetchFavoriteStoryWithChapters(storyUid: String): Flow<FavoriteStoryWithChapters?> {
         return favoriteStoryDao.fetchFavoriteStoryWithChapters(storyUid)
     }
 
-    suspend fun deleteStory(storyId: Int) {
-        favoriteStoryDao.deleteStory(storyId)
+    suspend fun deleteStoryWithChapters(storyId: Int) {
+        favoriteStoryDao.deleteStoryWithChapters(storyId)
     }
 
     suspend fun addPrivateBoxWithFlashcards(box: Box, flashcards: List<Flashcard>) {
