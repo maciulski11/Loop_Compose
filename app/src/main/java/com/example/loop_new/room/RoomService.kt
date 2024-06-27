@@ -131,7 +131,7 @@ class RoomService(
     }
 
     suspend fun deleteStory(storyId: Int) {
-        favoriteStoryDao.deleteBox(storyId)
+        favoriteStoryDao.deleteStory(storyId)
     }
 
     suspend fun addPrivateBoxWithFlashcards(box: Box, flashcards: List<Flashcard>) {

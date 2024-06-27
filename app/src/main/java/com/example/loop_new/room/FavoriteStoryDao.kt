@@ -33,5 +33,5 @@ interface FavoriteStoryDao {
     suspend fun fetchFavoriteStoryWithChapters(storyUid: String): FavoriteStoryWithChapters?
 
     @Query("DELETE FROM story WHERE id = :storyId")
-    suspend fun deleteBox(storyId: Int)
+    suspend fun deleteStory(storyId: Int)
 }

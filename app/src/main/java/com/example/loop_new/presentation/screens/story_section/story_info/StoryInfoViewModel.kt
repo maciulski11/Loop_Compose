@@ -54,10 +54,4 @@ class StoryInfoViewModel(
             roomService.insertStoryWithTextContents(story)
         }
     }
-
-    fun deleteStory(storyId: Int) {
-        viewModelScope.launch {
-            roomService.deleteStory(storyId)
-        }
-    }
 }
