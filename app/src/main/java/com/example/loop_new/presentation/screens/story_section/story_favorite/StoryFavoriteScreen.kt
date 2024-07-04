@@ -1,5 +1,6 @@
 package com.example.loop_new.presentation.screens.story_section.story_favorite
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.example.loop_new.R
 import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.dialogs.DeleteFavoriteStoryDialog
@@ -137,6 +140,23 @@ fun FavoriteStoryItem(story: Favorite, onClick: () -> Unit, onDelete: () -> Unit
                     .clip(shape = RoundedCornerShape(4.dp)),
                 contentScale = ContentScale.Crop
             )
+
+            val image = if (story.favorite == true) {
+                painterResource(id = R.drawable.star_gold)
+            } else {
+                null
+            }
+
+            if (image != null) {
+                Image(
+                    painter = image,
+                    contentDescription = "favorite",
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.BottomEnd)
+                        .size(20.dp)
+                )
+            }
 
             Box(
                 modifier = Modifier

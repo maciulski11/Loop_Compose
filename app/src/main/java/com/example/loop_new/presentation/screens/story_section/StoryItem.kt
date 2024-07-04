@@ -66,6 +66,24 @@ fun StoryItem(story: Story, favorite: Boolean, onClick: () -> Unit) {
                 contentScale = ContentScale.Crop
             )
 
+            //TODO: sprawdizc dzialanie w firabse czy sie aktualizuje
+//            val image = if (favorite) {
+//                painterResource(id = R.drawable.star_gold)
+//            } else {
+//                null
+//            }
+//
+//            if (image != null) {
+//                Image(
+//                    painter = image,
+//                    contentDescription = "favorite",
+//                    modifier = Modifier
+//                        .padding(4.dp)
+//                        .align(Alignment.BottomEnd)
+//                        .size(20.dp)
+//                )
+//            }
+
             Box(
                 modifier = Modifier
                     .size(26.dp)

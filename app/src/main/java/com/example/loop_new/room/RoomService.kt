@@ -134,6 +134,10 @@ class RoomService(
         favoriteStoryDao.deleteStoryWithChapters(storyId)
     }
 
+    suspend fun updateFavoriteStatus(storyUid: String, isFavorite: Boolean) {
+        favoriteStoryDao.updateFavoriteStatus(storyUid, isFavorite)
+    }
+
     suspend fun addPrivateBoxWithFlashcards(box: Box, flashcards: List<Flashcard>) {
         try {
             val boxId = addBoxAndGetId(box)

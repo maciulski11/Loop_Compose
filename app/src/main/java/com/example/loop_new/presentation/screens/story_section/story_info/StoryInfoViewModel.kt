@@ -49,9 +49,16 @@ class StoryInfoViewModel(
         firebaseService.addStoryUidToViewList(uid)
     }
 
+    //TODO: zmienic nazwe tej funkcji
     fun addStoryToFavoriteSection1(story: Story) {
         viewModelScope.launch {
             roomService.insertStoryWithTextContents(story)
+        }
+    }
+
+    fun updateFavoriteStatus(storyUid: String, isFavorite: Boolean) {
+        viewModelScope.launch {
+            roomService.updateFavoriteStatus(storyUid, isFavorite)
         }
     }
 }

@@ -389,7 +389,7 @@ fun NavigationScreens(
                     StoryInfoViewModel(firebaseService, roomService, storyUid, database)
                 }
 
-                StoryInfoScreen(navController, viewModel)
+                StoryInfoScreen(navController, viewModel, storyUid)
             }
 
             composable(NavigationSupport.StoryFavoriteScreen) {

@@ -19,13 +19,16 @@ interface FavoriteStoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTextContent(textContentRoom: TextContentRoom)
 
+    @Query("UPDATE story SET favorite = :isFavorite WHERE uid = :storyUid")
+    suspend fun updateFavoriteStatus(storyUid: String, isFavorite: Boolean)
+
     @Query("SELECT * FROM story WHERE uid = :uid LIMIT 1")
     suspend fun getFavoriteByUid(uid: String): Favorite?
 
     @Query("SELECT * FROM story WHERE uid = :storyUid")
     suspend fun fetchStory(storyUid: String) : Favorite
 
-    @Query("SELECT * FROM story")
+    @Query("SELECT * FROM story ORDER BY favorite DESC")
     fun fetchStories(): Flow<List<Favorite>>
 
     @Transaction
