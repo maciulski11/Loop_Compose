@@ -203,7 +203,7 @@ fun PrivateScreen(
                     Text(
                         modifier = Modifier.padding(horizontal = 46.dp),
                         text = "If you want to start learning you have 2 options:\n" +
-                                "1. You can return to public section and find you favourite box with flashcard.\n" +
+                                "1. You can click search icon on bottom screen to public section and find you favourite box with flashcard.\n" +
                                 "2. You can create your box and flashcards with your preferences.",
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,

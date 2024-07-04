@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +43,7 @@ import com.example.loop_new.domain.model.firebase.Favorite
 import com.example.loop_new.presentation.navigation.NavigationSupport
 import com.example.loop_new.presentation.screens.dialogs.DeleteFavoriteStoryDialog
 import com.example.loop_new.ui.theme.Black2
+import com.example.loop_new.ui.theme.Gray
 import com.example.loop_new.ui.theme.White
 import com.example.loop_new.ui.theme.colorA1
 import com.example.loop_new.ui.theme.colorA2
@@ -60,22 +63,40 @@ fun StoryFavoriteScreen(navController: NavController, viewModel: StoryFavoriteVi
 
     val stories by remember { viewModel.stories }.collectAsState(emptyList())
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = Modifier
-            .fillMaxSize(), contentPadding = PaddingValues(horizontal = 8.dp)
-    ) {
-        items(stories) { story ->
-            FavoriteStoryItem(
-                story = story,
-                onClick = {
-                    navController
-                        .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/room")
-                },
-                onDelete = {
-                    viewModel.deleteStoryWithChapters(story.id)
-                }
+    if (stories.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Your favorites list is empty...",
+                style = MaterialTheme.typography.h6,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                color = Gray
             )
+        }
+    } else {
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier
+                .fillMaxSize(), contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(stories) { story ->
+                FavoriteStoryItem(
+                    story = story,
+                    onClick = {
+                        navController
+                            .navigate("${NavigationSupport.StoryInfoScreen}/${story.uid}/room")
+                    },
+                    onDelete = {
+                        viewModel.deleteStoryWithChapters(story.id)
+                    }
+                )
+            }
         }
     }
 }
