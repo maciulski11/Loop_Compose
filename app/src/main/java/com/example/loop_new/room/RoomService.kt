@@ -84,7 +84,7 @@ class RoomService(
         flashcardDao.insertPublicFlashcards(flashcards)
     }
 
-    suspend fun insertStoryWithTextContents(story: Story) {
+    suspend fun insertStoryWithTextContents(story: Story, favorite: Boolean) {
         // We convert data from Story to Favorite
          val favorite = Favorite(
             title = story.title,
@@ -94,7 +94,7 @@ class RoomService(
             level = story.level,
             category = story.category,
             image = story.image,
-            favorite = story.favorite
+            favorite = favorite
         )
 
         // We save Favorite and get its ID

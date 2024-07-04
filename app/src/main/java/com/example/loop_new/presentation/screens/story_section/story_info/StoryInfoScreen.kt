@@ -1,7 +1,10 @@
 package com.example.loop_new.presentation.screens.story_section.story_info
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,7 +52,7 @@ fun StoryInfoScreenPreview() {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel) {
+fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel, storyUid: String) {
 
     if (viewModel.storyDetails == null && viewModel.favoriteDetails == null) {
 
@@ -211,18 +214,17 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
 
                             if (viewModel.storyDetails != null) {
                                 viewModel.addStoryUidToViewList(viewModel.storyDetails!!.uid.toString())
-                                viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!)
+                                viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!, false)
                             }
                         }
                     ) {
                         Text(text = "Read")
                     }
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
                     val isFavorite = remember {
-                        mutableStateOf(viewModel.storyDetails?.favoriteStories?.any { it.favorite == true }
-                            ?: false)
+                        mutableStateOf(viewModel.favoriteDetails?.favorite ?: false)
                     }
 
                     val image = if (isFavorite.value) {
@@ -231,31 +233,30 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel)
                         painterResource(id = R.drawable.star)
                     }
 
-//                    Image(
-//                        painter = image,
-//                        contentDescription = "favorite",
-//                        modifier = Modifier
-//                            .padding(4.dp)
-//                            .align(Alignment.CenterVertically)
-//                            .clickable(
-//                                indication = null,
-//                                interactionSource = remember { MutableInteractionSource() }
-//                            ) {
-//                                viewModel.apply {
-//                                    if (isFavorite.value) {
-//                                        // Add to favorite
-////                                        removeStoryFromFavoriteSection()
-//                                        viewModel.deleteStory()
-//                                    } else {
-//                                        // Delete from favorite
-////                                        addStoryToFavoriteSection()
-//                                            viewModel.addStoryToFavoriteSection1(viewModel.storyDetails?.title.toString(), viewModel.storyDetails?.uid.toString())
-//                                    }
-//                                }
-//                                // Update status isFavorite after click
-//                                isFavorite.value = !isFavorite.value
-//                            }
-//                    )
+                    Image(
+                        painter = image,
+                        contentDescription = "favorite",
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                viewModel.apply {
+                                    if (!isFavorite.value) {
+                                        // Add to favorite
+                                        viewModel.updateFavoriteStatus(storyUid, true)
+                                        viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!, true)
+                                    } else {
+                                        // Delete from favorite
+                                        viewModel.updateFavoriteStatus(storyUid, false)
+                                    }
+                                }
+                                // Update status isFavorite after click
+                                isFavorite.value = !isFavorite.value
+                            }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))

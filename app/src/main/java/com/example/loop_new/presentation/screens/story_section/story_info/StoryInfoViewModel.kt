@@ -36,6 +36,7 @@ class StoryInfoViewModel(
     private fun fetchStoryFromFirebase(storyUid: String) {
         viewModelScope.launch {
             _storyDetails = firebaseService.fetchStory(storyUid)
+            _favoriteDetails = roomService.fetchStory(storyUid)
         }
     }
 
@@ -50,9 +51,9 @@ class StoryInfoViewModel(
     }
 
     //TODO: zmienic nazwe tej funkcji
-    fun addStoryToFavoriteSection1(story: Story) {
+    fun addStoryToFavoriteSection1(story: Story, favorite: Boolean) {
         viewModelScope.launch {
-            roomService.insertStoryWithTextContents(story)
+            roomService.insertStoryWithTextContents(story, favorite)
         }
     }
 
