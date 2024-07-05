@@ -86,7 +86,7 @@ class RoomService(
 
     suspend fun insertStoryWithTextContents(story: Story, favorite: Boolean) {
         // We convert data from Story to Favorite
-         val favorite = Favorite(
+        val dataFavorite = Favorite(
             title = story.title,
             author = story.author,
             entry = story.entry,
@@ -98,7 +98,7 @@ class RoomService(
         )
 
         // We save Favorite and get its ID
-        var favoriteId = favoriteStoryDao.insertFavorite(favorite)
+        var favoriteId = favoriteStoryDao.insertFavorite(dataFavorite)
 
         if (favoriteId == -1L) {
             // If favoriteId == -1, it means the entry already exists
@@ -143,9 +143,15 @@ class RoomService(
             val boxId = addBoxAndGetId(box)
             val flashcardsWithBoxId = flashcards.map { it.copy(boxId = boxId.toInt()) }
             addFlashcards(flashcardsWithBoxId)
-            Log.d("YourViewModel", "addPrivateBoxWithFlashcards: Box and flashcards successfully added to Room database")
+            Log.d(
+                "YourViewModel",
+                "addPrivateBoxWithFlashcards: Box and flashcards successfully added to Room database"
+            )
         } catch (e: Exception) {
-            Log.e("YourViewModel", "addPrivateBoxWithFlashcards: Error adding box and flashcards: ${e.message}")
+            Log.e(
+                "YourViewModel",
+                "addPrivateBoxWithFlashcards: Error adding box and flashcards: ${e.message}"
+            )
         }
     }
 

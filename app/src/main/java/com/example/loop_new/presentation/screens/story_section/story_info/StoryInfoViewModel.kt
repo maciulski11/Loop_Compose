@@ -51,7 +51,7 @@ class StoryInfoViewModel(
     }
 
     //TODO: zmienic nazwe tej funkcji
-    fun addStoryToFavoriteSection1(story: Story, favorite: Boolean) {
+    fun addStoryToFavoriteSection(story: Story, favorite: Boolean) {
         viewModelScope.launch {
             roomService.insertStoryWithTextContents(story, favorite)
         }

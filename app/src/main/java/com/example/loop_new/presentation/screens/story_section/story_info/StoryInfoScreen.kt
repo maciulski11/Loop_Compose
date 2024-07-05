@@ -214,7 +214,10 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel,
 
                             if (viewModel.storyDetails != null) {
                                 viewModel.addStoryUidToViewList(viewModel.storyDetails!!.uid.toString())
-                                viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!, false)
+                                viewModel.addStoryToFavoriteSection(
+                                    viewModel.storyDetails!!,
+                                    false
+                                )
                             }
                         }
                     ) {
@@ -247,7 +250,13 @@ fun StoryInfoScreen(navController: NavController, viewModel: StoryInfoViewModel,
                                     if (!isFavorite.value) {
                                         // Add to favorite
                                         viewModel.updateFavoriteStatus(storyUid, true)
-                                        viewModel.addStoryToFavoriteSection1(viewModel.storyDetails!!, true)
+
+                                        if (viewModel.storyDetails != null) {
+                                            viewModel.addStoryToFavoriteSection(
+                                                viewModel.storyDetails!!,
+                                                true
+                                            )
+                                        }
                                     } else {
                                         // Delete from favorite
                                         viewModel.updateFavoriteStatus(storyUid, false)
