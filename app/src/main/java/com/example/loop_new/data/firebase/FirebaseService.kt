@@ -274,12 +274,6 @@ class FirebaseService(private val firestore: FirebaseFirestore) :
         return documents
     }
 
-    //TODO: add checking whether the logged in user has a given story in his favorites!!
-    private fun isUserFavoriteStory(story: Story): Boolean {
-        // Sprawdź, czy UID zalogowanego użytkownika znajduje się w liście ulubionych dla danej historii
-        return story.favoriteStories?.any { it.uid == currentUser } ?: false
-    }
-
     override suspend fun fetchStory(storyUid: String): Story? {
         return try {
             val document = firestore.collection(STORY).document("yWhYIeotoTamzjd60yf9")
