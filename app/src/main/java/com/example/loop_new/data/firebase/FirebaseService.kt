@@ -16,7 +16,6 @@ import com.example.loop_new.domain.services.FirebaseService
 import com.example.loop_new.ui.theme.categoryOfStory
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions

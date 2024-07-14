@@ -32,8 +32,8 @@ import com.example.loop_new.domain.services.GoogleAuthService
 import com.example.loop_new.domain.services.Service
 import com.example.loop_new.domain.services.TranslateService
 import com.example.loop_new.presentation.screens.login_section.sign_up.SignUpScreen
-import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardScreen
-import com.example.loop_new.presentation.screens.flashcard_section.add_flashcard.AddFlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard_add.AddFlashcardScreen
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard_add.AddFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub.PublicFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.pub.PublicFlashcardViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.lesson.LessonScreen

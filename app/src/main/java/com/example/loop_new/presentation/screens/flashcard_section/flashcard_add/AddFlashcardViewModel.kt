@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.flashcard_section.add_flashcard
+package com.example.loop_new.presentation.screens.flashcard_section.flashcard_add
 
 import android.util.Log
 import androidx.compose.runtime.getValue

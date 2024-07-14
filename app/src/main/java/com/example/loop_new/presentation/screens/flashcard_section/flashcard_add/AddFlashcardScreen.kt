@@ -1,4 +1,4 @@
-package com.example.loop_new.presentation.screens.flashcard_section.add_flashcard
+package com.example.loop_new.presentation.screens.flashcard_section.flashcard_add
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
