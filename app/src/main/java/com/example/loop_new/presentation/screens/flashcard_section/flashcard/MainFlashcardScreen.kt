@@ -40,6 +40,7 @@ fun FlashcardItem(
     flashcard: Flashcard,
     onPlayAudioFromUrl: (String) -> Unit,
     onLongPress: (Boolean) -> Unit,
+    onClick: (Int) -> Unit
 ) {
     val color = remember { mutableStateOf(Black) } // Domyślny kolor
 
@@ -59,7 +60,7 @@ fun FlashcardItem(
             )
             .pointerInput(Unit) {
                 detectTapGestures(
-                    // LongClick
+                    onTap = {onClick(flashcard.idFlashcard)},
                     onLongPress = { onLongPress(true) }
                 )
             },

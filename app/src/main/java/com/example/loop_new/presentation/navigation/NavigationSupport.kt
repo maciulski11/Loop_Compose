@@ -44,6 +44,7 @@ import com.example.loop_new.presentation.screens.flashcard_section.box.priv.Priv
 import com.example.loop_new.presentation.screens.flashcard_section.box.priv.PrivateBoxViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.priv.PrivateFlashcardScreen
 import com.example.loop_new.presentation.screens.flashcard_section.flashcard.priv.PrivateFlashcardViewModel
+import com.example.loop_new.presentation.screens.flashcard_section.flashcard_edit.EditFlashcardScreen
 import com.example.loop_new.presentation.screens.story_section.read.ReadScreen
 import com.example.loop_new.presentation.screens.story_section.read.ReadViewModel
 import com.example.loop_new.presentation.screens.flashcard_section.repeat.RepeatScreen
@@ -74,6 +75,7 @@ object NavigationSupport {
     const val FlashcardScreen = "flashcard_screen"
     const val PrivateFlashcardScreen = "private_flashcard_screen"
     const val AddFlashcardScreen = "add_flashcard_screen"
+    const val EditFlashcardScreen = "edit_flashcard_screen"
     const val LessonScreen = "lesson_screen"
     const val RepeatScreen = "repeat_screen"
     const val ReadScreen = "read_screen"
@@ -305,6 +307,17 @@ fun NavigationScreens(
                     }
 
                 AddFlashcardScreen(navController, boxUid, boxId, viewModel)
+            }
+
+            composable(
+                "${NavigationSupport.EditFlashcardScreen}/{flashcardId}",
+                arguments = listOf(
+                    navArgument("flashcardId") { type = NavType.IntType },
+                )
+            ) { backStackEntry ->
+                val flashcardId = backStackEntry.arguments?.getInt("flashcardId") ?: 0
+
+                EditFlashcardScreen(navController, flashcardId)
             }
 
             composable(

@@ -146,10 +146,17 @@ fun PublicScreen(
         ) {
             items(list) { flashcard ->
                 FlashcardItem(
-                    flashcard, { audioUrl ->
+                    flashcard = flashcard,
+                    onPlayAudioFromUrl = { audioUrl ->
                         onPlayAudioFromUrl(audioUrl)
-                    })
-                { showDialogDeleteFlashcard.value = false }
+                    },
+                    onLongPress = { longClick ->
+                        showDialogDeleteFlashcard.value = longClick
+                    },
+                    onClick = {
+                        // without clik in public section
+                    }
+                )
             }
         }
 

@@ -187,14 +187,17 @@ fun PrivateScreen(
                 val showDialogDeleteFlashcard = remember { mutableStateOf(false) }
 
                 FlashcardItem(
-                    flashcard,
-                    { audioUrl ->
+                    flashcard = flashcard,
+                    onPlayAudioFromUrl = { audioUrl ->
                         onPlayAudioFromUrl(audioUrl)
                     },
-                    { longClick ->
+                    onLongPress = { longClick ->
                         showDialogDeleteFlashcard.value = longClick
                     }
-                )
+                ) { flashcardId ->
+                    navController
+                        .navigate("${NavigationSupport.EditFlashcardScreen}/${flashcardId}")
+                }
 
                 // Delete flashcard alert dialog
                 if (showDialogDeleteFlashcard.value) {
